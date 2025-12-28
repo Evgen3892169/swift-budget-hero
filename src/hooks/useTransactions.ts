@@ -85,7 +85,7 @@ export const useTransactions = (telegramUserId: string | null) => {
   // Initial sync on mount
   useEffect(() => {
     if (telegramUserId) {
-      syncTransactions(false);
+      syncTransactions();
     } else {
       setIsLoading(false);
     }

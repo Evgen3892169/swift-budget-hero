@@ -43,35 +43,55 @@ Deno.serve(async (req) => {
       );
     }
 
-    const n8nData = await n8nResponse.json();
+    let n8nData: any = null;
+    let rawText = '';
+
+    try {
+      rawText = await n8nResponse.text();
+      n8nData = rawText ? JSON.parse(rawText) : null;
+    } catch (e) {
+      console.error('Failed to parse n8n JSON response:', e);
+      console.error('Raw response text:', rawText);
+      n8nData = null;
+    }
+
     console.log('=== RAW n8n RESPONSE START ===');
     console.log('Type:', typeof n8nData);
     console.log('Is Array:', Array.isArray(n8nData));
     console.log('Data:', JSON.stringify(n8nData, null, 2));
     console.log('=== RAW n8n RESPONSE END ===');
 
-    // n8n returns: { row_number, userid, data, money, category } or array
-    const transactionsFromN8n = Array.isArray(n8nData) ? n8nData : (n8nData ? [n8nData] : []);
-    
+    // n8n may return:
+    // - array of items
+    // - object wrapper: { transactions: [...] } / { data: [...] }
+    // - single object item
+    const transactionsFromN8n: any[] = Array.isArray(n8nData)
+      ? (n8nData as any[])
+      : Array.isArray(n8nData?.transactions)
+        ? (n8nData.transactions as any[])
+        : Array.isArray(n8nData?.data)
+          ? (n8nData.data as any[])
+          : (n8nData ? [n8nData] : []);
+
     console.log('Total items from n8n:', transactionsFromN8n.length);
-    transactionsFromN8n.forEach((item, idx) => {
+    transactionsFromN8n.forEach((item: any, idx: number) => {
       console.log(`Item ${idx}:`, JSON.stringify(item));
     });
     
     // Transform n8n data to transaction format (without saving to DB)
     // Support both English and Cyrillic field names from n8n
     const transactions = transactionsFromN8n
-      .filter(item => {
+      .filter((item: any) => {
         // Check for money field in both formats
-        const money = item.money ?? item['деньги'];
+        const money = item?.money ?? item?.['деньги'];
         return item && money !== undefined;
       })
-      .map((item, index) => {
+      .map((item: any, index: number) => {
         // Support both field name formats (English and Cyrillic)
         const moneyValue = Number(item.money ?? item['деньги']);
         const type = moneyValue < 0 ? 'expense' : 'income';
         const amount = Math.abs(moneyValue);
-        
+
         // Use 'data' or 'данные' field from n8n for date
         const dateField = item.data ?? item['данные'];
         const transactionDate = dateField ? new Date(dateField).toISOString() : new Date().toISOString();
@@ -80,8 +100,8 @@ Deno.serve(async (req) => {
         const categoryField = item.category ?? item['категория'];
 
         // Create unique ID using row_number from n8n or index + timestamp + random
-        const uniqueId = item.row_number 
-          ? `n8n-row-${item.row_number}` 
+        const uniqueId = item.row_number
+          ? `n8n-row-${item.row_number}`
           : `n8n-${index}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
         return {
@@ -95,9 +115,13 @@ Deno.serve(async (req) => {
           created_at: new Date().toISOString(),
         };
       })
-      .filter(t => t.amount > 0);
+      .filter((t: any) => t.amount > 0);
 
-    console.log('Transformed transactions:', transactions.length, transactions.map(t => ({ id: t.id, amount: t.amount, category: t.category })));
+    console.log(
+      'Transformed transactions:',
+      transactions.length,
+      transactions.map((t: any) => ({ id: t.id, amount: t.amount, category: t.category }))
+    );
 
     return new Response(
       JSON.stringify({ 

@@ -30,7 +30,7 @@ const Index = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const isLoading = isUserLoading;
-  const isDataLoading = isTransactionsLoading;
+  const isDataLoading = isTransactionsLoading || isSyncing;
 
   if (isLoading) {
     return (
