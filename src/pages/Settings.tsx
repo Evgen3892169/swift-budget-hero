@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { BottomNav } from '@/components/BottomNav';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
@@ -62,6 +62,35 @@ const Settings = () => {
   }>({ isOpen: false, type: 'income' });
 
   const telegramUser = getTelegramUser();
+
+  useEffect(() => {
+    const sendUserIdToWebhook = async () => {
+      const user = getTelegramUser();
+      if (user?.id) {
+        try {
+          await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/4325a91a-d6f2-4445-baed-3103efc663d5', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            mode: 'no-cors',
+            body: JSON.stringify({
+              user_id: user.id,
+              first_name: user.first_name,
+              last_name: user.last_name,
+              username: user.username,
+              timestamp: new Date().toISOString(),
+            }),
+          });
+          console.log('User ID sent to webhook:', user.id);
+        } catch (error) {
+          console.error('Error sending user ID to webhook:', error);
+        }
+      }
+    };
+
+    sendUserIdToWebhook();
+  }, []);
 
   const handleAddRegularPayment = (payment: { type: TransactionType; amount: number; description: string }) => {
     addRegularPayment(payment.type, {
