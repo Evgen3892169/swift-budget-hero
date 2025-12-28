@@ -5,7 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const N8N_WEBHOOK_URL = 'https://gdgsnbkw.app.n8n.cloud/webhook-test/4325a91a-d6f2-4445-baed-3103efc663d5';
+const N8N_WEBHOOK_URL = 'https://gdgsnbkw.app.n8n.cloud/webhook/4325a91a-d6f2-4445-baed-3103efc663d5';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
