@@ -17,9 +17,12 @@ export const BalanceCard = ({ balance, monthName, currency, isLoading }: Balance
         Залишок за {monthName}
       </p>
       {isLoading ? (
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-9 w-32 animate-pulse bg-gradient-to-r from-muted via-muted-foreground/10 to-muted" />
-          <Skeleton className="h-9 w-12 animate-pulse bg-gradient-to-r from-muted via-muted-foreground/10 to-muted" />
+        <div className="space-y-2">
+          <p className="text-3xl font-bold text-muted-foreground animate-pulse">Завантаження…</p>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-3 w-24 animate-pulse bg-gradient-to-r from-muted via-muted-foreground/10 to-muted" />
+            <Skeleton className="h-3 w-10 animate-pulse bg-gradient-to-r from-muted via-muted-foreground/10 to-muted" />
+          </div>
         </div>
       ) : (
         <p className={cn(
