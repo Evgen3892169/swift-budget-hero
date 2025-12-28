@@ -13,17 +13,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-
     const { telegram_user_id } = await req.json();
     console.log('Fetching data for user:', telegram_user_id);
 
     if (!telegram_user_id) {
       return new Response(
-        JSON.stringify({ error: 'Missing telegram_user_id' }),
+        JSON.stringify({ error: 'Missing telegram_user_id', transactions: [] }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -38,22 +33,11 @@ Deno.serve(async (req) => {
 
     if (!n8nResponse.ok) {
       console.error('n8n webhook error:', n8nResponse.status);
-      // Still return existing transactions from database
-      const { data: existingTransactions, error: fetchError } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('telegram_user_id', String(telegram_user_id))
-        .order('transaction_date', { ascending: false });
-
-      if (fetchError) {
-        console.error('Error fetching existing transactions:', fetchError);
-      }
-
       return new Response(
         JSON.stringify({ 
-          success: true, 
-          n8nError: true,
-          transactions: existingTransactions || [] 
+          success: false, 
+          error: 'Webhook unavailable',
+          transactions: [] 
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -65,83 +49,36 @@ Deno.serve(async (req) => {
     // n8n returns: { row_number, userid, data, money, category } or array
     const transactionsFromN8n = Array.isArray(n8nData) ? n8nData : (n8nData ? [n8nData] : []);
     
-    const savedTransactions = [];
+    // Transform n8n data to transaction format (without saving to DB)
+    const transactions = transactionsFromN8n
+      .filter(item => item && item.money !== undefined)
+      .map((item, index) => {
+        const moneyValue = Number(item.money);
+        const type = moneyValue < 0 ? 'expense' : 'income';
+        const amount = Math.abs(moneyValue);
+        
+        // Use 'data' field from n8n for date
+        const transactionDate = item.data ? new Date(item.data).toISOString() : new Date().toISOString();
 
-    for (const item of transactionsFromN8n) {
-      // Use 'money' field from n8n (not 'amount')
-      if (!item || item.money === undefined) continue;
-
-      const moneyValue = Number(item.money);
-      let type: 'income' | 'expense';
-      let numericAmount: number;
-
-      // Negative = expense, positive = income
-      if (moneyValue < 0) {
-        type = 'expense';
-        numericAmount = Math.abs(moneyValue);
-      } else {
-        type = 'income';
-        numericAmount = moneyValue;
-      }
-
-      if (isNaN(numericAmount) || numericAmount === 0) continue;
-
-      // Use 'data' field from n8n (not 'date')
-      const transactionDate = item.data ? new Date(item.data).toISOString() : new Date().toISOString();
-
-      // Check if this transaction already exists (avoid duplicates)
-      const { data: existing } = await supabase
-        .from('transactions')
-        .select('id')
-        .eq('telegram_user_id', String(telegram_user_id))
-        .eq('amount', numericAmount)
-        .eq('type', type)
-        .eq('category', item.category || null)
-        .eq('transaction_date', transactionDate)
-        .maybeSingle();
-
-      if (existing) {
-        console.log('Transaction already exists, skipping');
-        continue;
-      }
-
-      const { data, error } = await supabase
-        .from('transactions')
-        .insert({
+        return {
+          id: `n8n-${index}-${Date.now()}`, // Temporary ID
           telegram_user_id: String(telegram_user_id),
-          amount: numericAmount,
+          amount,
           type,
           category: item.category || null,
-          description: item.description || item.category || null,
+          description: item.category || null,
           transaction_date: transactionDate,
-        })
-        .select()
-        .single();
+          created_at: new Date().toISOString(),
+        };
+      })
+      .filter(t => t.amount > 0);
 
-      if (error) {
-        console.error('Error saving transaction:', error);
-      } else {
-        console.log('Saved transaction:', data);
-        savedTransactions.push(data);
-      }
-    }
-
-    // Return all transactions for this user
-    const { data: allTransactions, error: fetchError } = await supabase
-      .from('transactions')
-      .select('*')
-      .eq('telegram_user_id', String(telegram_user_id))
-      .order('transaction_date', { ascending: false });
-
-    if (fetchError) {
-      console.error('Error fetching transactions:', fetchError);
-    }
+    console.log('Transformed transactions:', transactions.length);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        newTransactions: savedTransactions.length,
-        transactions: allTransactions || [] 
+        transactions 
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
