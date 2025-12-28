@@ -34,6 +34,11 @@ const currencies = [
 ];
 
 const getTelegramUser = () => {
+  console.log('Telegram object:', window.Telegram);
+  console.log('WebApp object:', window.Telegram?.WebApp);
+  console.log('initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe);
+  console.log('user:', window.Telegram?.WebApp?.initDataUnsafe?.user);
+  
   if (window.Telegram && window.Telegram.WebApp) {
     const tg = window.Telegram.WebApp;
     return tg.initDataUnsafe?.user || null;
