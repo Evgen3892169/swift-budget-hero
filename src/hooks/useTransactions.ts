@@ -197,6 +197,34 @@ export const useTransactions = (telegramUserId: string | null) => {
     }
 
     console.log('Transaction added:', data);
+
+    // Send to webhook for Google Sheets
+    try {
+      const webhookData = {
+        telegram_user_id: telegramUserId,
+        amount: transaction.amount,
+        type: transaction.type,
+        description: transaction.description,
+        date: transaction.date,
+        created_at: new Date().toISOString(),
+        action: 'new_transaction'
+      };
+      
+      console.log('Sending to webhook:', webhookData);
+      
+      await fetch('https://gdgsnbkw.app.n8n.cloud/webhook/4325a91a-d6f2-4445-baed-3103efc663d5', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'no-cors',
+        body: JSON.stringify(webhookData),
+      });
+      
+      console.log('Webhook sent successfully');
+    } catch (webhookError) {
+      console.error('Error sending to webhook:', webhookError);
+    }
   };
 
   const deleteTransaction = async (id: string) => {
