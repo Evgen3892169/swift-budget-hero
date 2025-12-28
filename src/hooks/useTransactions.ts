@@ -27,40 +27,56 @@ export const useTransactions = (telegramUserId: string | null) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load transactions from Supabase
+  // Sync with n8n and load transactions
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const syncAndFetchTransactions = async () => {
       if (!telegramUserId) {
         setIsLoading(false);
         return;
       }
 
       try {
-        console.log('Fetching transactions for user:', telegramUserId);
+        console.log('Syncing data for user:', telegramUserId);
         
-        const { data, error } = await supabase
-          .from('transactions')
-          .select('*')
-          .eq('telegram_user_id', telegramUserId)
-          .order('transaction_date', { ascending: false });
+        // Call sync-user-data edge function which:
+        // 1. Sends user_id to n8n
+        // 2. Receives transactions from n8n
+        // 3. Saves new transactions to database
+        // 4. Returns all transactions
+        const { data: syncData, error: syncError } = await supabase.functions.invoke('sync-user-data', {
+          body: { telegram_user_id: telegramUserId }
+        });
 
-        if (error) {
-          console.error('Error fetching transactions:', error);
-          setIsLoading(false);
-          return;
+        if (syncError) {
+          console.error('Error syncing data:', syncError);
+          // Fall back to just fetching existing transactions
+          const { data, error } = await supabase
+            .from('transactions')
+            .select('*')
+            .eq('telegram_user_id', telegramUserId)
+            .order('transaction_date', { ascending: false });
+
+          if (!error && data) {
+            const appTransactions = (data as DbTransaction[]).map(t => ({
+              id: t.id,
+              type: t.type,
+              amount: Number(t.amount),
+              description: t.description || t.category || '',
+              date: t.transaction_date,
+            }));
+            setTransactions(appTransactions);
+          }
+        } else if (syncData?.transactions) {
+          console.log('Synced transactions:', syncData.transactions.length);
+          const appTransactions: Transaction[] = syncData.transactions.map((t: DbTransaction) => ({
+            id: t.id,
+            type: t.type,
+            amount: Number(t.amount),
+            description: t.description || t.category || '',
+            date: t.transaction_date,
+          }));
+          setTransactions(appTransactions);
         }
-
-        // Convert DB transactions to app format
-        const appTransactions: Transaction[] = (data as DbTransaction[]).map(t => ({
-          id: t.id,
-          type: t.type,
-          amount: Number(t.amount),
-          description: t.description || t.category || '',
-          date: t.transaction_date,
-        }));
-
-        console.log('Loaded transactions:', appTransactions.length);
-        setTransactions(appTransactions);
       } catch (error) {
         console.error('Error loading transactions:', error);
       } finally {
@@ -68,7 +84,7 @@ export const useTransactions = (telegramUserId: string | null) => {
       }
     };
 
-    fetchTransactions();
+    syncAndFetchTransactions();
   }, [telegramUserId]);
 
   // Load settings from localStorage
@@ -108,7 +124,11 @@ export const useTransactions = (telegramUserId: string | null) => {
             description: t.description || t.category || '',
             date: t.transaction_date,
           };
-          setTransactions(prev => [newTransaction, ...prev]);
+          setTransactions(prev => {
+            // Avoid duplicates
+            if (prev.some(tx => tx.id === newTransaction.id)) return prev;
+            return [newTransaction, ...prev];
+          });
         }
       )
       .subscribe();
@@ -176,7 +196,6 @@ export const useTransactions = (telegramUserId: string | null) => {
       return;
     }
 
-    // Transaction will be added via realtime subscription
     console.log('Transaction added:', data);
   };
 
