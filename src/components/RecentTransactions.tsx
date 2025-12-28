@@ -34,10 +34,13 @@ export const RecentTransactions = ({ transactions, currency, isLoading }: Recent
       </div>
       
       {isLoading ? (
-        <div className="space-y-1">
-          <TransactionSkeleton />
-          <TransactionSkeleton />
-          <TransactionSkeleton />
+        <div className="space-y-2">
+          <p className="text-sm text-muted-foreground animate-pulse">Завантаження…</p>
+          <div className="space-y-1">
+            <TransactionSkeleton />
+            <TransactionSkeleton />
+            <TransactionSkeleton />
+          </div>
         </div>
       ) : recentTransactions.length === 0 ? (
         <p className="text-muted-foreground text-sm py-4 text-center">
