@@ -38,8 +38,23 @@ Deno.serve(async (req) => {
 
     if (!n8nResponse.ok) {
       console.error('n8n webhook error:', n8nResponse.status);
+      // Still return existing transactions from database
+      const { data: existingTransactions, error: fetchError } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('telegram_user_id', String(telegram_user_id))
+        .order('transaction_date', { ascending: false });
+
+      if (fetchError) {
+        console.error('Error fetching existing transactions:', fetchError);
+      }
+
       return new Response(
-        JSON.stringify({ error: 'Failed to fetch from n8n', transactions: [] }),
+        JSON.stringify({ 
+          success: true, 
+          n8nError: true,
+          transactions: existingTransactions || [] 
+        }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
