@@ -104,8 +104,10 @@ const History = () => {
         
         <MonthNavigator
           monthName={getMonthName(currentDate)}
+          currentDate={currentDate}
           onPrevious={goToPreviousMonth}
           onNext={goToNextMonth}
+          onDateSelect={setSelectedDate}
         />
 
         {/* Date Filter */}
