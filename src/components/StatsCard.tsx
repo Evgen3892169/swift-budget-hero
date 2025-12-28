@@ -1,5 +1,5 @@
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 interface StatsCardProps {
   income: number;
@@ -19,10 +19,7 @@ export const StatsCard = ({ income, expense, currency, isLoading }: StatsCardPro
           <span className="text-sm text-muted-foreground">Доходи</span>
         </div>
         {isLoading ? (
-          <div className="space-y-2">
-            <p className="text-xl font-bold text-muted-foreground animate-pulse">Завантаження…</p>
-            <Skeleton className="h-3 w-20 animate-pulse bg-gradient-to-r from-income/10 via-income/20 to-income/10" />
-          </div>
+          <LoadingSpinner size="sm" />
         ) : (
           <p className="text-xl font-bold text-income transition-all duration-300">
             +{income.toLocaleString('uk-UA')} {currency}
@@ -38,10 +35,7 @@ export const StatsCard = ({ income, expense, currency, isLoading }: StatsCardPro
           <span className="text-sm text-muted-foreground">Витрати</span>
         </div>
         {isLoading ? (
-          <div className="space-y-2">
-            <p className="text-xl font-bold text-muted-foreground animate-pulse">Завантаження…</p>
-            <Skeleton className="h-3 w-20 animate-pulse bg-gradient-to-r from-expense/10 via-expense/20 to-expense/10" />
-          </div>
+          <LoadingSpinner size="sm" />
         ) : (
           <p className="text-xl font-bold text-expense transition-all duration-300">
             -{expense.toLocaleString('uk-UA')} {currency}

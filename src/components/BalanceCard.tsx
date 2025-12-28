@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 interface BalanceCardProps {
   balance: number;
@@ -17,12 +17,8 @@ export const BalanceCard = ({ balance, monthName, currency, isLoading }: Balance
         Залишок за {monthName}
       </p>
       {isLoading ? (
-        <div className="space-y-2">
-          <p className="text-3xl font-bold text-muted-foreground animate-pulse">Завантаження…</p>
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-3 w-24 animate-pulse bg-gradient-to-r from-muted via-muted-foreground/10 to-muted" />
-            <Skeleton className="h-3 w-10 animate-pulse bg-gradient-to-r from-muted via-muted-foreground/10 to-muted" />
-          </div>
+        <div className="py-2">
+          <LoadingSpinner size="md" text="Завантаження балансу..." />
         </div>
       ) : (
         <p className={cn(
