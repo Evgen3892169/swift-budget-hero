@@ -91,18 +91,8 @@ Deno.serve(async (req) => {
       }
     }
 
-    if (error) {
-      console.error('Database error:', error);
-      return new Response(
-        JSON.stringify({ error: error.message }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    console.log('Transaction saved:', data);
-
     return new Response(
-      JSON.stringify({ success: true, transaction: data }),
+      JSON.stringify({ success: true, saved: savedTransactions.length, transactions: savedTransactions }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
