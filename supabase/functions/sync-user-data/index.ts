@@ -44,12 +44,15 @@ Deno.serve(async (req) => {
     }
 
     const n8nData = await n8nResponse.json();
-    console.log('Received from n8n:', n8nData);
+    console.log('Raw data from n8n:', JSON.stringify(n8nData));
 
     // n8n returns: { row_number, userid, data, money, category } or array
     const transactionsFromN8n = Array.isArray(n8nData) ? n8nData : (n8nData ? [n8nData] : []);
     
+    console.log('Total items from n8n:', transactionsFromN8n.length);
+    
     // Transform n8n data to transaction format (without saving to DB)
+    // Use row_number or unique combination for ID to avoid duplicates
     const transactions = transactionsFromN8n
       .filter(item => item && item.money !== undefined)
       .map((item, index) => {
@@ -60,8 +63,13 @@ Deno.serve(async (req) => {
         // Use 'data' field from n8n for date
         const transactionDate = item.data ? new Date(item.data).toISOString() : new Date().toISOString();
 
+        // Create unique ID using row_number from n8n or index + timestamp + random
+        const uniqueId = item.row_number 
+          ? `n8n-row-${item.row_number}` 
+          : `n8n-${index}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
         return {
-          id: `n8n-${index}-${Date.now()}`, // Temporary ID
+          id: uniqueId,
           telegram_user_id: String(telegram_user_id),
           amount,
           type,
@@ -73,7 +81,7 @@ Deno.serve(async (req) => {
       })
       .filter(t => t.amount > 0);
 
-    console.log('Transformed transactions:', transactions.length);
+    console.log('Transformed transactions:', transactions.length, transactions.map(t => ({ id: t.id, amount: t.amount, category: t.category })));
 
     return new Response(
       JSON.stringify({ 
