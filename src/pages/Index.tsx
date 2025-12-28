@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useTransactions } from '@/hooks/useTransactions';
+import { useState, useEffect } from 'react';
+import { useTransactionsContext } from '@/contexts/TransactionsContext';
 import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { MonthNavigator } from '@/components/MonthNavigator';
 import { BalanceCard } from '@/components/BalanceCard';
@@ -18,26 +18,35 @@ const Index = () => {
     monthlyStats,
     settings,
     currentDate,
-    isLoading: isTransactionsLoading,
+    isLoading,
     isSyncing,
+    isInitialized,
     syncTransactions,
     goToPreviousMonth,
     goToNextMonth,
     getMonthName,
     addTransaction,
-  } = useTransactions(telegramUserId);
+    setTelegramUserId,
+  } = useTransactionsContext();
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const isLoading = isUserLoading;
-  const isDataLoading = isTransactionsLoading || isSyncing;
+  // Set telegram user ID in context
+  useEffect(() => {
+    if (telegramUserId) {
+      setTelegramUserId(telegramUserId);
+    }
+  }, [telegramUserId, setTelegramUserId]);
 
-  if (isLoading) {
+  const isPageLoading = isUserLoading;
+  const isDataLoading = isLoading || (isSyncing && !isInitialized);
+
+  if (isPageLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Завантаження даних...</p>
+          <p className="text-muted-foreground">Завантаження...</p>
         </div>
       </div>
     );
@@ -82,7 +91,7 @@ const Index = () => {
             <div className="relative">
               <div className="h-4 w-4 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
             </div>
-            <span className="text-sm text-primary font-medium">Синхронізація даних з Google Sheets...</span>
+            <span className="text-sm text-primary font-medium">Оновлення даних...</span>
           </div>
         )}
 

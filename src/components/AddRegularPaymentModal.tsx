@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,31 +45,43 @@ export const AddRegularPaymentModal = ({
     onClose();
   };
 
+  const handleClose = () => {
+    setAmount('');
+    setDescription('');
+    onClose();
+  };
+
   const isIncome = type === 'income';
+  const isValid = amount && parseFloat(amount) > 0 && description.trim();
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md mx-4">
-        <DialogHeader>
-          <DialogTitle>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="w-[calc(100%-2rem)] max-w-md rounded-2xl p-6">
+        <DialogHeader className="text-left">
+          <DialogTitle className="text-xl font-semibold">
             {isIncome ? 'Новий регулярний дохід' : 'Нова регулярна витрата'}
           </DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5 mt-2">
           <div className="space-y-2">
-            <Label htmlFor="description">Назва</Label>
+            <Label htmlFor="description" className="text-sm font-medium">
+              Назва
+            </Label>
             <Input
               id="description"
               placeholder={isIncome ? "Наприклад: Зарплата" : "Наприклад: Оренда"}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              className="h-12 text-base"
               autoFocus
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="amount">Сума ({currency})</Label>
+            <Label htmlFor="amount" className="text-sm font-medium">
+              Сума ({currency})
+            </Label>
             <Input
               id="amount"
               type="number"
@@ -72,17 +89,27 @@ export const AddRegularPaymentModal = ({
               placeholder="0"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="text-xl h-14"
+              className="text-2xl h-16 font-semibold"
             />
           </div>
           
-          <Button 
-            type="submit" 
-            className="w-full h-12"
-            disabled={!amount || parseFloat(amount) <= 0 || !description.trim()}
-          >
-            Додати
-          </Button>
+          <div className="flex gap-3 pt-2">
+            <Button 
+              type="button"
+              variant="outline"
+              className="flex-1 h-12"
+              onClick={handleClose}
+            >
+              Скасувати
+            </Button>
+            <Button 
+              type="submit" 
+              className="flex-1 h-12"
+              disabled={!isValid}
+            >
+              Додати
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

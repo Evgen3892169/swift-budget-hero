@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useTransactions } from '@/hooks/useTransactions';
+import { useState, useEffect } from 'react';
+import { useTransactionsContext } from '@/contexts/TransactionsContext';
 import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { BottomNav } from '@/components/BottomNav';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, TrendingUp, TrendingDown, Webhook, User } from 'lucide-react';
 import { TransactionType } from '@/types/transaction';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 const currencies = [
   { value: 'грн', label: '₴ Гривня (грн)' },
@@ -22,12 +23,13 @@ const Settings = () => {
   
   const {
     settings,
-    isLoading: isTransactionsLoading,
+    isLoading,
     updateSettings,
     addRegularPayment,
     deleteRegularPayment,
     addTransaction,
-  } = useTransactions(telegramUserId);
+    setTelegramUserId,
+  } = useTransactionsContext();
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [regularPaymentModal, setRegularPaymentModal] = useState<{
@@ -35,7 +37,12 @@ const Settings = () => {
     type: TransactionType;
   }>({ isOpen: false, type: 'income' });
 
-  const isLoading = isUserLoading || isTransactionsLoading;
+  // Set telegram user ID in context
+  useEffect(() => {
+    if (telegramUserId) {
+      setTelegramUserId(telegramUserId);
+    }
+  }, [telegramUserId, setTelegramUserId]);
 
   const handleAddRegularPayment = (payment: { type: TransactionType; amount: number; description: string }) => {
     addRegularPayment(payment.type, {
@@ -45,13 +52,10 @@ const Settings = () => {
     });
   };
 
-  if (isLoading) {
+  if (isUserLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Завантаження даних...</p>
-        </div>
+        <LoadingSpinner size="lg" text="Завантаження налаштувань..." />
       </div>
     );
   }
@@ -116,8 +120,9 @@ const Settings = () => {
               variant="outline"
               size="sm"
               onClick={() => setRegularPaymentModal({ isOpen: true, type: 'income' })}
+              className="gap-1"
             >
-              <Plus className="h-4 w-4 mr-1" />
+              <Plus className="h-4 w-4" />
               Додати
             </Button>
           </div>
@@ -127,7 +132,7 @@ const Settings = () => {
               Немає регулярних доходів
             </p>
           ) : (
-            <div>
+            <div className="space-y-1">
               {settings.regularIncomes.map(payment => (
                 <RegularPaymentItem
                   key={payment.id}
@@ -153,8 +158,9 @@ const Settings = () => {
               variant="outline"
               size="sm"
               onClick={() => setRegularPaymentModal({ isOpen: true, type: 'expense' })}
+              className="gap-1"
             >
-              <Plus className="h-4 w-4 mr-1" />
+              <Plus className="h-4 w-4" />
               Додати
             </Button>
           </div>
@@ -164,7 +170,7 @@ const Settings = () => {
               Немає регулярних витрат
             </p>
           ) : (
-            <div>
+            <div className="space-y-1">
               {settings.regularExpenses.map(payment => (
                 <RegularPaymentItem
                   key={payment.id}
@@ -186,8 +192,8 @@ const Settings = () => {
             <Label className="text-base font-semibold">Інтеграція</Label>
           </div>
           <p className="text-sm text-muted-foreground">
-            Готово до інтеграції з Telegram та n8n. 
-            Дані можуть надходити через webhook з полями: тип, сума, опис, дата.
+            Дані синхронізуються з Google Sheets через n8n. 
+            Вручну додані транзакції також відправляються на сервер.
           </p>
         </div>
       </div>
@@ -203,7 +209,7 @@ const Settings = () => {
       
       <AddRegularPaymentModal
         isOpen={regularPaymentModal.isOpen}
-        onClose={() => setRegularPaymentModal({ ...regularPaymentModal, isOpen: false })}
+        onClose={() => setRegularPaymentModal(prev => ({ ...prev, isOpen: false }))}
         onAdd={handleAddRegularPayment}
         type={regularPaymentModal.type}
         currency={settings.currency}

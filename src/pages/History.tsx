@@ -1,10 +1,11 @@
-import { useState, useMemo } from 'react';
-import { useTransactions } from '@/hooks/useTransactions';
+import { useState, useMemo, useEffect } from 'react';
+import { useTransactionsContext } from '@/contexts/TransactionsContext';
 import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { TransactionItem } from '@/components/TransactionItem';
 import { MonthNavigator } from '@/components/MonthNavigator';
 import { BottomNav } from '@/components/BottomNav';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
+import { LoadingSpinner, TransactionLoadingSkeleton } from '@/components/LoadingSpinner';
 
 const History = () => {
   const { telegramUserId, isLoading: isUserLoading } = useTelegramUser();
@@ -13,7 +14,8 @@ const History = () => {
     transactions,
     settings,
     currentDate,
-    isLoading: isTransactionsLoading,
+    isLoading,
+    isInitialized,
     goToPreviousMonth,
     goToNextMonth,
     getMonthName,
@@ -21,11 +23,19 @@ const History = () => {
     deleteTransaction,
     currentMonth,
     currentYear,
-  } = useTransactions(telegramUserId);
+    setTelegramUserId,
+  } = useTransactionsContext();
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const isLoading = isUserLoading || isTransactionsLoading;
+  // Set telegram user ID in context
+  useEffect(() => {
+    if (telegramUserId) {
+      setTelegramUserId(telegramUserId);
+    }
+  }, [telegramUserId, setTelegramUserId]);
+
+  const isPageLoading = isUserLoading || (isLoading && !isInitialized);
 
   const filteredTransactions = useMemo(() => {
     return transactions
@@ -56,12 +66,11 @@ const History = () => {
     return groups;
   }, [filteredTransactions]);
 
-  if (isLoading) {
+  if (isPageLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Завантаження даних...</p>
+          <LoadingSpinner size="lg" text="Завантаження історії..." />
         </div>
       </div>
     );
@@ -88,7 +97,14 @@ const History = () => {
           onNext={goToNextMonth}
         />
 
-        {Object.keys(groupedTransactions).length === 0 ? (
+        {!isInitialized ? (
+          <div className="bg-card rounded-lg p-4 space-y-2">
+            <LoadingSpinner size="sm" text="Завантаження транзакцій..." />
+            <TransactionLoadingSkeleton />
+            <TransactionLoadingSkeleton />
+            <TransactionLoadingSkeleton />
+          </div>
+        ) : Object.keys(groupedTransactions).length === 0 ? (
           <div className="bg-card rounded-lg p-8 text-center">
             <p className="text-muted-foreground">
               Немає операцій за цей місяць
