@@ -9,11 +9,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { TransactionType } from '@/types/transaction';
+import { DayOfMonthPicker } from '@/components/DayOfMonthPicker';
 
 interface AddRegularPaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (payment: { type: TransactionType; amount: number; description: string }) => void;
+  onAdd: (payment: { type: TransactionType; amount: number; description: string; dayOfMonth?: number }) => void;
   type: TransactionType;
   currency: string;
 }
@@ -27,6 +28,7 @@ export const AddRegularPaymentModal = ({
 }: AddRegularPaymentModalProps) => {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  const [dayOfMonth, setDayOfMonth] = useState<number | undefined>(undefined);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,16 +40,19 @@ export const AddRegularPaymentModal = ({
       type,
       amount: numAmount,
       description: description.trim(),
+      dayOfMonth,
     });
     
     setAmount('');
     setDescription('');
+    setDayOfMonth(undefined);
     onClose();
   };
 
   const handleClose = () => {
     setAmount('');
     setDescription('');
+    setDayOfMonth(undefined);
     onClose();
   };
 
@@ -91,6 +96,20 @@ export const AddRegularPaymentModal = ({
               onChange={(e) => setAmount(e.target.value)}
               className="text-2xl h-16 font-semibold"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">
+              День нарахування (необов'язково)
+            </Label>
+            <DayOfMonthPicker
+              selectedDay={dayOfMonth}
+              onDayChange={setDayOfMonth}
+              className="w-full h-12"
+            />
+            <p className="text-xs text-muted-foreground">
+              Оберіть день місяця, коли це нарахування застосовується
+            </p>
           </div>
           
           <div className="flex gap-3 pt-2">

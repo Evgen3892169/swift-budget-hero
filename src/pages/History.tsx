@@ -4,8 +4,10 @@ import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { TransactionItem } from '@/components/TransactionItem';
 import { MonthNavigator } from '@/components/MonthNavigator';
 import { BottomNav } from '@/components/BottomNav';
-import { AddTransactionModal } from '@/components/AddTransactionModal';
 import { LoadingSpinner, TransactionLoadingSkeleton } from '@/components/LoadingSpinner';
+import { DatePickerPopover } from '@/components/DatePickerPopover';
+import { CalendarDays, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const History = () => {
   const { telegramUserId, isLoading: isUserLoading } = useTelegramUser();
@@ -19,14 +21,13 @@ const History = () => {
     goToPreviousMonth,
     goToNextMonth,
     getMonthName,
-    addTransaction,
     deleteTransaction,
     currentMonth,
     currentYear,
     setTelegramUserId,
   } = useTransactionsContext();
   
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   // Set telegram user ID in context
   useEffect(() => {
@@ -38,13 +39,21 @@ const History = () => {
   const isPageLoading = isUserLoading || (isLoading && !isInitialized);
 
   const filteredTransactions = useMemo(() => {
-    return transactions
-      .filter(t => {
+    let filtered = transactions.filter(t => {
+      const date = new Date(t.date);
+      return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+    });
+    
+    // If a specific date is selected, filter to that date
+    if (selectedDate) {
+      filtered = filtered.filter(t => {
         const date = new Date(t.date);
-        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-      })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [transactions, currentMonth, currentYear]);
+        return date.toDateString() === selectedDate.toDateString();
+      });
+    }
+    
+    return filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [transactions, currentMonth, currentYear, selectedDate]);
 
   // Group transactions by date
   const groupedTransactions = useMemo(() => {
@@ -89,13 +98,35 @@ const History = () => {
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="p-4 space-y-4 max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold">Історія операцій</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Історія операцій</h1>
+        </div>
         
         <MonthNavigator
           monthName={getMonthName(currentDate)}
           onPrevious={goToPreviousMonth}
           onNext={goToNextMonth}
         />
+
+        {/* Date Filter */}
+        <div className="flex items-center gap-2">
+          <DatePickerPopover
+            date={selectedDate}
+            onDateChange={setSelectedDate}
+            placeholder="Фільтр по даті"
+            className="flex-1"
+          />
+          {selectedDate && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSelectedDate(undefined)}
+              className="shrink-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
 
         {!isInitialized ? (
           <div className="bg-card rounded-lg p-4 space-y-2">
@@ -107,7 +138,7 @@ const History = () => {
         ) : Object.keys(groupedTransactions).length === 0 ? (
           <div className="bg-card rounded-lg p-8 text-center">
             <p className="text-muted-foreground">
-              Немає операцій за цей місяць
+              {selectedDate ? 'Немає операцій за вибрану дату' : 'Немає операцій за цей місяць'}
             </p>
           </div>
         ) : (
@@ -133,14 +164,7 @@ const History = () => {
         )}
       </div>
 
-      <BottomNav onAddClick={() => setIsAddModalOpen(true)} />
-      
-      <AddTransactionModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAdd={addTransaction}
-        currency={settings.currency}
-      />
+      <BottomNav />
     </div>
   );
 };

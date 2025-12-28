@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useTransactionsContext } from '@/contexts/TransactionsContext';
 import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { MonthNavigator } from '@/components/MonthNavigator';
@@ -6,7 +6,6 @@ import { BalanceCard } from '@/components/BalanceCard';
 import { StatsCard } from '@/components/StatsCard';
 import { RecentTransactions } from '@/components/RecentTransactions';
 import { BottomNav } from '@/components/BottomNav';
-import { AddTransactionModal } from '@/components/AddTransactionModal';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -25,11 +24,8 @@ const Index = () => {
     goToPreviousMonth,
     goToNextMonth,
     getMonthName,
-    addTransaction,
     setTelegramUserId,
   } = useTransactionsContext();
-  
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Set telegram user ID in context
   useEffect(() => {
@@ -127,15 +123,7 @@ const Index = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNav onAddClick={() => setIsAddModalOpen(true)} />
-
-      {/* Add Transaction Modal */}
-      <AddTransactionModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAdd={addTransaction}
-        currency={settings.currency}
-      />
+      <BottomNav />
     </div>
   );
 };
