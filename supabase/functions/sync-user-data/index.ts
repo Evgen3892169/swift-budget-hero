@@ -1,0 +1,144 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+const N8N_WEBHOOK_URL = 'https://gdgsnbkw.app.n8n.cloud/webhook-test/4325a91a-d6f2-4445-baed-3103efc663d5';
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    const { telegram_user_id } = await req.json();
+    console.log('Fetching data for user:', telegram_user_id);
+
+    if (!telegram_user_id) {
+      return new Response(
+        JSON.stringify({ error: 'Missing telegram_user_id' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Send user_id to n8n and get transactions back
+    console.log('Calling n8n webhook...');
+    const n8nResponse = await fetch(N8N_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: telegram_user_id }),
+    });
+
+    if (!n8nResponse.ok) {
+      console.error('n8n webhook error:', n8nResponse.status);
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch from n8n', transactions: [] }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const n8nData = await n8nResponse.json();
+    console.log('Received from n8n:', n8nData);
+
+    // n8n can return single transaction or array
+    // Format: { amount: "-100", category: "кава" } or [{ amount: "-100", category: "кава" }, ...]
+    const transactionsFromN8n = Array.isArray(n8nData) ? n8nData : (n8nData ? [n8nData] : []);
+    
+    const savedTransactions = [];
+
+    for (const item of transactionsFromN8n) {
+      if (!item || item.amount === undefined) continue;
+
+      const amountStr = String(item.amount);
+      let type: 'income' | 'expense';
+      let numericAmount: number;
+
+      // Parse amount: "+" = income, "-" = expense
+      if (amountStr.startsWith('+')) {
+        type = 'income';
+        numericAmount = Math.abs(parseFloat(amountStr.substring(1)));
+      } else if (amountStr.startsWith('-')) {
+        type = 'expense';
+        numericAmount = Math.abs(parseFloat(amountStr.substring(1)));
+      } else {
+        numericAmount = parseFloat(amountStr);
+        type = numericAmount >= 0 ? 'income' : 'expense';
+        numericAmount = Math.abs(numericAmount);
+      }
+
+      if (isNaN(numericAmount) || numericAmount === 0) continue;
+
+      const transactionDate = item.date ? new Date(item.date).toISOString() : new Date().toISOString();
+
+      // Check if this transaction already exists (avoid duplicates)
+      const { data: existing } = await supabase
+        .from('transactions')
+        .select('id')
+        .eq('telegram_user_id', String(telegram_user_id))
+        .eq('amount', numericAmount)
+        .eq('type', type)
+        .eq('category', item.category || null)
+        .eq('transaction_date', transactionDate)
+        .maybeSingle();
+
+      if (existing) {
+        console.log('Transaction already exists, skipping');
+        continue;
+      }
+
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert({
+          telegram_user_id: String(telegram_user_id),
+          amount: numericAmount,
+          type,
+          category: item.category || null,
+          description: item.description || item.category || null,
+          transaction_date: transactionDate,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error saving transaction:', error);
+      } else {
+        console.log('Saved transaction:', data);
+        savedTransactions.push(data);
+      }
+    }
+
+    // Return all transactions for this user
+    const { data: allTransactions, error: fetchError } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('telegram_user_id', String(telegram_user_id))
+      .order('transaction_date', { ascending: false });
+
+    if (fetchError) {
+      console.error('Error fetching transactions:', fetchError);
+    }
+
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        newTransactions: savedTransactions.length,
+        transactions: allTransactions || [] 
+      }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+
+  } catch (error) {
+    console.error('Error:', error);
+    return new Response(
+      JSON.stringify({ error: 'Internal server error', transactions: [] }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+});

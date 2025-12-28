@@ -2,3 +2,6 @@ project_id = "zzxtpmbtkgddiqnadixk"
 
 [functions.webhook-transactions]
 verify_jwt = false
+
+[functions.sync-user-data]
+verify_jwt = false
