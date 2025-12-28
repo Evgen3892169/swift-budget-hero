@@ -94,7 +94,21 @@ Deno.serve(async (req) => {
 
         // Use 'data' or 'данные' field from n8n for date
         const dateField = item.data ?? item['данные'];
-        const transactionDate = dateField ? new Date(dateField).toISOString() : new Date().toISOString();
+        let transactionDate = new Date().toISOString();
+        
+        if (dateField) {
+          try {
+            const parsedDate = new Date(dateField);
+            // Check if date is valid
+            if (!isNaN(parsedDate.getTime())) {
+              transactionDate = parsedDate.toISOString();
+            } else {
+              console.warn(`Invalid date for item ${index}:`, dateField);
+            }
+          } catch (e) {
+            console.warn(`Failed to parse date for item ${index}:`, dateField, e);
+          }
+        }
 
         // Use 'category' or 'категория' field
         const categoryField = item.category ?? item['категория'];
