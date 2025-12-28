@@ -47,35 +47,32 @@ Deno.serve(async (req) => {
     const n8nData = await n8nResponse.json();
     console.log('Received from n8n:', n8nData);
 
-    // n8n can return single transaction or array
-    // Format: { amount: "-100", category: "кава" } or [{ amount: "-100", category: "кава" }, ...]
+    // n8n returns: { row_number, userid, data, money, category } or array
     const transactionsFromN8n = Array.isArray(n8nData) ? n8nData : (n8nData ? [n8nData] : []);
     
     const savedTransactions = [];
 
     for (const item of transactionsFromN8n) {
-      if (!item || item.amount === undefined) continue;
+      // Use 'money' field from n8n (not 'amount')
+      if (!item || item.money === undefined) continue;
 
-      const amountStr = String(item.amount);
+      const moneyValue = Number(item.money);
       let type: 'income' | 'expense';
       let numericAmount: number;
 
-      // Parse amount: "+" = income, "-" = expense
-      if (amountStr.startsWith('+')) {
-        type = 'income';
-        numericAmount = Math.abs(parseFloat(amountStr.substring(1)));
-      } else if (amountStr.startsWith('-')) {
+      // Negative = expense, positive = income
+      if (moneyValue < 0) {
         type = 'expense';
-        numericAmount = Math.abs(parseFloat(amountStr.substring(1)));
+        numericAmount = Math.abs(moneyValue);
       } else {
-        numericAmount = parseFloat(amountStr);
-        type = numericAmount >= 0 ? 'income' : 'expense';
-        numericAmount = Math.abs(numericAmount);
+        type = 'income';
+        numericAmount = moneyValue;
       }
 
       if (isNaN(numericAmount) || numericAmount === 0) continue;
 
-      const transactionDate = item.date ? new Date(item.date).toISOString() : new Date().toISOString();
+      // Use 'data' field from n8n (not 'date')
+      const transactionDate = item.data ? new Date(item.data).toISOString() : new Date().toISOString();
 
       // Check if this transaction already exists (avoid duplicates)
       const { data: existing } = await supabase
