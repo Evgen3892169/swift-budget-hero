@@ -212,7 +212,7 @@ export const useTransactions = (telegramUserId: string | null) => {
       
       console.log('Sending to webhook:', webhookData);
       
-      await fetch('https://gdgsnbkw.app.n8n.cloud/webhook/4325a91a-d6f2-4445-baed-3103efc663d5', {
+      await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/4325a91a-d6f2-4445-baed-3103efc663d5', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
