@@ -25,7 +25,8 @@ const Index = () => {
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const isLoading = isUserLoading || isTransactionsLoading;
+  const isLoading = isUserLoading;
+  const isDataLoading = isTransactionsLoading;
 
   if (isLoading) {
     return (
@@ -68,6 +69,7 @@ const Index = () => {
           balance={monthlyStats.balance}
           monthName={getMonthName(currentDate)}
           currency={settings.currency}
+          isLoading={isDataLoading}
         />
 
         {/* Stats */}
@@ -75,12 +77,14 @@ const Index = () => {
           income={monthlyStats.income}
           expense={monthlyStats.expense}
           currency={settings.currency}
+          isLoading={isDataLoading}
         />
 
         {/* Recent Transactions */}
         <RecentTransactions
           transactions={monthTransactions}
           currency={settings.currency}
+          isLoading={isDataLoading}
         />
       </div>
 
