@@ -44,12 +44,19 @@ Deno.serve(async (req) => {
     }
 
     const n8nData = await n8nResponse.json();
-    console.log('Raw data from n8n:', JSON.stringify(n8nData));
+    console.log('=== RAW n8n RESPONSE START ===');
+    console.log('Type:', typeof n8nData);
+    console.log('Is Array:', Array.isArray(n8nData));
+    console.log('Data:', JSON.stringify(n8nData, null, 2));
+    console.log('=== RAW n8n RESPONSE END ===');
 
     // n8n returns: { row_number, userid, data, money, category } or array
     const transactionsFromN8n = Array.isArray(n8nData) ? n8nData : (n8nData ? [n8nData] : []);
     
     console.log('Total items from n8n:', transactionsFromN8n.length);
+    transactionsFromN8n.forEach((item, idx) => {
+      console.log(`Item ${idx}:`, JSON.stringify(item));
+    });
     
     // Transform n8n data to transaction format (without saving to DB)
     // Support both English and Cyrillic field names from n8n
