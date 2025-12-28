@@ -94,6 +94,7 @@ const Index = () => {
         {/* Month Navigation */}
         <MonthNavigator
           monthName={getMonthName(currentDate)}
+          currentDate={currentDate}
           onPrevious={goToPreviousMonth}
           onNext={goToNextMonth}
         />
