@@ -1,5 +1,5 @@
 import { RegularPayment } from '@/types/transaction';
-import { Trash2 } from 'lucide-react';
+import { Trash2, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -18,6 +18,12 @@ export const RegularPaymentItem = ({ payment, currency, onDelete }: RegularPayme
         <p className="text-sm font-medium truncate">
           {payment.description}
         </p>
+        {payment.dayOfMonth && (
+          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+            <CalendarDays className="h-3 w-3" />
+            <span>{payment.dayOfMonth} числа</span>
+          </div>
+        )}
       </div>
       
       <div className="flex items-center gap-2">

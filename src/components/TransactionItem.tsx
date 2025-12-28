@@ -22,15 +22,23 @@ export const TransactionItem = ({
   return (
     <div className="flex items-center justify-between py-3 border-b border-border last:border-0">
       <div className="flex-1 min-w-0">
-        {showDate && (
-          <p className="text-xs text-muted-foreground mb-0.5">
-            {date.toLocaleDateString('uk-UA', { 
-              day: 'numeric', 
-              month: 'short',
-              year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+        <div className="flex items-center gap-2 mb-0.5">
+          {showDate && (
+            <p className="text-xs text-muted-foreground">
+              {date.toLocaleDateString('uk-UA', { 
+                day: 'numeric', 
+                month: 'short',
+                year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+              })}
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            {date.toLocaleTimeString('uk-UA', { 
+              hour: '2-digit', 
+              minute: '2-digit'
             })}
           </p>
-        )}
+        </div>
         <p className="text-sm font-medium truncate">
           {transaction.description || (isIncome ? 'Дохід' : 'Витрата')}
         </p>
