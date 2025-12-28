@@ -52,16 +52,25 @@ Deno.serve(async (req) => {
     console.log('Total items from n8n:', transactionsFromN8n.length);
     
     // Transform n8n data to transaction format (without saving to DB)
-    // Use row_number or unique combination for ID to avoid duplicates
+    // Support both English and Cyrillic field names from n8n
     const transactions = transactionsFromN8n
-      .filter(item => item && item.money !== undefined)
+      .filter(item => {
+        // Check for money field in both formats
+        const money = item.money ?? item['деньги'];
+        return item && money !== undefined;
+      })
       .map((item, index) => {
-        const moneyValue = Number(item.money);
+        // Support both field name formats (English and Cyrillic)
+        const moneyValue = Number(item.money ?? item['деньги']);
         const type = moneyValue < 0 ? 'expense' : 'income';
         const amount = Math.abs(moneyValue);
         
-        // Use 'data' field from n8n for date
-        const transactionDate = item.data ? new Date(item.data).toISOString() : new Date().toISOString();
+        // Use 'data' or 'данные' field from n8n for date
+        const dateField = item.data ?? item['данные'];
+        const transactionDate = dateField ? new Date(dateField).toISOString() : new Date().toISOString();
+
+        // Use 'category' or 'категория' field
+        const categoryField = item.category ?? item['категория'];
 
         // Create unique ID using row_number from n8n or index + timestamp + random
         const uniqueId = item.row_number 
@@ -73,8 +82,8 @@ Deno.serve(async (req) => {
           telegram_user_id: String(telegram_user_id),
           amount,
           type,
-          category: item.category || null,
-          description: item.category || null,
+          category: categoryField || null,
+          description: categoryField || null,
           transaction_date: transactionDate,
           created_at: new Date().toISOString(),
         };
