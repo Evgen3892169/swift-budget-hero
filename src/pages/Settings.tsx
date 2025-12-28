@@ -7,14 +7,39 @@ import { RegularPaymentItem } from '@/components/RegularPaymentItem';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, TrendingUp, TrendingDown, Webhook } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, Webhook, User } from 'lucide-react';
 import { TransactionType } from '@/types/transaction';
+
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp?: {
+        initDataUnsafe?: {
+          user?: {
+            id?: number;
+            first_name?: string;
+            last_name?: string;
+            username?: string;
+          };
+        };
+      };
+    };
+  }
+}
 
 const currencies = [
   { value: 'грн', label: '₴ Гривня (грн)' },
   { value: '$', label: '$ Долар ($)' },
   { value: '€', label: '€ Євро (€)' },
 ];
+
+const getTelegramUser = () => {
+  if (window.Telegram && window.Telegram.WebApp) {
+    const tg = window.Telegram.WebApp;
+    return tg.initDataUnsafe?.user || null;
+  }
+  return null;
+};
 
 const Settings = () => {
   const {
@@ -31,6 +56,8 @@ const Settings = () => {
     type: TransactionType;
   }>({ isOpen: false, type: 'income' });
 
+  const telegramUser = getTelegramUser();
+
   const handleAddRegularPayment = (payment: { type: TransactionType; amount: number; description: string }) => {
     addRegularPayment(payment.type, {
       type: payment.type,
@@ -43,6 +70,42 @@ const Settings = () => {
     <div className="min-h-screen bg-background pb-24">
       <div className="p-4 space-y-6 max-w-lg mx-auto">
         <h1 className="text-2xl font-bold">Налаштування</h1>
+        
+        {/* User Profile */}
+        <div className="bg-card rounded-lg p-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="bg-primary/20 p-1.5 rounded-full">
+              <User className="h-4 w-4 text-primary" />
+            </div>
+            <span className="text-base font-semibold">Профіль користувача</span>
+          </div>
+          {telegramUser ? (
+            <div className="space-y-2">
+              <div>
+                <p className="text-sm text-muted-foreground">Telegram User ID</p>
+                <p className="text-xl font-bold">{telegramUser.id}</p>
+              </div>
+              {(telegramUser.first_name || telegramUser.last_name) && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Ім'я</p>
+                  <p className="font-medium">
+                    {[telegramUser.first_name, telegramUser.last_name].filter(Boolean).join(' ')}
+                  </p>
+                </div>
+              )}
+              {telegramUser.username && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Username</p>
+                  <p className="font-medium">@{telegramUser.username}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Відкрийте додаток через Telegram для відображення профілю
+            </p>
+          )}
+        </div>
         
         {/* Currency */}
         <div className="bg-card rounded-lg p-4 shadow-sm">
