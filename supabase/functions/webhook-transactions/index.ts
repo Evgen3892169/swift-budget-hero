@@ -20,51 +20,76 @@ Deno.serve(async (req) => {
     const body = await req.json();
     console.log('Received webhook data:', body);
 
-    // Expected format from n8n:
-    // { telegram_user_id: "123", amount: "-100" or "+500", category: "food", description: "...", date: "2024-01-15T10:00:00Z" }
-    
-    const { telegram_user_id, amount, category, description, date } = body;
+    // Handle array or single object from n8n
+    // Format: { userid, money, category, data } or array of these
+    const items = Array.isArray(body) ? body : [body];
+    const savedTransactions = [];
 
-    if (!telegram_user_id || amount === undefined) {
-      console.error('Missing required fields');
-      return new Response(
-        JSON.stringify({ error: 'Missing telegram_user_id or amount' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    for (const item of items) {
+      // Support both formats: n8n format (userid, money, data) and direct format (telegram_user_id, amount, date)
+      const userId = item.userid || item.telegram_user_id;
+      const moneyValue = item.money ?? item.amount;
+      const category = item.category || null;
+      const description = item.description || item.category || null;
+      const dateValue = item.data || item.date;
+
+      if (!userId || moneyValue === undefined) {
+        console.log('Skipping item with missing fields:', item);
+        continue;
+      }
+
+      // Parse amount: negative = expense, positive = income
+      let type: 'income' | 'expense';
+      let numericAmount: number;
+
+      const numValue = Number(moneyValue);
+      if (numValue < 0) {
+        type = 'expense';
+        numericAmount = Math.abs(numValue);
+      } else {
+        type = 'income';
+        numericAmount = numValue;
+      }
+
+      if (isNaN(numericAmount) || numericAmount === 0) continue;
+
+      const transactionDate = dateValue ? new Date(dateValue).toISOString() : new Date().toISOString();
+
+      // Check for duplicates
+      const { data: existing } = await supabase
+        .from('transactions')
+        .select('id')
+        .eq('telegram_user_id', String(userId))
+        .eq('amount', numericAmount)
+        .eq('type', type)
+        .eq('transaction_date', transactionDate)
+        .maybeSingle();
+
+      if (existing) {
+        console.log('Transaction already exists, skipping');
+        continue;
+      }
+
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert({
+          telegram_user_id: String(userId),
+          amount: numericAmount,
+          type,
+          category,
+          description,
+          transaction_date: transactionDate,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Database error:', error);
+      } else {
+        console.log('Transaction saved:', data);
+        savedTransactions.push(data);
+      }
     }
-
-    // Parse amount: "+" prefix = income, "-" prefix = expense
-    const amountStr = String(amount);
-    let type: 'income' | 'expense';
-    let numericAmount: number;
-
-    if (amountStr.startsWith('+')) {
-      type = 'income';
-      numericAmount = Math.abs(parseFloat(amountStr.substring(1)));
-    } else if (amountStr.startsWith('-')) {
-      type = 'expense';
-      numericAmount = Math.abs(parseFloat(amountStr.substring(1)));
-    } else {
-      // If no prefix, assume it's an expense if negative, income if positive
-      numericAmount = parseFloat(amountStr);
-      type = numericAmount >= 0 ? 'income' : 'expense';
-      numericAmount = Math.abs(numericAmount);
-    }
-
-    const transactionDate = date ? new Date(date).toISOString() : new Date().toISOString();
-
-    const { data, error } = await supabase
-      .from('transactions')
-      .insert({
-        telegram_user_id: String(telegram_user_id),
-        amount: numericAmount,
-        type,
-        category: category || null,
-        description: description || null,
-        transaction_date: transactionDate,
-      })
-      .select()
-      .single();
 
     if (error) {
       console.error('Database error:', error);
