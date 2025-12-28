@@ -1,12 +1,14 @@
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface StatsCardProps {
   income: number;
   expense: number;
   currency: string;
+  isLoading?: boolean;
 }
 
-export const StatsCard = ({ income, expense, currency }: StatsCardProps) => {
+export const StatsCard = ({ income, expense, currency, isLoading }: StatsCardProps) => {
   return (
     <div className="grid grid-cols-2 gap-3">
       <div className="bg-income-light rounded-lg p-4">
@@ -16,9 +18,13 @@ export const StatsCard = ({ income, expense, currency }: StatsCardProps) => {
           </div>
           <span className="text-sm text-muted-foreground">Доходи</span>
         </div>
-        <p className="text-xl font-bold text-income">
-          +{income.toLocaleString('uk-UA')} {currency}
-        </p>
+        {isLoading ? (
+          <Skeleton className="h-7 w-24 animate-pulse bg-gradient-to-r from-income/10 via-income/20 to-income/10" />
+        ) : (
+          <p className="text-xl font-bold text-income transition-all duration-300">
+            +{income.toLocaleString('uk-UA')} {currency}
+          </p>
+        )}
       </div>
       
       <div className="bg-expense-light rounded-lg p-4">
@@ -28,9 +34,13 @@ export const StatsCard = ({ income, expense, currency }: StatsCardProps) => {
           </div>
           <span className="text-sm text-muted-foreground">Витрати</span>
         </div>
-        <p className="text-xl font-bold text-expense">
-          -{expense.toLocaleString('uk-UA')} {currency}
-        </p>
+        {isLoading ? (
+          <Skeleton className="h-7 w-24 animate-pulse bg-gradient-to-r from-expense/10 via-expense/20 to-expense/10" />
+        ) : (
+          <p className="text-xl font-bold text-expense transition-all duration-300">
+            -{expense.toLocaleString('uk-UA')} {currency}
+          </p>
+        )}
       </div>
     </div>
   );
