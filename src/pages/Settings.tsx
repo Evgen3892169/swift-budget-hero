@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTransactions } from '@/hooks/useTransactions';
+import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { BottomNav } from '@/components/BottomNav';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
 import { AddRegularPaymentModal } from '@/components/AddRegularPaymentModal';
@@ -10,50 +11,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, TrendingUp, TrendingDown, Webhook, User } from 'lucide-react';
 import { TransactionType } from '@/types/transaction';
 
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp?: {
-        initDataUnsafe?: {
-          user?: {
-            id?: number;
-            first_name?: string;
-            last_name?: string;
-            username?: string;
-          };
-        };
-      };
-    };
-  }
-}
-
 const currencies = [
   { value: 'грн', label: '₴ Гривня (грн)' },
   { value: '$', label: '$ Долар ($)' },
   { value: '€', label: '€ Євро (€)' },
 ];
 
-const getTelegramUser = () => {
-  console.log('Telegram object:', window.Telegram);
-  console.log('WebApp object:', window.Telegram?.WebApp);
-  console.log('initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe);
-  console.log('user:', window.Telegram?.WebApp?.initDataUnsafe?.user);
-  
-  if (window.Telegram && window.Telegram.WebApp) {
-    const tg = window.Telegram.WebApp;
-    return tg.initDataUnsafe?.user || null;
-  }
-  return null;
-};
-
 const Settings = () => {
+  const { telegramUserId, isLoading: isUserLoading } = useTelegramUser();
+  
   const {
     settings,
+    isLoading: isTransactionsLoading,
     updateSettings,
     addRegularPayment,
     deleteRegularPayment,
     addTransaction,
-  } = useTransactions();
+  } = useTransactions(telegramUserId);
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [regularPaymentModal, setRegularPaymentModal] = useState<{
@@ -61,36 +35,7 @@ const Settings = () => {
     type: TransactionType;
   }>({ isOpen: false, type: 'income' });
 
-  const telegramUser = getTelegramUser();
-
-  useEffect(() => {
-    const sendUserIdToWebhook = async () => {
-      const user = getTelegramUser();
-      if (user?.id) {
-        try {
-          await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/4325a91a-d6f2-4445-baed-3103efc663d5', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            mode: 'no-cors',
-            body: JSON.stringify({
-              user_id: user.id,
-              first_name: user.first_name,
-              last_name: user.last_name,
-              username: user.username,
-              timestamp: new Date().toISOString(),
-            }),
-          });
-          console.log('User ID sent to webhook:', user.id);
-        } catch (error) {
-          console.error('Error sending user ID to webhook:', error);
-        }
-      }
-    };
-
-    sendUserIdToWebhook();
-  }, []);
+  const isLoading = isUserLoading || isTransactionsLoading;
 
   const handleAddRegularPayment = (payment: { type: TransactionType; amount: number; description: string }) => {
     addRegularPayment(payment.type, {
@@ -99,6 +44,17 @@ const Settings = () => {
       description: payment.description,
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">Завантаження даних...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -113,26 +69,12 @@ const Settings = () => {
             </div>
             <span className="text-base font-semibold">Профіль користувача</span>
           </div>
-          {telegramUser ? (
+          {telegramUserId ? (
             <div className="space-y-2">
               <div>
                 <p className="text-sm text-muted-foreground">Telegram User ID</p>
-                <p className="text-xl font-bold">{telegramUser.id}</p>
+                <p className="text-xl font-bold">{telegramUserId}</p>
               </div>
-              {(telegramUser.first_name || telegramUser.last_name) && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Ім'я</p>
-                  <p className="font-medium">
-                    {[telegramUser.first_name, telegramUser.last_name].filter(Boolean).join(' ')}
-                  </p>
-                </div>
-              )}
-              {telegramUser.username && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Username</p>
-                  <p className="font-medium">@{telegramUser.username}</p>
-                </div>
-              )}
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">

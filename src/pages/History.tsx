@@ -1,15 +1,19 @@
 import { useState, useMemo } from 'react';
 import { useTransactions } from '@/hooks/useTransactions';
+import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { TransactionItem } from '@/components/TransactionItem';
 import { MonthNavigator } from '@/components/MonthNavigator';
 import { BottomNav } from '@/components/BottomNav';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
 
 const History = () => {
+  const { telegramUserId, isLoading: isUserLoading } = useTelegramUser();
+  
   const {
     transactions,
     settings,
     currentDate,
+    isLoading: isTransactionsLoading,
     goToPreviousMonth,
     goToNextMonth,
     getMonthName,
@@ -17,9 +21,11 @@ const History = () => {
     deleteTransaction,
     currentMonth,
     currentYear,
-  } = useTransactions();
+  } = useTransactions(telegramUserId);
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const isLoading = isUserLoading || isTransactionsLoading;
 
   const filteredTransactions = useMemo(() => {
     return transactions
@@ -49,6 +55,27 @@ const History = () => {
     
     return groups;
   }, [filteredTransactions]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">Завантаження даних...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!telegramUserId) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <p className="text-muted-foreground">Будь ласка, відкрийте додаток через Telegram</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-24">

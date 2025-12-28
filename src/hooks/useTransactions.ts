@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Transaction, Settings, RegularPayment } from '@/types/transaction';
+import { supabase } from '@/integrations/supabase/client';
 
-const TRANSACTIONS_KEY = 'expense-tracker-transactions';
 const SETTINGS_KEY = 'expense-tracker-settings';
 
 const defaultSettings: Settings = {
@@ -10,32 +10,113 @@ const defaultSettings: Settings = {
   regularExpenses: [],
 };
 
-export const useTransactions = () => {
+interface DbTransaction {
+  id: string;
+  telegram_user_id: string;
+  amount: number;
+  type: 'income' | 'expense';
+  category: string | null;
+  description: string | null;
+  transaction_date: string;
+  created_at: string;
+}
+
+export const useTransactions = (telegramUserId: string | null) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load from localStorage
+  // Load transactions from Supabase
   useEffect(() => {
-    const savedTransactions = localStorage.getItem(TRANSACTIONS_KEY);
+    const fetchTransactions = async () => {
+      if (!telegramUserId) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        console.log('Fetching transactions for user:', telegramUserId);
+        
+        const { data, error } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('telegram_user_id', telegramUserId)
+          .order('transaction_date', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching transactions:', error);
+          setIsLoading(false);
+          return;
+        }
+
+        // Convert DB transactions to app format
+        const appTransactions: Transaction[] = (data as DbTransaction[]).map(t => ({
+          id: t.id,
+          type: t.type,
+          amount: Number(t.amount),
+          description: t.description || t.category || '',
+          date: t.transaction_date,
+        }));
+
+        console.log('Loaded transactions:', appTransactions.length);
+        setTransactions(appTransactions);
+      } catch (error) {
+        console.error('Error loading transactions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [telegramUserId]);
+
+  // Load settings from localStorage
+  useEffect(() => {
     const savedSettings = localStorage.getItem(SETTINGS_KEY);
-    
-    if (savedTransactions) {
-      setTransactions(JSON.parse(savedTransactions));
-    }
     if (savedSettings) {
       setSettings(JSON.parse(savedSettings));
     }
   }, []);
 
-  // Save to localStorage
-  useEffect(() => {
-    localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
-  }, [transactions]);
-
+  // Save settings to localStorage
   useEffect(() => {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   }, [settings]);
+
+  // Subscribe to realtime updates
+  useEffect(() => {
+    if (!telegramUserId) return;
+
+    const channel = supabase
+      .channel('transactions-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'transactions',
+          filter: `telegram_user_id=eq.${telegramUserId}`,
+        },
+        (payload) => {
+          console.log('New transaction received:', payload);
+          const t = payload.new as DbTransaction;
+          const newTransaction: Transaction = {
+            id: t.id,
+            type: t.type,
+            amount: Number(t.amount),
+            description: t.description || t.category || '',
+            date: t.transaction_date,
+          };
+          setTransactions(prev => [newTransaction, ...prev]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [telegramUserId]);
 
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
@@ -72,15 +153,44 @@ export const useTransactions = () => {
     };
   }, [monthTransactions, settings]);
 
-  const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
-    const newTransaction: Transaction = {
-      ...transaction,
-      id: crypto.randomUUID(),
-    };
-    setTransactions(prev => [newTransaction, ...prev]);
+  const addTransaction = async (transaction: Omit<Transaction, 'id'>) => {
+    if (!telegramUserId) {
+      console.error('No telegram user ID');
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('transactions')
+      .insert({
+        telegram_user_id: telegramUserId,
+        amount: transaction.amount,
+        type: transaction.type,
+        description: transaction.description,
+        transaction_date: transaction.date,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding transaction:', error);
+      return;
+    }
+
+    // Transaction will be added via realtime subscription
+    console.log('Transaction added:', data);
   };
 
-  const deleteTransaction = (id: string) => {
+  const deleteTransaction = async (id: string) => {
+    const { error } = await supabase
+      .from('transactions')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting transaction:', error);
+      return;
+    }
+
     setTransactions(prev => prev.filter(t => t.id !== id));
   };
 
@@ -133,21 +243,6 @@ export const useTransactions = () => {
     return date.toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' });
   };
 
-  // Webhook handler for n8n integration
-  const addTransactionFromWebhook = (data: {
-    type: 'income' | 'expense';
-    amount: number;
-    description: string;
-    date?: string;
-  }) => {
-    addTransaction({
-      type: data.type,
-      amount: data.amount,
-      description: data.description,
-      date: data.date || new Date().toISOString(),
-    });
-  };
-
   return {
     transactions,
     monthTransactions,
@@ -156,6 +251,7 @@ export const useTransactions = () => {
     currentDate,
     currentMonth,
     currentYear,
+    isLoading,
     addTransaction,
     deleteTransaction,
     updateSettings,
@@ -164,6 +260,5 @@ export const useTransactions = () => {
     goToPreviousMonth,
     goToNextMonth,
     getMonthName,
-    addTransactionFromWebhook,
   };
 };
