@@ -7,6 +7,8 @@ import { StatsCard } from '@/components/StatsCard';
 import { RecentTransactions } from '@/components/RecentTransactions';
 import { BottomNav } from '@/components/BottomNav';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
+import { RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const { telegramUserId, isLoading: isUserLoading } = useTelegramUser();
@@ -17,6 +19,8 @@ const Index = () => {
     settings,
     currentDate,
     isLoading: isTransactionsLoading,
+    isSyncing,
+    syncTransactions,
     goToPreviousMonth,
     goToNextMonth,
     getMonthName,
@@ -52,10 +56,35 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="p-4 space-y-4 max-w-lg mx-auto">
-        {/* Header */}
-        <header className="pt-2">
+        {/* Header with Sync Button */}
+        <header className="pt-2 flex items-center justify-between">
           <h1 className="text-xl font-bold text-foreground">Мої фінанси</h1>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => syncTransactions()}
+            disabled={isSyncing}
+            className="relative"
+          >
+            <RefreshCw className={`h-5 w-5 ${isSyncing ? 'animate-spin' : ''}`} />
+            {isSyncing && (
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+              </span>
+            )}
+          </Button>
         </header>
+
+        {/* Syncing Indicator */}
+        {isSyncing && (
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 flex items-center gap-3 animate-fade-in">
+            <div className="relative">
+              <div className="h-4 w-4 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+            </div>
+            <span className="text-sm text-primary font-medium">Синхронізація даних з Google Sheets...</span>
+          </div>
+        )}
 
         {/* Month Navigation */}
         <MonthNavigator

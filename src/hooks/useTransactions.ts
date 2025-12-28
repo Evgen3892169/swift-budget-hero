@@ -26,49 +26,34 @@ export const useTransactions = (telegramUserId: string | null) => {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  // Sync with n8n and load transactions
-  useEffect(() => {
-    const syncAndFetchTransactions = async () => {
-      if (!telegramUserId) {
-        setIsLoading(false);
-        return;
-      }
+  // Sync function that can be called manually
+  const syncTransactions = async (showSyncIndicator = true) => {
+    if (!telegramUserId) return;
+    
+    if (showSyncIndicator) setIsSyncing(true);
+    
+    try {
+      console.log('Syncing data for user:', telegramUserId);
+      
+      const { data: syncData, error: syncError } = await supabase.functions.invoke('sync-user-data', {
+        body: { telegram_user_id: telegramUserId }
+      });
 
-      try {
-        console.log('Syncing data for user:', telegramUserId);
-        
-        // Call sync-user-data edge function which:
-        // 1. Sends user_id to n8n
-        // 2. Receives transactions from n8n
-        // 3. Saves new transactions to database
-        // 4. Returns all transactions
-        const { data: syncData, error: syncError } = await supabase.functions.invoke('sync-user-data', {
-          body: { telegram_user_id: telegramUserId }
-        });
+      console.log('Sync response:', syncData, syncError);
 
-        if (syncError) {
-          console.error('Error syncing data:', syncError);
-          // Fall back to just fetching existing transactions
-          const { data, error } = await supabase
-            .from('transactions')
-            .select('*')
-            .eq('telegram_user_id', telegramUserId)
-            .order('transaction_date', { ascending: false });
+      if (syncError) {
+        console.error('Error syncing data:', syncError);
+        // Fall back to just fetching existing transactions
+        const { data, error } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('telegram_user_id', telegramUserId)
+          .order('transaction_date', { ascending: false });
 
-          if (!error && data) {
-            const appTransactions = (data as DbTransaction[]).map(t => ({
-              id: t.id,
-              type: t.type,
-              amount: Number(t.amount),
-              description: t.description || t.category || '',
-              date: t.transaction_date,
-            }));
-            setTransactions(appTransactions);
-          }
-        } else if (syncData?.transactions) {
-          console.log('Synced transactions:', syncData.transactions.length);
-          const appTransactions: Transaction[] = syncData.transactions.map((t: DbTransaction) => ({
+        if (!error && data) {
+          const appTransactions = (data as DbTransaction[]).map(t => ({
             id: t.id,
             type: t.type,
             amount: Number(t.amount),
@@ -77,14 +62,33 @@ export const useTransactions = (telegramUserId: string | null) => {
           }));
           setTransactions(appTransactions);
         }
-      } catch (error) {
-        console.error('Error loading transactions:', error);
-      } finally {
-        setIsLoading(false);
+      } else if (syncData?.transactions) {
+        console.log('Synced transactions count:', syncData.transactions.length);
+        console.log('Synced transactions data:', syncData.transactions);
+        const appTransactions: Transaction[] = syncData.transactions.map((t: DbTransaction) => ({
+          id: t.id,
+          type: t.type,
+          amount: Number(t.amount),
+          description: t.description || t.category || '',
+          date: t.transaction_date,
+        }));
+        setTransactions(appTransactions);
       }
-    };
+    } catch (error) {
+      console.error('Error loading transactions:', error);
+    } finally {
+      setIsLoading(false);
+      setIsSyncing(false);
+    }
+  };
 
-    syncAndFetchTransactions();
+  // Initial sync on mount
+  useEffect(() => {
+    if (telegramUserId) {
+      syncTransactions(false);
+    } else {
+      setIsLoading(false);
+    }
   }, [telegramUserId]);
 
   // Load settings from localStorage
@@ -299,6 +303,8 @@ export const useTransactions = (telegramUserId: string | null) => {
     currentMonth,
     currentYear,
     isLoading,
+    isSyncing,
+    syncTransactions,
     addTransaction,
     deleteTransaction,
     updateSettings,
