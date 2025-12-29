@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TransactionsProvider } from "@/contexts/TransactionsContext";
 import Index from "./pages/Index";
 import History from "./pages/History";
+import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/user/:userId" element={<Index />} />
               <Route path="/history" element={<History />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
