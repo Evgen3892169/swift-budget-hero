@@ -21,7 +21,6 @@ export const MiniChart = ({ transactions, currentMonth, currentYear, currency }:
       return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
     });
 
-    // Group by day
     const dayMap: { [key: number]: { income: number; expense: number } } = {};
     
     for (let i = 1; i <= 31; i++) {
@@ -37,7 +36,6 @@ export const MiniChart = ({ transactions, currentMonth, currentYear, currency }:
       }
     });
 
-    // Calculate cumulative values
     let cumulativeIncome = 0;
     let cumulativeExpense = 0;
     
@@ -56,33 +54,33 @@ export const MiniChart = ({ transactions, currentMonth, currentYear, currency }:
 
   if (chartData.length === 0) {
     return (
-      <div className="h-24 flex items-center justify-center">
+      <div className="h-28 flex items-center justify-center">
         <p className="text-muted-foreground text-xs">Немає даних</p>
       </div>
     );
   }
 
   return (
-    <div className="h-24">
+    <div className="h-28">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData}>
           <defs>
             <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(160, 60%, 45%)" stopOpacity={0.4} />
-              <stop offset="100%" stopColor="hsl(160, 60%, 45%)" stopOpacity={0} />
+              <stop offset="0%" stopColor="hsl(160, 65%, 50%)" stopOpacity={0.35} />
+              <stop offset="100%" stopColor="hsl(160, 65%, 50%)" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="expenseGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(0, 62%, 45%)" stopOpacity={0.4} />
-              <stop offset="100%" stopColor="hsl(0, 62%, 45%)" stopOpacity={0} />
+              <stop offset="0%" stopColor="hsl(0, 60%, 55%)" stopOpacity={0.35} />
+              <stop offset="100%" stopColor="hsl(0, 60%, 55%)" stopOpacity={0} />
             </linearGradient>
           </defs>
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: 'hsl(220, 25%, 12%)', 
-              border: 'none', 
-              borderRadius: '8px',
+              backgroundColor: 'hsl(220, 35%, 11%)', 
+              border: '1px solid hsl(220, 30%, 18%)', 
+              borderRadius: '12px',
               fontSize: '12px',
-              color: 'hsl(180, 20%, 95%)'
+              color: 'hsl(180, 10%, 94%)'
             }}
             formatter={(value: number, name: string) => [
               `${value.toLocaleString('uk-UA')} ${currency}`,
@@ -93,14 +91,14 @@ export const MiniChart = ({ transactions, currentMonth, currentYear, currency }:
           <Area
             type="monotone"
             dataKey="income"
-            stroke="hsl(160, 60%, 45%)"
+            stroke="hsl(160, 65%, 50%)"
             strokeWidth={2}
             fill="url(#incomeGradient)"
           />
           <Area
             type="monotone"
             dataKey="expense"
-            stroke="hsl(0, 62%, 45%)"
+            stroke="hsl(0, 60%, 55%)"
             strokeWidth={2}
             fill="url(#expenseGradient)"
           />
