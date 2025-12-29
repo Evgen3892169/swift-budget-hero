@@ -6,6 +6,7 @@ export interface Transaction {
   amount: number;
   description: string;
   date: string;
+  category?: string;
   isRegular?: boolean;
 }
 

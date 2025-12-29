@@ -6,7 +6,7 @@ import { MonthNavigator } from '@/components/MonthNavigator';
 import { BottomNav } from '@/components/BottomNav';
 import { LoadingSpinner, TransactionLoadingSkeleton } from '@/components/LoadingSpinner';
 import { DatePickerPopover } from '@/components/DatePickerPopover';
-import { CalendarDays, X } from 'lucide-react';
+import { X, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const History = () => {
@@ -28,8 +28,8 @@ const History = () => {
   } = useTransactionsContext();
   
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [showAllHistory, setShowAllHistory] = useState(false);
 
-  // Set telegram user ID in context
   useEffect(() => {
     if (telegramUserId) {
       setTelegramUserId(telegramUserId);
@@ -39,10 +39,15 @@ const History = () => {
   const isPageLoading = isUserLoading || (isLoading && !isInitialized);
 
   const filteredTransactions = useMemo(() => {
-    let filtered = transactions.filter(t => {
-      const date = new Date(t.date);
-      return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-    });
+    let filtered = transactions;
+    
+    // If not showing all history, filter by current month
+    if (!showAllHistory) {
+      filtered = filtered.filter(t => {
+        const date = new Date(t.date);
+        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+      });
+    }
     
     // If a specific date is selected, filter to that date
     if (selectedDate) {
@@ -53,7 +58,7 @@ const History = () => {
     }
     
     return filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [transactions, currentMonth, currentYear, selectedDate]);
+  }, [transactions, currentMonth, currentYear, selectedDate, showAllHistory]);
 
   // Group transactions by date
   const groupedTransactions = useMemo(() => {
@@ -102,15 +107,15 @@ const History = () => {
           <h1 className="text-2xl font-bold">Історія операцій</h1>
         </div>
         
-        <MonthNavigator
-          monthName={getMonthName(currentDate)}
-          currentDate={currentDate}
-          onPrevious={goToPreviousMonth}
-          onNext={goToNextMonth}
-          onDateSelect={setSelectedDate}
-        />
+        {!showAllHistory && (
+          <MonthNavigator
+            monthName={getMonthName(currentDate)}
+            onPrevious={goToPreviousMonth}
+            onNext={goToNextMonth}
+          />
+        )}
 
-        {/* Date Filter */}
+        {/* Date Filter & All History Button */}
         <div className="flex items-center gap-2">
           <DatePickerPopover
             date={selectedDate}
@@ -123,30 +128,38 @@ const History = () => {
               variant="ghost"
               size="icon"
               onClick={() => setSelectedDate(undefined)}
-              className="shrink-0"
+              className="shrink-0 rounded-xl"
             >
               <X className="h-4 w-4" />
             </Button>
           )}
+          <Button
+            variant={showAllHistory ? "default" : "outline"}
+            onClick={() => setShowAllHistory(!showAllHistory)}
+            className="shrink-0 rounded-xl gap-2"
+          >
+            <List className="h-4 w-4" />
+            {showAllHistory ? 'За місяць' : 'Вся історія'}
+          </Button>
         </div>
 
         {!isInitialized ? (
-          <div className="bg-card rounded-lg p-4 space-y-2">
+          <div className="bg-card rounded-xl p-4 space-y-2">
             <LoadingSpinner size="sm" text="Завантаження транзакцій..." />
             <TransactionLoadingSkeleton />
             <TransactionLoadingSkeleton />
             <TransactionLoadingSkeleton />
           </div>
         ) : Object.keys(groupedTransactions).length === 0 ? (
-          <div className="bg-card rounded-lg p-8 text-center">
+          <div className="bg-card rounded-xl p-8 text-center">
             <p className="text-muted-foreground">
-              {selectedDate ? 'Немає операцій за вибрану дату' : 'Немає операцій за цей місяць'}
+              {selectedDate ? 'Немає операцій за вибрану дату' : showAllHistory ? 'Немає операцій' : 'Немає операцій за цей місяць'}
             </p>
           </div>
         ) : (
           <div className="space-y-4">
             {Object.entries(groupedTransactions).map(([date, transactions]) => (
-              <div key={date} className="bg-card rounded-lg p-4 shadow-sm">
+              <div key={date} className="bg-card rounded-xl p-4">
                 <h3 className="text-sm font-medium text-muted-foreground mb-2">
                   {date}
                 </h3>
