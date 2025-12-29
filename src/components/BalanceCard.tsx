@@ -13,25 +13,27 @@ export const BalanceCard = ({ balance, monthName, currency, isLoading }: Balance
   const isPositive = balance >= 0;
   
   return (
-    <div className="bg-card rounded-xl p-5 glow-primary">
-      <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+    <div className="bg-card rounded-2xl p-6 border border-border/50 glow-primary">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-11 h-11 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/20">
           <Wallet className="h-5 w-5 text-primary" />
         </div>
-        <p className="text-muted-foreground text-sm">
-          Залишок за {monthName}
-        </p>
+        <div>
+          <p className="text-muted-foreground text-sm">Баланс</p>
+          <p className="text-xs text-muted-foreground/70">{monthName}</p>
+        </div>
       </div>
       {isLoading ? (
         <div className="py-2">
-          <LoadingSpinner size="md" text="Завантаження балансу..." />
+          <LoadingSpinner size="md" text="Завантаження..." />
         </div>
       ) : (
         <p className={cn(
-          "text-3xl font-bold transition-all duration-300",
+          "text-4xl font-bold tracking-tight transition-all duration-300",
           isPositive ? "text-income" : "text-expense"
         )}>
-          {isPositive ? '+' : ''}{balance.toLocaleString('uk-UA')} {currency}
+          {isPositive ? '+' : ''}{balance.toLocaleString('uk-UA')} 
+          <span className="text-lg font-medium ml-1 opacity-70">{currency}</span>
         </p>
       )}
     </div>

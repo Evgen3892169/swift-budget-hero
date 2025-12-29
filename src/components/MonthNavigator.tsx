@@ -13,17 +13,17 @@ export const MonthNavigator = ({
   onNext,
 }: MonthNavigatorProps) => {
   return (
-    <div className="flex items-center justify-between bg-card rounded-xl p-2">
+    <div className="flex items-center justify-between bg-card/80 backdrop-blur-sm rounded-2xl p-2 border border-border/50">
       <Button 
         variant="ghost" 
         size="icon"
         onClick={onPrevious}
-        className="h-10 w-10 rounded-lg hover:bg-secondary"
+        className="h-10 w-10 rounded-xl hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
       >
         <ChevronLeft className="h-5 w-5" />
       </Button>
       
-      <span className="text-lg font-semibold capitalize text-foreground">
+      <span className="text-base font-semibold capitalize text-foreground tracking-wide">
         {monthName}
       </span>
       
@@ -31,7 +31,7 @@ export const MonthNavigator = ({
         variant="ghost" 
         size="icon"
         onClick={onNext}
-        className="h-10 w-10 rounded-lg hover:bg-secondary"
+        className="h-10 w-10 rounded-xl hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
       >
         <ChevronRight className="h-5 w-5" />
       </Button>

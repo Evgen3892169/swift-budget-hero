@@ -41,7 +41,6 @@ const History = () => {
   const filteredTransactions = useMemo(() => {
     let filtered = transactions;
     
-    // If not showing all history, filter by current month
     if (!showAllHistory) {
       filtered = filtered.filter(t => {
         const date = new Date(t.date);
@@ -49,7 +48,6 @@ const History = () => {
       });
     }
     
-    // If a specific date is selected, filter to that date
     if (selectedDate) {
       filtered = filtered.filter(t => {
         const date = new Date(t.date);
@@ -60,7 +58,6 @@ const History = () => {
     return filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [transactions, currentMonth, currentYear, selectedDate, showAllHistory]);
 
-  // Group transactions by date
   const groupedTransactions = useMemo(() => {
     const groups: { [key: string]: typeof filteredTransactions } = {};
     
@@ -83,9 +80,7 @@ const History = () => {
   if (isPageLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <LoadingSpinner size="lg" text="Завантаження історії..." />
-        </div>
+        <LoadingSpinner size="lg" text="Завантаження..." />
       </div>
     );
   }
@@ -101,11 +96,12 @@ const History = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="p-4 space-y-4 max-w-lg mx-auto">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Історія операцій</h1>
-        </div>
+    <div className="min-h-screen bg-background pb-28">
+      <div className="p-4 space-y-5 max-w-lg mx-auto">
+        <header className="pt-3">
+          <h1 className="text-xl font-bold text-foreground tracking-tight">Історія</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">Всі операції</p>
+        </header>
         
         {!showAllHistory && (
           <MonthNavigator
@@ -115,7 +111,7 @@ const History = () => {
           />
         )}
 
-        {/* Date Filter & All History Button */}
+        {/* Filters */}
         <div className="flex items-center gap-2">
           <DatePickerPopover
             date={selectedDate}
@@ -128,7 +124,7 @@ const History = () => {
               variant="ghost"
               size="icon"
               onClick={() => setSelectedDate(undefined)}
-              className="shrink-0 rounded-xl"
+              className="shrink-0 rounded-xl h-10 w-10"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -136,34 +132,34 @@ const History = () => {
           <Button
             variant={showAllHistory ? "default" : "outline"}
             onClick={() => setShowAllHistory(!showAllHistory)}
-            className="shrink-0 rounded-xl gap-2"
+            className="shrink-0 rounded-xl gap-2 h-10"
           >
             <List className="h-4 w-4" />
-            {showAllHistory ? 'За місяць' : 'Вся історія'}
+            <span className="text-xs">{showAllHistory ? 'Місяць' : 'Все'}</span>
           </Button>
         </div>
 
         {!isInitialized ? (
-          <div className="bg-card rounded-xl p-4 space-y-2">
-            <LoadingSpinner size="sm" text="Завантаження транзакцій..." />
+          <div className="bg-card rounded-2xl p-5 border border-border/50 space-y-3">
+            <LoadingSpinner size="sm" text="Завантаження..." />
             <TransactionLoadingSkeleton />
             <TransactionLoadingSkeleton />
             <TransactionLoadingSkeleton />
           </div>
         ) : Object.keys(groupedTransactions).length === 0 ? (
-          <div className="bg-card rounded-xl p-8 text-center">
-            <p className="text-muted-foreground">
-              {selectedDate ? 'Немає операцій за вибрану дату' : showAllHistory ? 'Немає операцій' : 'Немає операцій за цей місяць'}
+          <div className="bg-card rounded-2xl p-8 text-center border border-border/50">
+            <p className="text-muted-foreground text-sm">
+              {selectedDate ? 'Немає операцій' : showAllHistory ? 'Немає операцій' : 'Немає операцій за місяць'}
             </p>
           </div>
         ) : (
           <div className="space-y-4">
             {Object.entries(groupedTransactions).map(([date, transactions]) => (
-              <div key={date} className="bg-card rounded-xl p-4">
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+              <div key={date} className="bg-card rounded-2xl p-4 border border-border/50">
+                <h3 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wide">
                   {date}
                 </h3>
-                <div>
+                <div className="space-y-1">
                   {transactions.map(transaction => (
                     <TransactionItem
                       key={transaction.id}
