@@ -7,7 +7,7 @@ import { StatsCard } from '@/components/StatsCard';
 import { RecentTransactions } from '@/components/RecentTransactions';
 import { MiniChart } from '@/components/MiniChart';
 import { BottomNav } from '@/components/BottomNav';
-import { RefreshCw, TrendingUp } from 'lucide-react';
+import { RefreshCw, TrendingUp, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -40,12 +40,12 @@ const Index = () => {
   const isPageLoading = isUserLoading;
   const isDataLoading = isLoading || (isSyncing && !isInitialized);
 
-  if (isPageLoading) {
+  if (isPageLoading || (isDataLoading && !isInitialized)) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center loading-screen">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent mx-auto"></div>
-          <p className="text-muted-foreground">Завантаження...</p>
+          <p className="text-muted-foreground">Оновлення даних...</p>
         </div>
       </div>
     );
@@ -124,6 +124,13 @@ const Index = () => {
           isLoading={isDataLoading}
         />
 
+        {/* Recent Transactions */}
+        <RecentTransactions
+          transactions={monthTransactions}
+          currency={settings.currency}
+          isLoading={isDataLoading}
+        />
+
         {/* Mini Analytics Chart */}
         <div className="bg-card rounded-2xl p-5 border border-border/50">
           <div className="flex items-center gap-2 mb-4">
@@ -150,12 +157,20 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Recent Transactions */}
-        <RecentTransactions
-          transactions={monthTransactions}
-          currency={settings.currency}
-          isLoading={isDataLoading}
-        />
+        {/* AI Analysis Block */}
+        <div className="bg-card rounded-2xl p-5 border border-border/50 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">ШІ асистент</p>
+            <h3 className="font-semibold text-sm">Аналіз витрат</h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              Отримайте короткий розбір ваших витрат за місяць.
+            </p>
+          </div>
+          <Button className="rounded-xl h-10 px-4 gap-2" variant="default">
+            <Sparkles className="h-4 w-4" />
+            <span className="text-sm font-medium">ШІ аналіз</span>
+          </Button>
+        </div>
       </div>
 
       <BottomNav />

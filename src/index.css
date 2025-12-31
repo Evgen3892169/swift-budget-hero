@@ -187,4 +187,8 @@
       linear-gradient(90deg, hsl(168 80% 48% / 0.03) 1px, transparent 1px);
     background-size: 40px 40px;
   }
+
+  .loading-screen {
+    @apply bg-white text-foreground;
+  }
 }
