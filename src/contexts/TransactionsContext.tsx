@@ -8,6 +8,7 @@ const defaultSettings: Settings = {
   currency: 'грн',
   regularIncomes: [],
   regularExpenses: [],
+  categories: [],
 };
 
 interface TransactionsContextType {

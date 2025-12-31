@@ -8,10 +8,21 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, TrendingUp, TrendingDown, Webhook, User, Users, Link as LinkIcon } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, Webhook, User, Users, Trash2 } from 'lucide-react';
 import { TransactionType } from '@/types/transaction';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 const currencies = [
   { value: 'грн', label: '₴ Гривня (грн)' },
@@ -35,9 +46,9 @@ const Settings = () => {
     isOpen: boolean;
     type: TransactionType;
   }>({ isOpen: false, type: 'income' });
-  
-  const [familyUserId, setFamilyUserId] = useState(settings.familyUserId || '');
-  const [isConnecting, setIsConnecting] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [isCategorySubmitting, setIsCategorySubmitting] = useState(false);
+  const [isFamilyProcessing, setIsFamilyProcessing] = useState(false);
 
   // Set telegram user ID in context
   useEffect(() => {
@@ -56,32 +67,55 @@ const Settings = () => {
   };
 
   const handleConnectFamily = async () => {
-    if (!familyUserId.trim()) {
-      toast.error('Введіть User ID для підключення');
+    if (!telegramUserId) {
+      toast.error('Не знайдено ваш User ID');
       return;
     }
-    
-    setIsConnecting(true);
+
+    setIsFamilyProcessing(true);
     try {
-      updateSettings({ familyUserId: familyUserId.trim() });
-      setTelegramUserId(familyUserId.trim());
-      await syncTransactions();
-      toast.success('Успішно підключено до сімейного кабінету');
+      await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/a2568da5-e64f-4ee6-b39c-02edb8431131', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_id: telegramUserId }),
+      });
+
+      updateSettings({ familyUserId: telegramUserId });
+      toast.success('Сімейний бюджет підключено');
     } catch (error) {
-      toast.error('Помилка підключення');
+      console.error(error);
+      toast.error('Не вдалося підключити сімейний бюджет');
     } finally {
-      setIsConnecting(false);
+      setIsFamilyProcessing(false);
     }
   };
 
-  const handleDisconnectFamily = () => {
-    setFamilyUserId('');
-    updateSettings({ familyUserId: undefined });
-    if (telegramUserId) {
-      setTelegramUserId(telegramUserId);
-      syncTransactions();
+  const handleDisconnectFamily = async () => {
+    if (!telegramUserId) {
+      toast.error('Не знайдено ваш User ID');
+      return;
     }
-    toast.success('Відключено від сімейного кабінету');
+
+    setIsFamilyProcessing(true);
+    try {
+      await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/a72f7b98-b3b6-4254-aee9-ffdb156d28c7', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_id: telegramUserId }),
+      });
+
+      updateSettings({ familyUserId: undefined });
+      toast.success('Сімейний бюджет відключено');
+    } catch (error) {
+      console.error(error);
+      toast.error('Не вдалося відключити сімейний бюджет');
+    } finally {
+      setIsFamilyProcessing(false);
+    }
   };
 
   if (isUserLoading) {
@@ -96,7 +130,7 @@ const Settings = () => {
     <div className="min-h-screen bg-background pb-24">
       <div className="p-4 space-y-6 max-w-lg mx-auto">
         <h1 className="text-2xl font-bold">Налаштування</h1>
-        
+
         {/* User Profile */}
         <div className="bg-card rounded-lg p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
@@ -229,56 +263,160 @@ const Settings = () => {
           </p>
         </div>
 
+        {/* Categories Management */}
+        <div className="bg-card rounded-lg p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <Label className="text-base font-semibold">Категорії</Label>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1"
+              onClick={async () => {
+                if (!newCategoryName.trim()) {
+                  toast.error('Введіть назву категорії');
+                  return;
+                }
+                if (!telegramUserId) {
+                  toast.error('Не знайдено ваш User ID');
+                  return;
+                }
+
+                setIsCategorySubmitting(true);
+                try {
+                  await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/ad417f87-a904-42a0-8ddb-5de5a18aea26', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      user_id: telegramUserId,
+                      category: newCategoryName.trim(),
+                    }),
+                  });
+
+                  const existing = settings.categories || [];
+                  updateSettings({ categories: [...existing, newCategoryName.trim()] });
+                  setNewCategoryName('');
+                  toast.success('Категорію додано');
+                } catch (error) {
+                  console.error(error);
+                  toast.error('Не вдалося додати категорію');
+                } finally {
+                  setIsCategorySubmitting(false);
+                }
+              }}
+            >
+              <Plus className="h-4 w-4" />
+              Категорія
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2 mb-3">
+            <Input
+              placeholder="Назва категорії"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="h-10"
+            />
+          </div>
+
+          {(!settings.categories || settings.categories.length === 0) ? (
+            <p className="text-sm text-muted-foreground">
+              Поки що немає власних категорій
+            </p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {settings.categories.map((category) => (
+                <AlertDialog key={category}>
+                  <AlertDialogTrigger asChild>
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted text-xs text-muted-foreground hover:bg-muted/80 transition-colors"
+                    >
+                      <span>{category}</span>
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Видалити категорію?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Ви впевнені, що хочете видалити категорію «{category}»?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Скасувати</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={async () => {
+                          if (!telegramUserId) {
+                            toast.error('Не знайдено ваш User ID');
+                            return;
+                          }
+                          try {
+                            await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/da61a718-d050-4d2b-8738-7ea3612c816b', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({
+                                user_id: telegramUserId,
+                                category,
+                              }),
+                            });
+
+                            const existing = settings.categories || [];
+                            updateSettings({ categories: existing.filter((c) => c !== category) });
+                            toast.success('Категорію видалено');
+                          } catch (error) {
+                            console.error(error);
+                            toast.error('Не вдалося видалити категорію');
+                          }
+                        }}
+                      >
+                        Видалити
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Family Cabinet */}
         <div className="bg-card rounded-lg p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <div className="bg-primary/20 p-1.5 rounded-full">
               <Users className="h-4 w-4 text-primary" />
             </div>
-            <Label className="text-base font-semibold">Сімейний кабінет</Label>
+            <Label className="text-base font-semibold">Сімейний бюджет</Label>
           </div>
           <p className="text-sm text-muted-foreground mb-3">
-            Підключіться до кабінету іншого користувача для спільного бюджету
+            Підключіть спільний сімейний бюджет для синхронізації витрат
           </p>
-          
+
           {settings.familyUserId ? (
             <div className="space-y-3">
-              <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg">
-                <LinkIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium">Підключено до: {settings.familyUserId}</span>
-              </div>
-              <Button 
-                variant="outline" 
-                className="w-full"
+              <p className="text-sm text-muted-foreground">
+                Сімейний бюджет підключено для користувача ID: {settings.familyUserId}
+              </p>
+              <Button
+                variant="destructive"
+                className="w-full h-11"
                 onClick={handleDisconnectFamily}
+                disabled={isFamilyProcessing}
               >
-                Відключитися
+                {isFamilyProcessing ? 'Відключення...' : 'Відключити'}
               </Button>
             </div>
           ) : (
             <div className="space-y-3">
-              <Input
-                placeholder="Введіть User ID"
-                value={familyUserId}
-                onChange={(e) => setFamilyUserId(e.target.value)}
-                className="h-12"
-              />
-              <Button 
-                className="w-full h-12"
+              <Button
+                className="w-full h-11"
                 onClick={handleConnectFamily}
-                disabled={isConnecting || !familyUserId.trim()}
+                disabled={isFamilyProcessing || !telegramUserId}
               >
-                {isConnecting ? (
-                  <>
-                    <div className="h-4 w-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin mr-2" />
-                    Підключення...
-                  </>
-                ) : (
-                  <>
-                    <LinkIcon className="h-4 w-4 mr-2" />
-                    Підключитися
-                  </>
-                )}
+                {isFamilyProcessing ? 'Підключення...' : 'Підключити сімейний бюджет'}
               </Button>
             </div>
           )}
