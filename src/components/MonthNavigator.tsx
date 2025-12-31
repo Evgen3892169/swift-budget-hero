@@ -23,7 +23,7 @@ export const MonthNavigator = ({
         <ChevronLeft className="h-5 w-5" />
       </Button>
       
-      <span className="text-base font-semibold capitalize text-foreground tracking-wide">
+      <span className="text-base font-semibold text-foreground tracking-wide">
         {monthName}
       </span>
       
