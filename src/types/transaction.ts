@@ -23,6 +23,7 @@ export interface Settings {
   regularIncomes: RegularPayment[];
   regularExpenses: RegularPayment[];
   familyUserId?: string;
+  categories?: string[];
 }
 
 export interface MonthData {
