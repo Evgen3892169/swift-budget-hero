@@ -77,19 +77,40 @@ Deno.serve(async (req) => {
     // Support both English and Cyrillic field names from n8n
     const transactions = transactionsFromN8n
       .filter((item: any) => {
-        // Check for money field in both formats
-        const money = item?.money ?? item?.['деньги'] ?? item?.amount ?? item?.['сума'];
+        // Check for money field in both formats (English / Cyrillic, with possible spaces and different cases)
+        const money =
+          item?.money ??
+          item?.amount ??
+          item?.['amount'] ??
+          item?.['деньги'] ??
+          item?.['сума'] ??
+          item?.['сума '] ??
+          item?.['Сума'] ??
+          item?.['Сума '];
         return item && money !== undefined;
       })
       .map((item: any, index: number) => {
-        // Support both field name formats (English and Cyrillic)
-        const rawMoney = item.money ?? item['деньги'] ?? item.amount ?? item['сума'];
+        // Support both field name formats (English and Cyrillic, different cases, with/without spaces)
+        const rawMoney =
+          item.money ??
+          item.amount ??
+          item['amount'] ??
+          item['деньги'] ??
+          item['сума'] ??
+          item['сума '] ??
+          item['Сума'] ??
+          item['Сума '];
         const moneyValue = Number(rawMoney);
         const type = moneyValue < 0 ? 'expense' : 'income';
         const amount = Math.abs(moneyValue);
 
-        // Use 'data' or 'данные' or 'date' field from n8n for date
-        const dateField = item.data ?? item['данные'] ?? item.date ?? item['дата'];
+        // Use 'data' or 'данные' or 'date' field from n8n for date (support 'Дата' too)
+        const dateField =
+          item.data ??
+          item['данные'] ??
+          item.date ??
+          item['дата'] ??
+          item['Дата'];
         let transactionDate = new Date().toISOString();
         
         if (dateField) {
@@ -106,8 +127,12 @@ Deno.serve(async (req) => {
           }
         }
 
-        // Use 'category' or 'категория' field
-        const categoryField = item.category ?? item['категория'];
+        // Use 'category' or 'категория' field (support 'Категорія' variants)
+        const categoryField =
+          item.category ??
+          item['категория'] ??
+          item['Категорія'] ??
+          item['Категорія '];
 
         // Create unique ID using row_number from n8n or index + timestamp + random
         const uniqueId = item.row_number
@@ -134,11 +159,28 @@ Deno.serve(async (req) => {
     );
 
     // Optional additional data from n8n: categories, regular payments, family budget status
-    const categories = Array.isArray((n8nData as any)?.categories)
-      ? ((n8nData as any).categories as any[]).map((c) => String(c))
-      : Array.isArray((n8nData as any)?.['категорії'])
-        ? ((n8nData as any)['категорії'] as any[]).map((c) => String(c))
-        : [];
+    const rawCategories =
+      (n8nData as any)?.categories ??
+      (n8nData as any)?.['категорії'];
+
+    const categories = Array.isArray(rawCategories)
+      ? (rawCategories as any[]).map((c: any) => {
+          if (typeof c === 'string') return c;
+          return (
+            c?.category ??
+            c?.['категория'] ??
+            c?.['Категорія'] ??
+            c?.['Категорія ']
+          )
+            ? String(
+                c.category ??
+                  c['категория'] ??
+                  c['Категорія'] ??
+                  c['Категорія ']
+              )
+            : '';
+        }).filter((c: string) => c.length > 0)
+      : [];
 
     const mapRegular = (items: any[] | undefined | null, fallbackType: 'income' | 'expense') => {
       if (!items || !Array.isArray(items)) return [] as any[];
