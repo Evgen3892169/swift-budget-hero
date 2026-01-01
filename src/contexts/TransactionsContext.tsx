@@ -80,18 +80,65 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
       if (syncError) {
         console.error('Error syncing data:', syncError);
-        // On error, keep current transactions
-      } else if (syncData?.transactions && Array.isArray(syncData.transactions)) {
-        console.log('Synced transactions count:', syncData.transactions.length);
+        // On error, keep current transactions and settings
+      } else if (syncData) {
+        const rawTransactions = Array.isArray(syncData.transactions)
+          ? syncData.transactions
+          : [];
+
+        console.log('Synced transactions count:', rawTransactions.length);
+
         // Replace ALL transactions with what we got from n8n - no database storage
-        const appTransactions: Transaction[] = syncData.transactions.map((t: any) => ({
+        const appTransactions: Transaction[] = rawTransactions.map((t: any) => ({
           id: t.id || crypto.randomUUID(),
           type: t.type as 'income' | 'expense',
           amount: Number(t.amount),
           description: t.description || t.category || '',
           date: t.transaction_date || t.date || new Date().toISOString(),
+          category: t.category || undefined,
         }));
         setTransactions(appTransactions);
+
+        // Optional settings coming from webhook: categories, regular payments, family budget
+        setSettings((prev) => {
+          const next = { ...prev };
+
+          if (Array.isArray((syncData as any).categories)) {
+            next.categories = (syncData as any).categories.map((c: any) => String(c));
+          }
+
+          const mapRegular = (items: any[] | undefined | null, fallbackType: 'income' | 'expense') => {
+            if (!items || !Array.isArray(items)) return [] as RegularPayment[];
+            return items.map((item: any) => ({
+              id: item.id || crypto.randomUUID(),
+              type:
+                item.type === 'income' || item.type === 'expense'
+                  ? (item.type as 'income' | 'expense')
+                  : fallbackType,
+              amount: Number(item.amount),
+              description: item.description || '',
+              dayOfMonth:
+                item.dayOfMonth ?? item.day_of_month ?? (typeof item.day === 'number' ? item.day : undefined),
+            }));
+          };
+
+          const regularIncomes = mapRegular((syncData as any).regularIncomes, 'income');
+          const regularExpenses = mapRegular((syncData as any).regularExpenses, 'expense');
+
+          if (regularIncomes.length > 0) {
+            next.regularIncomes = regularIncomes;
+          }
+          if (regularExpenses.length > 0) {
+            next.regularExpenses = regularExpenses;
+          }
+
+          if ((syncData as any).familyUserId !== undefined) {
+            const rawFamily = (syncData as any).familyUserId;
+            next.familyUserId = rawFamily ? String(rawFamily) : undefined;
+          }
+
+          return next;
+        });
       }
     } catch (error) {
       console.error('Error loading transactions:', error);
