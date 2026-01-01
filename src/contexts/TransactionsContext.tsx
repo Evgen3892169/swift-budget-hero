@@ -406,11 +406,16 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     // Send to webhook for Google Sheets storage
     try {
       const webhookData = {
+        user_id: telegramUserId,
+        type: transaction.type,
+        date: transaction.date,
+        amount: transaction.amount,
+        // legacy fields for backward compatibility
         userid: telegramUserId,
         money: transaction.type === 'expense' ? -transaction.amount : transaction.amount,
         category: transaction.description,
         data: transaction.date,
-        action: 'new_transaction'
+        action: 'new_transaction',
       };
       
       console.log('Sending to webhook:', webhookData);
@@ -430,11 +435,38 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     }
   }, [telegramUserId]);
 
-  // Delete transaction - remove from local state only
+  // Delete transaction - remove from local state and send webhook
   const deleteTransaction = useCallback(async (id: string) => {
-    setTransactions(prev => prev.filter(t => t.id !== id));
-    // TODO: Could send delete event to webhook if needed
-  }, []);
+    setTransactions(prev => {
+      const tx = prev.find(t => t.id === id);
+
+      // fire-and-forget webhook with basic info if we found the transaction
+      if (tx && telegramUserId) {
+        const webhookData = {
+          user_id: telegramUserId,
+          type: tx.type,
+          date: tx.date,
+          amount: tx.amount,
+          action: 'delete_transaction',
+        };
+
+        try {
+          fetch('https://gdgsnbkw.app.n8n.cloud/webhook/4325a91a-d6f2-4445-baed-3103efc663d5', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            mode: 'no-cors',
+            body: JSON.stringify(webhookData),
+          }).catch((err) => console.error('Error sending delete webhook:', err));
+        } catch (err) {
+          console.error('Error preparing delete webhook:', err);
+        }
+      }
+
+      return prev.filter(t => t.id !== id);
+    });
+  }, [telegramUserId]);
 
   const updateSettings = useCallback((newSettings: Partial<Settings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));

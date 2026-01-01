@@ -77,6 +77,7 @@ const Settings = () => {
           user_id: telegramUserId,
           type: payment.type,
           amount: payment.amount,
+          date: new Date().toISOString(),
         }),
       });
     } catch (error) {
@@ -103,6 +104,7 @@ const Settings = () => {
           user_id: telegramUserId,
           type,
           amount,
+          date: new Date().toISOString(),
         }),
       });
     } catch (error) {
@@ -331,7 +333,7 @@ const Settings = () => {
 
                 setIsCategorySubmitting(true);
                 try {
-                  await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/ad417f87-a904-42a0-8ddb-5de5a18aea26', {
+                  await fetch('https://shinespiceclover.app.n8n.cloud/webhook/ad417f87-a904-42a0-8ddb-5de5a18aea26', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
@@ -401,7 +403,7 @@ const Settings = () => {
                             return;
                           }
                           try {
-                            await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/da61a718-d050-4d2b-8738-7ea3612c816b', {
+                            await fetch('https://shinespiceclover.app.n8n.cloud/webhook/ad417f87-a904-42a0-8ddb-5de5a18aea26', {
                               method: 'POST',
                               headers: {
                                 'Content-Type': 'application/json',
