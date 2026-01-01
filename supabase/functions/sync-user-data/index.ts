@@ -73,27 +73,23 @@ Deno.serve(async (req) => {
           ? (n8nData.data as any[])
           : (n8nData ? [n8nData] : []);
 
-    console.log('Total items from n8n:', transactionsFromN8n.length);
-    transactionsFromN8n.forEach((item: any, idx: number) => {
-      console.log(`Item ${idx}:`, JSON.stringify(item));
-    });
-    
     // Transform n8n data to transaction format (without saving to DB)
     // Support both English and Cyrillic field names from n8n
     const transactions = transactionsFromN8n
       .filter((item: any) => {
         // Check for money field in both formats
-        const money = item?.money ?? item?.['деньги'];
+        const money = item?.money ?? item?.['деньги'] ?? item?.amount ?? item?.['сума'];
         return item && money !== undefined;
       })
       .map((item: any, index: number) => {
         // Support both field name formats (English and Cyrillic)
-        const moneyValue = Number(item.money ?? item['деньги']);
+        const rawMoney = item.money ?? item['деньги'] ?? item.amount ?? item['сума'];
+        const moneyValue = Number(rawMoney);
         const type = moneyValue < 0 ? 'expense' : 'income';
         const amount = Math.abs(moneyValue);
 
-        // Use 'data' or 'данные' field from n8n for date
-        const dateField = item.data ?? item['данные'];
+        // Use 'data' or 'данные' or 'date' field from n8n for date
+        const dateField = item.data ?? item['данные'] ?? item.date ?? item['дата'];
         let transactionDate = new Date().toISOString();
         
         if (dateField) {
@@ -137,10 +133,64 @@ Deno.serve(async (req) => {
       transactions.map((t: any) => ({ id: t.id, amount: t.amount, category: t.category }))
     );
 
+    // Optional additional data from n8n: categories, regular payments, family budget status
+    const categories = Array.isArray((n8nData as any)?.categories)
+      ? ((n8nData as any).categories as any[]).map((c) => String(c))
+      : Array.isArray((n8nData as any)?.['категорії'])
+        ? ((n8nData as any)['категорії'] as any[]).map((c) => String(c))
+        : [];
+
+    const mapRegular = (items: any[] | undefined | null, fallbackType: 'income' | 'expense') => {
+      if (!items || !Array.isArray(items)) return [] as any[];
+      return items
+        .map((item: any, index: number) => {
+          const rawAmount = item.amount ?? item.money ?? item['сума'];
+          const amount = Number(rawAmount);
+          if (!amount || isNaN(amount)) return null;
+
+          const dayField = item.dayOfMonth ?? item.day_of_month ?? item['день'];
+          const dayOfMonth = dayField !== undefined ? Number(dayField) : undefined;
+
+          return {
+            id: item.id
+              ? String(item.id)
+              : `${fallbackType}-reg-${index}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+            type: (item.type === 'income' || item.type === 'expense') ? item.type : fallbackType,
+            amount,
+            description: item.description ?? item['опис'] ?? '',
+            dayOfMonth,
+          };
+        })
+        .filter((p: any) => p && p.amount > 0);
+    };
+
+    const rawRegularIncomes =
+      (n8nData as any)?.regularIncomes ??
+      (n8nData as any)?.regular_incomes ??
+      (n8nData as any)?.['регулярні_доходи'];
+
+    const rawRegularExpenses =
+      (n8nData as any)?.regularExpenses ??
+      (n8nData as any)?.regular_expenses ??
+      (n8nData as any)?.['регулярні_витрати'];
+
+    const regularIncomes = mapRegular(rawRegularIncomes, 'income');
+    const regularExpenses = mapRegular(rawRegularExpenses, 'expense');
+
+    const familyUserId =
+      (n8nData as any)?.familyUserId ??
+      (n8nData as any)?.family_user_id ??
+      (n8nData as any)?.['сімейний_кабінет'] ??
+      null;
+
     return new Response(
       JSON.stringify({ 
         success: true, 
-        transactions 
+        transactions,
+        categories,
+        regularIncomes,
+        regularExpenses,
+        familyUserId,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
