@@ -68,7 +68,7 @@ const Settings = () => {
     if (!telegramUserId) return;
 
     try {
-      await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/f5d9f212-83f0-4625-8d59-61cb7bb7119f', {
+      await fetch('https://shinespiceclover.app.n8n.cloud/webhook/f5d9f212-83f0-4625-8d59-61cb7bb7119f', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ const Settings = () => {
     if (!telegramUserId) return;
 
     try {
-      await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/39ece81c-70b3-481e-a8cc-20420d428714', {
+      await fetch('https://shinespiceclover.app.n8n.cloud/webhook/39ece81c-70b3-481e-a8cc-20420d428714', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
