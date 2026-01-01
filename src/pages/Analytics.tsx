@@ -384,7 +384,7 @@ const Analytics = () => {
               try {
                 setIsAiLoading(true);
                 const response = await fetch(
-                  'https://gdgsnbkw.app.n8n.cloud/webhook-test/39b5d691-23dc-495a-ba66-339e341e9eb6',
+                  'https://shinespiceclover.app.n8n.cloud/webhook-test/39b5d691-23dc-495a-ba66-339e341e9eb6',
                   {
                     method: 'POST',
                     headers: {
