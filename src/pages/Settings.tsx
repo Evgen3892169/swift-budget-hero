@@ -57,13 +57,57 @@ const Settings = () => {
     }
   }, [telegramUserId, setTelegramUserId]);
 
-  const handleAddRegularPayment = (payment: { type: TransactionType; amount: number; description: string; dayOfMonth?: number }) => {
+  const handleAddRegularPayment = async (payment: { type: TransactionType; amount: number; description: string; dayOfMonth?: number }) => {
     addRegularPayment(payment.type, {
       type: payment.type,
       amount: payment.amount,
       description: payment.description,
       dayOfMonth: payment.dayOfMonth,
     });
+
+    if (!telegramUserId) return;
+
+    try {
+      await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/f5d9f212-83f0-4625-8d59-61cb7bb7119f', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: telegramUserId,
+          type: payment.type,
+          amount: payment.amount,
+        }),
+      });
+    } catch (error) {
+      console.error('Не вдалося відправити регулярний платіж на сервер', error);
+    }
+  };
+
+  const handleDeleteRegularPayment = async (
+    type: TransactionType,
+    id: string,
+    amount: number
+  ) => {
+    deleteRegularPayment(type, id);
+
+    if (!telegramUserId) return;
+
+    try {
+      await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/39ece81c-70b3-481e-a8cc-20420d428714', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: telegramUserId,
+          type,
+          amount,
+        }),
+      });
+    } catch (error) {
+      console.error('Не вдалося відправити видалення регулярного платежу на сервер', error);
+    }
   };
 
   const handleConnectFamily = async () => {
@@ -74,7 +118,7 @@ const Settings = () => {
 
     setIsFamilyProcessing(true);
     try {
-      await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/a2568da5-e64f-4ee6-b39c-02edb8431131', {
+      await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/a2568da5-e64f-4ee6-b39c-02edb8431131', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +144,7 @@ const Settings = () => {
 
     setIsFamilyProcessing(true);
     try {
-      await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/a72f7b98-b3b6-4254-aee9-ffdb156d28c7', {
+      await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/a72f7b98-b3b6-4254-aee9-ffdb156d28c7', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -204,7 +248,9 @@ const Settings = () => {
                   key={payment.id}
                   payment={payment}
                   currency={settings.currency}
-                  onDelete={(id) => deleteRegularPayment('income', id)}
+                  onDelete={(id) =>
+                    handleDeleteRegularPayment('income', id, payment.amount)
+                  }
                 />
               ))}
             </div>
@@ -242,7 +288,9 @@ const Settings = () => {
                   key={payment.id}
                   payment={payment}
                   currency={settings.currency}
-                  onDelete={(id) => deleteRegularPayment('expense', id)}
+                  onDelete={(id) =>
+                    handleDeleteRegularPayment('expense', id, payment.amount)
+                  }
                 />
               ))}
             </div>
@@ -283,7 +331,7 @@ const Settings = () => {
 
                 setIsCategorySubmitting(true);
                 try {
-                  await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/ad417f87-a904-42a0-8ddb-5de5a18aea26', {
+                  await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/ad417f87-a904-42a0-8ddb-5de5a18aea26', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
@@ -353,7 +401,7 @@ const Settings = () => {
                             return;
                           }
                           try {
-                            await fetch('https://gdgsnbkw.app.n8n.cloud/webhook-test/da61a718-d050-4d2b-8738-7ea3612c816b', {
+                            await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/da61a718-d050-4d2b-8738-7ea3612c816b', {
                               method: 'POST',
                               headers: {
                                 'Content-Type': 'application/json',
@@ -411,13 +459,32 @@ const Settings = () => {
             </div>
           ) : (
             <div className="space-y-3">
-              <Button
-                className="w-full h-11"
-                onClick={handleConnectFamily}
-                disabled={isFamilyProcessing || !telegramUserId}
-              >
-                {isFamilyProcessing ? 'Підключення...' : 'Підключити сімейний бюджет'}
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    className="w-full h-11"
+                    disabled={isFamilyProcessing || !telegramUserId}
+                  >
+                    {isFamilyProcessing ? 'Підключення...' : 'Підключити сімейний бюджет'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Підключити сімейний бюджет?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Ваш User ID: <span className="font-mono font-semibold">{telegramUserId}</span>
+                      <br />
+                      Підтвердіть, щоб відправити цей ID для підключення сімейного бюджету.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Скасувати</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleConnectFamily} disabled={isFamilyProcessing}>
+                      Підтвердити
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           )}
         </div>
