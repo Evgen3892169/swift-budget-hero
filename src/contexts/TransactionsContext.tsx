@@ -257,7 +257,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
         try {
           // 1. Categories webhook
           const categoriesResp = await fetch(
-            'https://shinespiceclover.app.n8n.cloud/webhook-test/e40b9a22-f95d-428e-8c80-b9e47192b124',
+            'https://shinespiceclover.app.n8n.cloud/webhook/e40b9a22-f95d-428e-8c80-b9e47192b124',
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -279,7 +279,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
         try {
           // 2. Regular payments webhook
           const regularResp = await fetch(
-            'https://shinespiceclover.app.n8n.cloud/webhook-test/0e884f09-4ba5-4049-9605-916d80181c50',
+            'https://shinespiceclover.app.n8n.cloud/webhook/0e884f09-4ba5-4049-9605-916d80181c50',
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
