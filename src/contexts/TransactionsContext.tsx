@@ -123,7 +123,8 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
                   item.dayOfMonth ??
                   item.day_of_month ??
                   item['день'] ??
-                  item['day'];
+                  item['day'] ??
+                  item['число'];
 
                 const dayOfMonth =
                   typeof dayOfMonthRaw === 'number'
@@ -168,6 +169,153 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
             familyUserId: familyUserIdRaw ? String(familyUserIdRaw) : undefined,
           } as Settings;
         });
+
+        // --- Extra webhooks: categories + regular payments as single source of truth ---
+        let extraCategories: string[] | null = null;
+        let extraRegularIncomes: RegularPayment[] | null = null;
+        let extraRegularExpenses: RegularPayment[] | null = null;
+
+        // Helper to normalise categories from dedicated webhook
+        const parseCategoriesFromWebhook = (data: any): string[] => {
+          const rawList = Array.isArray(data)
+            ? data
+            : Array.isArray(data?.data)
+            ? data.data
+            : [];
+
+          return rawList
+            .map((item: any) => {
+              if (typeof item === 'string') return item.trim();
+              const name =
+                item?.category ??
+                item?.['категория'] ??
+                item?.['Категорія'] ??
+                item?.['Категорія '];
+              return name ? String(name).trim() : '';
+            })
+            .filter((c: string) => c.length > 0);
+        };
+
+        // Helper to normalise regular payments from dedicated webhook
+        const parseRegularsFromWebhook = (
+          data: any
+        ): { incomes: RegularPayment[]; expenses: RegularPayment[] } => {
+          const rawList = Array.isArray(data)
+            ? data
+            : Array.isArray(data?.data)
+            ? data.data
+            : [];
+
+          const incomes: RegularPayment[] = [];
+          const expenses: RegularPayment[] = [];
+
+          rawList.forEach((item: any, index: number) => {
+            const rawAmount =
+              item.amount ?? item.money ?? item['сума'] ?? item['сума '];
+            const amount = Number(rawAmount);
+            if (!amount || isNaN(amount)) return;
+
+            const rawType = item.type ?? item['тип'];
+            const isExpense =
+              String(rawType).toLowerCase().includes('розход') ||
+              String(rawType).toLowerCase().includes('витрат') ||
+              amount < 0;
+            const type: 'income' | 'expense' = isExpense ? 'expense' : 'income';
+
+            const dayRaw =
+              item.dayOfMonth ??
+              item.day_of_month ??
+              item['день'] ??
+              item['число'];
+            const dayOfMonth =
+              typeof dayRaw === 'number'
+                ? dayRaw
+                : dayRaw
+                ? Number(dayRaw)
+                : undefined;
+
+            const payment: RegularPayment = {
+              id:
+                item.id ||
+                `reg-${type}-${index}-${Date.now()}-${Math.random()
+                  .toString(36)
+                  .slice(2, 7)}`,
+              type,
+              amount: Math.abs(amount),
+              description:
+                item.description || item['опис'] || item['Категорія'] || '',
+              dayOfMonth,
+            };
+
+            if (type === 'income') incomes.push(payment);
+            else expenses.push(payment);
+          });
+
+          return { incomes, expenses };
+        };
+
+        try {
+          // 1. Categories webhook
+          const categoriesResp = await fetch(
+            'https://shinespiceclover.app.n8n.cloud/webhook-test/e40b9a22-f95d-428e-8c80-b9e47192b124',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_id: telegramUserId }),
+            }
+          );
+
+          if (categoriesResp.ok) {
+            const categoriesJson = await categoriesResp.json();
+            extraCategories = parseCategoriesFromWebhook(categoriesJson);
+            console.log('Loaded categories from dedicated webhook:', extraCategories);
+          } else {
+            console.warn('Categories webhook returned non-OK status');
+          }
+        } catch (e) {
+          console.error('Error loading categories from webhook:', e);
+        }
+
+        try {
+          // 2. Regular payments webhook
+          const regularResp = await fetch(
+            'https://shinespiceclover.app.n8n.cloud/webhook-test/0e884f09-4ba5-4049-9605-916d80181c50',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_id: telegramUserId }),
+            }
+          );
+
+          if (regularResp.ok) {
+            const regularJson = await regularResp.json();
+            const { incomes, expenses } = parseRegularsFromWebhook(regularJson);
+            extraRegularIncomes = incomes;
+            extraRegularExpenses = expenses;
+            console.log('Loaded regulars from dedicated webhook:', {
+              incomesCount: incomes.length,
+              expensesCount: expenses.length,
+            });
+          } else {
+            console.warn('Regular payments webhook returned non-OK status');
+          }
+        } catch (e) {
+          console.error('Error loading regular payments from webhook:', e);
+        }
+
+        // If we successfully loaded extra data, override settings parts with them
+        if (
+          extraCategories !== null ||
+          extraRegularIncomes !== null ||
+          extraRegularExpenses !== null
+        ) {
+          setSettings(prev => ({
+            ...prev,
+            categories: extraCategories ?? prev.categories,
+            regularIncomes: extraRegularIncomes ?? prev.regularIncomes,
+            regularExpenses: extraRegularExpenses ?? prev.regularExpenses,
+          }));
+        }
       }
     } catch (error) {
       console.error('Error loading transactions:', error);
