@@ -100,44 +100,73 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
         setTransactions(appTransactions);
 
         // Optional settings coming from webhook: categories, regular payments, family budget
-        setSettings((prev) => {
-          const next = { ...prev };
+        setSettings(() => {
+          const raw = syncData as any;
 
-          if (Array.isArray((syncData as any).categories)) {
-            next.categories = (syncData as any).categories.map((c: any) => String(c));
-          }
+          const categories = Array.isArray(raw.categories)
+            ? raw.categories.map((c: any) => String(c))
+            : [];
 
-          const mapRegular = (items: any[] | undefined | null, fallbackType: 'income' | 'expense') => {
-            if (!items || !Array.isArray(items)) return [] as RegularPayment[];
-            return items.map((item: any) => ({
-              id: item.id || crypto.randomUUID(),
-              type:
-                item.type === 'income' || item.type === 'expense'
-                  ? (item.type as 'income' | 'expense')
-                  : fallbackType,
-              amount: Number(item.amount),
-              description: item.description || '',
-              dayOfMonth:
-                item.dayOfMonth ?? item.day_of_month ?? (typeof item.day === 'number' ? item.day : undefined),
-            }));
+          const mapRegular = (
+            items: any[] | undefined | null,
+            fallbackType: 'income' | 'expense'
+          ): RegularPayment[] => {
+            if (!items || !Array.isArray(items)) return [];
+            return items
+              .map((item: any) => {
+                const amount = Number(
+                  item.amount ?? item.money ?? item['сума'] ?? item['amount']
+                );
+                if (!amount || isNaN(amount)) return null;
+
+                const dayOfMonthRaw =
+                  item.dayOfMonth ??
+                  item.day_of_month ??
+                  item['день'] ??
+                  item['day'];
+
+                const dayOfMonth =
+                  typeof dayOfMonthRaw === 'number'
+                    ? dayOfMonthRaw
+                    : dayOfMonthRaw
+                    ? Number(dayOfMonthRaw)
+                    : undefined;
+
+                const type: 'income' | 'expense' =
+                  item.type === 'income' || item.type === 'expense'
+                    ? item.type
+                    : fallbackType;
+
+                return {
+                  id: item.id || crypto.randomUUID(),
+                  type,
+                  amount,
+                  description: item.description || item['опис'] || '',
+                  dayOfMonth,
+                } as RegularPayment;
+              })
+              .filter((p): p is RegularPayment => !!p && p.amount > 0);
           };
 
-          const regularIncomes = mapRegular((syncData as any).regularIncomes, 'income');
-          const regularExpenses = mapRegular((syncData as any).regularExpenses, 'expense');
+          const regularIncomes = mapRegular(
+            raw.regularIncomes ?? raw.regular_incomes ?? raw['регулярні_доходи'],
+            'income'
+          );
+          const regularExpenses = mapRegular(
+            raw.regularExpenses ?? raw.regular_expenses ?? raw['регулярні_витрати'],
+            'expense'
+          );
 
-          if (regularIncomes.length > 0) {
-            next.regularIncomes = regularIncomes;
-          }
-          if (regularExpenses.length > 0) {
-            next.regularExpenses = regularExpenses;
-          }
+          const familyUserIdRaw =
+            raw.familyUserId ?? raw.family_user_id ?? raw['сімейний_кабінет'];
 
-          if ((syncData as any).familyUserId !== undefined) {
-            const rawFamily = (syncData as any).familyUserId;
-            next.familyUserId = rawFamily ? String(rawFamily) : undefined;
-          }
-
-          return next;
+          return {
+            currency: 'грн',
+            categories,
+            regularIncomes,
+            regularExpenses,
+            familyUserId: familyUserIdRaw ? String(familyUserIdRaw) : undefined,
+          } as Settings;
         });
       }
     } catch (error) {
