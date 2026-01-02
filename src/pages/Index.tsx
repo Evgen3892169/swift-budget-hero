@@ -66,54 +66,57 @@ const Index = () => {
 
   const weeklyData = useMemo(() => {
     const monthIndex = currentDate.getMonth();
-    const ranges = weekRanges;
-    if (ranges.length === 0) return [];
-    const safeIndex = Math.min(selectedWeekIndex, ranges.length - 1);
-    const [startDay, endDay] = ranges[safeIndex];
-    const endDate = new Date(currentYear, monthIndex, endDay);
-    const startDate = new Date(currentYear, monthIndex, startDay);
-    const weekMap: {
-      [key: string]: {
-        income: number;
-        expense: number;
-        date: Date;
-      };
-    } = {};
+    if (weekRanges.length === 0) return [];
+
+    const safeIndex = Math.min(selectedWeekIndex, weekRanges.length - 1);
+    const [startDay, endDay] = weekRanges[safeIndex];
+
+    const dayNames = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const days: {
+      label: string;
+      dayNumber: number;
+      income: number;
+      expense: number;
+    }[] = [];
+
     for (let d = startDay; d <= endDay; d++) {
       const date = new Date(currentYear, monthIndex, d);
-      const key = date.toDateString();
-      weekMap[key] = {
-        income: 0,
-        expense: 0,
-        date
-      };
+      const income = monthTransactions
+        .filter(t => {
+          const td = new Date(t.date);
+          return (
+            td.getFullYear() === currentYear &&
+            td.getMonth() === monthIndex &&
+            td.getDate() === d &&
+            t.type === 'income'
+          );
+        })
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      const expense = monthTransactions
+        .filter(t => {
+          const td = new Date(t.date);
+          return (
+            td.getFullYear() === currentYear &&
+            td.getMonth() === monthIndex &&
+            td.getDate() === d &&
+            t.type === 'expense'
+          );
+        })
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      days.push({
+        label: dayNames[date.getDay()],
+        dayNumber: d,
+        income,
+        expense,
+      });
     }
-    monthTransactions.forEach(t => {
-      const d = new Date(t.date);
-      if (d < startDate || d > endDate) return;
-      const key = d.toDateString();
-      if (!weekMap[key]) return;
-      if (t.type === 'income') weekMap[key].income += t.amount;
-      else weekMap[key].expense += t.amount;
-    });
 
-    const values = Object.values(weekMap);
-    console.log('Weekly block debug:', {
-      startDay,
-      endDay,
-      ranges,
-      selectedWeekIndex: safeIndex,
-      monthTransactionsCount: monthTransactions.length,
-      values,
-    });
+    const maxValue = Math.max(1, ...days.map(v => Math.max(v.income, v.expense)));
 
-    const maxValue = Math.max(1, ...values.map(v => Math.max(v.income, v.expense)));
-    const dayNames = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-    return values.map(v => ({
-      label: dayNames[v.date.getDay()],
-      dayNumber: v.date.getDate(),
-      income: v.income,
-      expense: v.expense,
+    return days.map(v => ({
+      ...v,
       incomeHeight: (v.income / maxValue) * 100,
       expenseHeight: (v.expense / maxValue) * 100,
     }));
