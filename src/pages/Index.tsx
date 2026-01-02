@@ -155,10 +155,16 @@ const Index = () => {
                 </div>
               </div>
               <div className="inline-flex items-center gap-1 bg-secondary/40 rounded-full p-0.5">
-                {weekRanges.map((_, index) => (
-                  <span
-                    key={index}
-                    className="w-5 h-5 rounded-full bg-background/60 border border-border/60"
+                {weekRanges.map((range, index) => (
+                  <button
+                    key={`${range[0]}-${range[1]}`}
+                    type="button"
+                    onClick={() => setSelectedWeekIndex(index)}
+                    className={`w-5 h-5 rounded-full border transition-colors ${
+                      selectedWeekIndex === index
+                        ? 'bg-primary border-primary'
+                        : 'bg-background/60 border-border/60'
+                    }`}
                   />
                 ))}
               </div>
