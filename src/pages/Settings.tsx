@@ -386,16 +386,16 @@ const Settings = () => {
                             return;
                           }
                           try {
-                            await fetch('https://shinespiceclover.app.n8n.cloud/webhook/ad417f87-a904-42a0-8ddb-5de5a18aea26', {
-                              method: 'POST',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                              body: JSON.stringify({
-                                user_id: telegramUserId,
-                                category,
-                              }),
-                            });
+                              await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/da61a718-d050-4d2b-8738-7ea3612c816b', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                  user_id: telegramUserId,
+                                  category,
+                                }),
+                              });
 
                             const existing = settings.categories || [];
                             updateSettings({ categories: existing.filter((c) => c !== category) });
