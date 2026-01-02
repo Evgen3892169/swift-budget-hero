@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import landingLineChart from "@/assets/landing-line-chart.png";
+import landingLineChart from "@/assets/landing-line-chart-2.png";
 import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2, Users, ReceiptText, Mic } from "lucide-react";
 const telegramLink = "https://t.me"; // TODO: replace with real bot link
 
