@@ -42,7 +42,7 @@ export const DayOfMonthPicker = ({
           {selectedDay ? `${selectedDay} числа` : "День місяця"}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-3" align="start">
+      <PopoverContent className="w-64 p-3" align="start" side="bottom" sideOffset={4}>
         <div className="grid grid-cols-7 gap-1">
           {days.map((day) => (
             <Button

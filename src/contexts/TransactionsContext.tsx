@@ -142,7 +142,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
                   id: item.id || crypto.randomUUID(),
                   type,
                   amount,
-                  description: item.description || item['опис'] || '',
+                  description: item.description || item.name || item['опис'] || '',
                   dayOfMonth,
                 } as RegularPayment;
               })
@@ -251,7 +251,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
               type,
               amount: Math.abs(amount),
               description:
-                item.description || item['опис'] || item['Категорія'] || '',
+                item.description || item.name || item['опис'] || item['Категорія'] || '',
               dayOfMonth,
             };
 
