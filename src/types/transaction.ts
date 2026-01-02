@@ -16,6 +16,7 @@ export interface RegularPayment {
   amount: number;
   description: string;
   dayOfMonth?: number; // Day of month when payment is applied (1-31)
+  createdAt?: string;  // When this regular payment was created/set
 }
 
 export interface Settings {
