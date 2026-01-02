@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 export const useTelegramUser = () => {
   const { userId: routeUserId } = useParams<{ userId: string }>();
   const [telegramUserId, setTelegramUserId] = useState<string | null>(null);
+  const [telegramUserName, setTelegramUserName] = useState<string | null>(null);
+  const [telegramUserAvatar, setTelegramUserAvatar] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -15,26 +17,30 @@ export const useTelegramUser = () => {
       return;
     }
 
-    // Priority 2: Try to get user ID from Telegram WebApp
+    // Priority 2: Try to get user ID and profile from Telegram WebApp
     const tg = (window as any).Telegram?.WebApp;
-    const userId = tg?.initDataUnsafe?.user?.id;
-    
+    const user = tg?.initDataUnsafe?.user;
+    const userId = user?.id;
+
     if (userId) {
       setTelegramUserId(String(userId));
-      console.log('Telegram user ID:', userId);
+      const fullName = [user?.first_name, user?.last_name].filter(Boolean).join(' ');
+      setTelegramUserName(fullName || user?.username || null);
+      setTelegramUserAvatar(user?.photo_url || null);
+      console.log('Telegram user:', user);
     } else {
       // Priority 3: Check URL params for testing (e.g., ?user_id=7670202213)
       const urlParams = new URLSearchParams(window.location.search);
       const testUserId = urlParams.get('user_id');
-      
+
       if (testUserId) {
         setTelegramUserId(testUserId);
         console.log('Test user ID from URL:', testUserId);
       }
     }
-    
+
     setIsLoading(false);
   }, [routeUserId]);
 
-  return { telegramUserId, isLoading };
+  return { telegramUserId, telegramUserName, telegramUserAvatar, isLoading };
 };

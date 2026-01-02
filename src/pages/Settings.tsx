@@ -7,8 +7,9 @@ import { RegularPaymentItem } from '@/components/RegularPaymentItem';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, TrendingUp, TrendingDown, Webhook, User, Users, Trash2 } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, User, Users, Trash2 } from 'lucide-react';
 import { TransactionType } from '@/types/transaction';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
@@ -31,7 +32,7 @@ const currencies = [
 ];
 
 const Settings = () => {
-  const { telegramUserId, isLoading: isUserLoading } = useTelegramUser();
+  const { telegramUserId, telegramUserName, telegramUserAvatar, isLoading: isUserLoading } = useTelegramUser();
   
   const {
     settings,
@@ -48,7 +49,6 @@ const Settings = () => {
   }>({ isOpen: false, type: 'income' });
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isCategorySubmitting, setIsCategorySubmitting] = useState(false);
-  const [isFamilyProcessing, setIsFamilyProcessing] = useState(false);
 
   // Set telegram user ID in context
   useEffect(() => {
@@ -78,6 +78,8 @@ const Settings = () => {
           type: payment.type,
           amount: payment.amount,
           date: new Date().toISOString(),
+          dayOfMonth: payment.dayOfMonth,
+          day_of_month: payment.dayOfMonth,
         }),
       });
     } catch (error) {
@@ -88,7 +90,8 @@ const Settings = () => {
   const handleDeleteRegularPayment = async (
     type: TransactionType,
     id: string,
-    amount: number
+    amount: number,
+    dayOfMonth?: number
   ) => {
     deleteRegularPayment(type, id);
 
@@ -105,6 +108,8 @@ const Settings = () => {
           type,
           amount,
           date: new Date().toISOString(),
+          dayOfMonth,
+          day_of_month: dayOfMonth,
         }),
       });
     } catch (error) {
@@ -112,57 +117,9 @@ const Settings = () => {
     }
   };
 
-  const handleConnectFamily = async () => {
-    if (!telegramUserId) {
-      toast.error('Не знайдено ваш User ID');
-      return;
-    }
+  // Блок сімейного бюджету наразі вимкнений і відображається як "Скоро",
+  // тому обробники підключення/відключення не використовуються.
 
-    setIsFamilyProcessing(true);
-    try {
-      await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/a2568da5-e64f-4ee6-b39c-02edb8431131', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_id: telegramUserId }),
-      });
-
-      updateSettings({ familyUserId: telegramUserId });
-      toast.success('Сімейний бюджет підключено');
-    } catch (error) {
-      console.error(error);
-      toast.error('Не вдалося підключити сімейний бюджет');
-    } finally {
-      setIsFamilyProcessing(false);
-    }
-  };
-
-  const handleDisconnectFamily = async () => {
-    if (!telegramUserId) {
-      toast.error('Не знайдено ваш User ID');
-      return;
-    }
-
-    setIsFamilyProcessing(true);
-    try {
-      await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/a72f7b98-b3b6-4254-aee9-ffdb156d28c7', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_id: telegramUserId }),
-      });
-
-      updateSettings({ familyUserId: undefined });
-      toast.success('Сімейний бюджет відключено');
-    } catch (error) {
-      console.error(error);
-      toast.error('Не вдалося відключити сімейний бюджет');
-    } finally {
-      setIsFamilyProcessing(false);
-    }
-  };
 
   if (isUserLoading) {
     return (
@@ -186,10 +143,28 @@ const Settings = () => {
             <span className="text-base font-semibold">Профіль користувача</span>
           </div>
           {telegramUserId ? (
-            <div className="space-y-2">
-              <div>
-                <p className="text-sm text-muted-foreground">Telegram User ID</p>
-                <p className="text-xl font-bold">{telegramUserId}</p>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  {telegramUserAvatar ? (
+                    <AvatarImage src={telegramUserAvatar} alt={telegramUserName || 'Telegram аватар'} />
+                  ) : (
+                    <AvatarFallback>
+                      {(telegramUserName || 'U')
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')
+                        .slice(0, 2)
+                        .toUpperCase()}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div>
+                  <p className="text-sm font-medium">
+                    {telegramUserName || 'Telegram користувач'}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Telegram User ID: {telegramUserId}</p>
+                </div>
               </div>
             </div>
           ) : (
@@ -250,8 +225,8 @@ const Settings = () => {
                   key={payment.id}
                   payment={payment}
                   currency={settings.currency}
-                  onDelete={(id) =>
-                    handleDeleteRegularPayment('income', id, payment.amount)
+                  onDelete={(id, dayOfMonth) =>
+                    handleDeleteRegularPayment('income', id, payment.amount, dayOfMonth)
                   }
                 />
               ))}
@@ -290,8 +265,8 @@ const Settings = () => {
                   key={payment.id}
                   payment={payment}
                   currency={settings.currency}
-                  onDelete={(id) =>
-                    handleDeleteRegularPayment('expense', id, payment.amount)
+                  onDelete={(id, dayOfMonth) =>
+                    handleDeleteRegularPayment('expense', id, payment.amount, dayOfMonth)
                   }
                 />
               ))}
@@ -299,28 +274,23 @@ const Settings = () => {
           )}
         </div>
 
-        {/* Integration Info */}
-        <div className="bg-card rounded-lg p-4 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="bg-primary/20 p-1.5 rounded-full">
-              <Webhook className="h-4 w-4 text-primary" />
-            </div>
-            <Label className="text-base font-semibold">Інтеграція</Label>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Дані синхронізуються з Google Sheets через n8n. 
-            Вручну додані транзакції також відправляються на сервер.
-          </p>
-        </div>
 
         {/* Categories Management */}
         <div className="bg-card rounded-lg p-4 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <Label className="text-base font-semibold">Категорії</Label>
+          <Label className="text-base font-semibold mb-3 block">Категорії</Label>
+
+          <div className="space-y-3">
+            <Input
+              placeholder="Назва категорії"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="h-10"
+            />
+
             <Button
               variant="outline"
-              size="sm"
-              className="gap-1"
+              className="w-full h-10"
+              disabled={isCategorySubmitting}
               onClick={async () => {
                 if (!newCategoryName.trim()) {
                   toast.error('Введіть назву категорії');
@@ -356,35 +326,26 @@ const Settings = () => {
                 }
               }}
             >
-              <Plus className="h-4 w-4" />
-              Категорія
+              <Plus className="h-4 w-4 mr-1" />
+              Додати категорію
             </Button>
           </div>
 
-          <div className="flex items-center gap-2 mb-3">
-            <Input
-              placeholder="Назва категорії"
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              className="h-10"
-            />
-          </div>
-
           {(!settings.categories || settings.categories.length === 0) ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground mt-4">
               Поки що немає власних категорій
             </p>
           ) : (
-            <div className="flex flex-wrap gap-2">
+            <div className="mt-4 space-y-1">
               {settings.categories.map((category) => (
                 <AlertDialog key={category}>
                   <AlertDialogTrigger asChild>
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted text-xs text-muted-foreground hover:bg-muted/80 transition-colors"
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-muted text-sm text-foreground hover:bg-muted/80 transition-colors"
                     >
-                      <span>{category}</span>
-                      <Trash2 className="h-3 w-3" />
+                      <span className="truncate text-left">{category}</span>
+                      <Trash2 className="h-4 w-4 text-muted-foreground" />
                     </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
@@ -434,61 +395,22 @@ const Settings = () => {
         </div>
 
         {/* Family Cabinet */}
-        <div className="bg-card rounded-lg p-4 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="bg-primary/20 p-1.5 rounded-full">
-              <Users className="h-4 w-4 text-primary" />
+        <div className="bg-muted rounded-lg p-4 shadow-sm border border-border/60">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="bg-muted-foreground/10 p-1.5 rounded-full">
+              <Users className="h-4 w-4 text-muted-foreground" />
             </div>
-            <Label className="text-base font-semibold">Сімейний бюджет</Label>
+            <Label className="text-base font-semibold flex items-center gap-2">
+              Сімейний бюджет
+              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-background/60 text-muted-foreground border border-border/60">
+                <span>🔒</span>
+                <span>Скоро</span>
+              </span>
+            </Label>
           </div>
-          <p className="text-sm text-muted-foreground mb-3">
-            Підключіть спільний сімейний бюджет для синхронізації витрат
+          <p className="text-sm text-muted-foreground">
+            Можливість вести спільний сімейний бюджет зʼявиться найближчим часом.
           </p>
-
-          {settings.familyUserId ? (
-            <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">
-                Сімейний бюджет підключено для користувача ID: {settings.familyUserId}
-              </p>
-              <Button
-                variant="destructive"
-                className="w-full h-11"
-                onClick={handleDisconnectFamily}
-                disabled={isFamilyProcessing}
-              >
-                {isFamilyProcessing ? 'Відключення...' : 'Відключити'}
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    className="w-full h-11"
-                    disabled={isFamilyProcessing || !telegramUserId}
-                  >
-                    {isFamilyProcessing ? 'Підключення...' : 'Підключити сімейний бюджет'}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Підключити сімейний бюджет?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Ваш User ID: <span className="font-mono font-semibold">{telegramUserId}</span>
-                      <br />
-                      Підтвердіть, щоб відправити цей ID для підключення сімейного бюджету.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Скасувати</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleConnectFamily} disabled={isFamilyProcessing}>
-                      Підтвердити
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          )}
         </div>
       </div>
 
