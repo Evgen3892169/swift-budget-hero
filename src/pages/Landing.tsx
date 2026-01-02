@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2, Users, ReceiptText, Mic } from "lucide-react";
 
 const telegramLink = "https://t.me"; // TODO: replace with real bot link
 
@@ -589,6 +589,107 @@ const LandingPage = () => {
                 <li>{lang === "ua" ? "AI розбирає твої витрати по поличках і дає конкретні підказки: де можна зменшити, щоб ти відчув різницю вже в наступному місяці." : "AI breaks your spending down and gives concrete tips where to cut so you feel the difference as soon as next month."}</li>
               </ul>
             </article>
+          </div>
+        </section>
+
+        {/* Premium features */}
+        <section className="space-y-6">
+          <div className="flex flex-col gap-2 max-w-xl">
+            <h2 className="text-2xl sm:text-3xl font-semibold">
+              {lang === "ua" ? "Преміум‑можливості, які економлять час і нерви" : "Premium features that save time and nerves"}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {lang === "ua"
+                ? "Базового функціоналу вистачає, щоб навести лад у грошах. Преміум додає інструменти, які зазвичай є лише в важких фінансових застосунках — але в простому Telegram‑форматі."
+                : "The basic version is enough to get order in your money. Premium adds powerful tools usually found only in heavy finance apps — but wrapped into a simple Telegram experience."}
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {/* Family budget */}
+            <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-full bg-income-light flex items-center justify-center">
+                  <Users className="size-4 text-income" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <span>{lang === "ua" ? "Сімейний бюджет" : "Family budget"}</span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
+                      <Sparkles className="size-3 text-primary" />
+                      <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground max-w-xl">
+                    {lang === "ua"
+                      ? "Ведіть спільний бюджет з партнером чи родиною: загальні витрати, доходи та ліміти в одному місці, без зведення табличок вручну."
+                      : "Run a shared budget with a partner or family: joint expenses, income and limits in one place — no manual spreadsheet merging."}
+                  </p>
+                </div>
+              </div>
+              <div className="hidden sm:flex items-center">
+                <div className="w-9 h-5 rounded-full bg-background/40 border border-border/60 flex items-center px-0.5 opacity-60">
+                  <div className="size-4 rounded-full bg-muted" />
+                </div>
+              </div>
+            </article>
+
+            {/* Receipt scanner */}
+            <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-full bg-accent/20 flex items-center justify-center">
+                  <ReceiptText className="size-4 text-accent-foreground" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <span>{lang === "ua" ? "Сканер чеків" : "Receipt scanner"}</span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
+                      <Sparkles className="size-3 text-primary" />
+                      <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground max-w-xl">
+                    {lang === "ua"
+                      ? "Скануйте паперові чеки — суми й категорії автоматично потрапляють у витрати. Жодного ручного перенесення з фото в застосунок."
+                      : "Scan paper receipts and let the app automatically add amounts and categories to your expenses — no more manual typing from photos."}
+                  </p>
+                </div>
+              </div>
+              <div className="hidden sm:flex items-center">
+                <div className="w-9 h-5 rounded-full bg-background/40 border border-border/60 flex items-center px-0.5 opacity-60">
+                  <div className="size-4 rounded-full bg-muted" />
+                </div>
+              </div>
+            </article>
+
+            {/* Voice input */}
+            <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-full bg-primary/15 flex items-center justify-center">
+                  <Mic className="size-4 text-primary" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <span>{lang === "ua" ? "Запис голосом" : "Voice input"}</span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
+                      <Sparkles className="size-3 text-primary" />
+                      <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground max-w-xl">
+                    {lang === "ua"
+                      ? "Додавай витрати голосом по дорозі — бот сам розпізнає текст і розкладе все по категоріях. Менше натискань — більше контролю."
+                      : "Add expenses by voice on the go — the bot converts speech to text and assigns categories for you. Fewer taps, more control."}
+                  </p>
+                </div>
+              </div>
+              <div className="hidden sm:flex items-center">
+                <div className="w-9 h-5 rounded-full bg-background/40 border border-border/60 flex items-center px-0.5 opacity-60">
+                  <div className="size-4 rounded-full bg-muted" />
+                </div>
+              </div>
+            </article>
+
           </div>
         </section>
 
