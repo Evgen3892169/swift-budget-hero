@@ -523,47 +523,47 @@ const LandingPage = () => {
         </section>
 
         {/* Who is this for & pains */}
-        <section className="space-y-8">
+        <section className="space-y-8 animate-fade-in">
           <div className="flex flex-col gap-2 max-w-xl">
             <h2 className="text-2xl sm:text-3xl font-semibold">
               {lang === "ua" ? "Для кого ця програма" : "Who this app is for"}
             </h2>
             <p className="text-sm text-muted-foreground">
               {lang === "ua"
-                ? "Бот для тих, хто втомився жити від зарплати до зарплати й хоче нарешті відчути контроль, а не провину за кожну витрачену гривню."
-                : "A bot for people tired of living paycheck to paycheck who want control and peace of mind instead of guilt over every purchase."}
+                ? "Для тих, хто хоче простий фінансовий помічник у Telegram замість складного банківського застосунку."
+                : "For people who want a simple money helper in Telegram instead of a complex banking app."}
             </p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale animate-fade-in">
               <h3 className="font-semibold text-sm">
                 {lang === "ua" ? "Зайняті айтішники" : "Busy tech people"}
               </h3>
               <p className="text-xs text-muted-foreground">
                 {lang === "ua"
-                  ? "Працюєш по 10+ годин, а гроші розчиняються. Бот збирає всі доходи та витрати в одну картинку й показує, скільки в тебе реально вільних грошей після обов'язкових платежів."
-                  : "You work 10+ hour days yet money evaporates. The bot gathers all income and spending into one picture and shows how much is truly free after mandatory bills."}
+                  ? "Багато працюєш, дохід нормальний, але в кінці місяця грошей знову немає — бот показує, куди саме вони зникають."
+                  : "You work a lot and earn well but at month‑end money is gone again — the bot shows exactly where it disappears."}
               </p>
             </article>
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale animate-fade-in">
               <h3 className="font-semibold text-sm">
                 {lang === "ua" ? "Фрилансери та самозайняті" : "Freelancers"}
               </h3>
               <p className="text-xs text-muted-foreground">
                 {lang === "ua"
-                  ? "Сьогодні є замовлення — завтра тиша. Бот рахує, які витрати ти можеш собі дозволити при різних доходах і яка мінімальна сума дає тобі спокій на місяць."
-                  : "One month is packed, the next is empty. The app calculates what expenses you can safely afford at different income levels and what minimum keeps you calm for the month."}
+                  ? "Доходи стрибають, складно планувати місяць. Бот рахує, скільки можна витратити без страху залишитись без грошей."
+                  : "Income jumps up and down, planning is hard. The app calculates how much you can safely spend without ending up broke."}
               </p>
             </article>
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale animate-fade-in">
               <h3 className="font-semibold text-sm">
                 {lang === "ua" ? "Пари та сім’ї" : "Couples & families"}
               </h3>
               <p className="text-xs text-muted-foreground">
                 {lang === "ua"
-                  ? "Спільні покупки, кредити, діти, поїздки. Бот показує, скільки ваша сім'я реально тягне, щоб ви планували відпустки й великі цілі без сварок про гроші."
-                  : "Shared purchases, loans, kids, trips. The bot shows what your family can truly afford so you can plan vacations and big goals without constant money fights."}
+                  ? "Спільні витрати, кредити, діти. Бот допомагає швидко бачити загальний баланс, щоб менше сваритись через гроші."
+                  : "Shared expenses, loans, kids. The bot makes it easy to see the full balance so there are fewer money arguments."}
               </p>
             </article>
           </div>
@@ -574,9 +574,9 @@ const LandingPage = () => {
                 {lang === "ua" ? "Твої болі" : "Your pains"}
               </h3>
               <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                <li>{lang === "ua" ? "В кінці місяця карта в нулі, а ти не можеш згадати, на що пішли гроші." : "At the end of the month your card is empty and you can't remember where it all went."}</li>
-                <li>{lang === "ua" ? "Живеш у постійному фоні тривоги: а раптом не вистачить на оренду, кредит чи підписки?" : "Background anxiety all the time: what if there isn't enough for rent, loans or subscriptions?"}</li>
-                <li>{lang === "ua" ? "Пробував таблиці й застосунки, але кидав, бо це займає пів вечора й не дає швидкої відповіді 'я можу собі це дозволити?'." : "You tried spreadsheets and apps but quit because they eat your evenings and still don't answer fast if you can afford something."}</li>
+                <li>{lang === "ua" ? "Складні фінансові застосунки, купа кнопок і графіків — лячно навіть відкривати." : "Finance apps look overloaded with buttons and charts — you are afraid to even open them."}</li>
+                <li>{lang === "ua" ? "Незрозуміло, що саме натискати щодня, щоб це реально допомагало, а не забирало час." : "You don't know what to tap every day so that it actually helps instead of wasting time."}</li>
+                <li>{lang === "ua" ? "Немає простого ШІ, який сам аналізує витрати та пояснює людською мовою, що з ними робити." : "There is no simple AI that analyses spending for you and explains in plain language what to do about it."}</li>
               </ul>
             </article>
             <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
