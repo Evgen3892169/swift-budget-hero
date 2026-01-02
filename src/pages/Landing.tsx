@@ -385,26 +385,34 @@ const LandingPage = () => {
                   </span>
                 </div>
               </div>
-              <div className="space-y-2 animate-fade-in">
-                <div className="h-24 flex items-end gap-1 mt-1">
-                  {[100, 25, 18, 60, 12, 15, 10, 35].map((height, index) => (
-                    <div key={index} className="flex-1 flex flex-col justify-end">
+              <div className="space-y-3 animate-fade-in">
+                {/* Simple bar chart, like on your screenshot */}
+                <div className="h-28 flex items-end gap-1 mt-1">
+                  {[
+                    { day: 1, height: 100, positive: true },
+                    { day: 2, height: 18, positive: true },
+                    { day: 3, height: 16, positive: true },
+                    { day: 5, height: 20, positive: true },
+                    { day: 6, height: 55, positive: false },
+                    { day: 8, height: 24, positive: true },
+                    { day: 10, height: 18, positive: true },
+                    { day: 15, height: 14, positive: false },
+                    { day: 18, height: 16, positive: true },
+                    { day: 22, height: 14, positive: false },
+                    { day: 26, height: 15, positive: true },
+                  ].map((bar) => (
+                    <div key={bar.day} className="flex-1 flex flex-col justify-end">
                       <div
-                        className={`${index === 0 || index === 3 || index === 7 ? "bg-income" : "bg-destructive"} rounded-t-full`}
-                        style={{ height: `${height}%` }}
+                        className={`${bar.positive ? "bg-income" : "bg-destructive"} rounded-t-full`}
+                        style={{ height: `${bar.height}%` }}
                       />
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between text-[10px] text-muted-foreground px-0.5">
-                  <span>1</span>
-                  <span>2</span>
-                  <span>3</span>
-                  <span>5</span>
-                  <span>8</span>
-                  <span>10</span>
-                  <span>18</span>
-                  <span>26</span>
+                  {[1, 2, 3, 5, 6, 8, 10, 15, 18, 22, 26].map((day) => (
+                    <span key={day}>{day}</span>
+                  ))}
                 </div>
               </div>
             </article>
