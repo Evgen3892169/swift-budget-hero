@@ -41,6 +41,8 @@
     --expense-foreground: 0 0% 100%;
     --expense-light: 0 72% 95%;
 
+    --balance-border: 30 90% 60%;
+
     --border: 215 20% 88%;
     --input: 215 20% 88%;
     --ring: 168 76% 42%;
@@ -92,11 +94,14 @@
     --income: 160 65% 50%;
     --income-foreground: 180 10% 94%;
     --income-light: 160 50% 14%;
-
+ 
     /* Expense - red that's not too harsh */
     --expense: 0 60% 55%;
     --expense-foreground: 180 10% 94%;
     --expense-light: 0 45% 14%;
+
+    /* Balance border - soft orange */
+    --balance-border: 30 85% 55%;
 
     --border: 220 30% 18%;
     --input: 220 30% 18%;
@@ -119,7 +124,6 @@
   }
 
   html {
-    @apply dark;
   }
 
   body {
@@ -190,5 +194,9 @@
 
   .loading-screen {
     @apply bg-white text-foreground;
+  }
+
+  .border-balance {
+    border-color: hsl(var(--balance-border));
   }
 }

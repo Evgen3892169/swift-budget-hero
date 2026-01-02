@@ -27,7 +27,8 @@ const History = () => {
     setTelegramUserId,
   } = useTransactionsContext();
   
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [showAllHistory, setShowAllHistory] = useState(false);
 
   useEffect(() => {
@@ -48,15 +49,17 @@ const History = () => {
       });
     }
     
-    if (selectedDate) {
+    if (startDate || endDate) {
       filtered = filtered.filter(t => {
         const date = new Date(t.date);
-        return date.toDateString() === selectedDate.toDateString();
+        if (startDate && date < startDate) return false;
+        if (endDate && date > endDate) return false;
+        return true;
       });
     }
-    
+ 
     return filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [transactions, currentMonth, currentYear, selectedDate, showAllHistory]);
+  }, [transactions, currentMonth, currentYear, startDate, endDate, showAllHistory]);
 
   const groupedTransactions = useMemo(() => {
     const groups: { [key: string]: typeof filteredTransactions } = {};
@@ -114,16 +117,25 @@ const History = () => {
         {/* Filters */}
         <div className="flex items-center gap-2">
           <DatePickerPopover
-            date={selectedDate}
-            onDateChange={setSelectedDate}
-            placeholder="Фільтр по даті"
+            date={startDate}
+            onDateChange={setStartDate}
+            placeholder="З дати"
             className="flex-1"
           />
-          {selectedDate && (
+          <DatePickerPopover
+            date={endDate}
+            onDateChange={setEndDate}
+            placeholder="По дату"
+            className="flex-1"
+          />
+          {(startDate || endDate) && (
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setSelectedDate(undefined)}
+              onClick={() => {
+                setStartDate(undefined);
+                setEndDate(undefined);
+              }}
               className="shrink-0 rounded-xl h-10 w-10"
             >
               <X className="h-4 w-4" />
@@ -149,7 +161,7 @@ const History = () => {
         ) : Object.keys(groupedTransactions).length === 0 ? (
           <div className="bg-card rounded-2xl p-8 text-center border border-border/50">
             <p className="text-muted-foreground text-sm">
-              {selectedDate ? 'Немає операцій' : showAllHistory ? 'Немає операцій' : 'Немає операцій за місяць'}
+              {showAllHistory ? 'Немає операцій' : 'Немає операцій за місяць'}
             </p>
           </div>
         ) : (

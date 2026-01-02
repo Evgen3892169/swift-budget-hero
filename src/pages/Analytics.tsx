@@ -204,160 +204,87 @@ const Analytics = () => {
             </p>
           </div>
 
-          <div className="bg-card rounded-2xl p-4 text-center border border-primary/20 glow-primary">
-            <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/20">
-              <Wallet className="h-5 w-5 text-primary" />
-            </div>
-            <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Баланс</p>
-            <p
-              className={`text-sm font-bold ${
-                monthlyStats.balance >= 0 ? 'text-income' : 'text-expense'
-              }`}
-            >
-              {monthlyStats.balance >= 0 ? '+' : ''}
-              {monthlyStats.balance.toLocaleString('uk-UA')}
-            </p>
-          </div>
+          <div className="bg-card rounded-2xl p-4 text-center border border-balance glow-primary">
+             <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/20">
+               <Wallet className="h-5 w-5 text-primary" />
+             </div>
+             <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Баланс</p>
+             <p
+               className={`text-sm font-bold ${
+                 monthlyStats.balance >= 0 ? 'text-income' : 'text-expense'
+               }`}
+             >
+               {monthlyStats.balance >= 0 ? '+' : ''}
+               {monthlyStats.balance.toLocaleString('uk-UA')}
+             </p>
+           </div>
         </div>
 
-        {/* Charts */}
-        {range === 'month' ? (
-          <div className="bg-card rounded-2xl p-5 border border-border/50">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
-                <TrendingUp className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="font-semibold text-sm">По днях</h3>
-            </div>
-            {dailyData.length === 0 ? (
-              <p className="text-muted-foreground text-sm text-center py-8">
-                Немає даних за цей місяць
-              </p>
-            ) : (
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={dailyData} barGap={2}>
-                    <XAxis
-                      dataKey="day"
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fill: 'hsl(210, 15%, 55%)', fontSize: 10 }}
-                    />
-                    <YAxis hide />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'hsl(220, 35%, 11%)',
-                        border: '1px solid hsl(220, 30%, 18%)',
-                        borderRadius: '12px',
-                        color: 'hsl(180, 10%, 94%)',
-                      }}
-                      formatter={(value: number, name: string) => [
-                        `${value.toLocaleString('uk-UA')} ${settings.currency}`,
-                        name === 'income' ? 'Дохід' : 'Витрати',
-                      ]}
-                      labelFormatter={(label) => `День ${label}`}
-                    />
-                    <Bar dataKey="income" fill="hsl(160, 65%, 50%)" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="expense" fill="hsl(0, 60%, 55%)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="bg-card rounded-2xl p-5 border border-border/50">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
-                <TrendingUp className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="font-semibold text-sm">По місяцях (весь період)</h3>
-            </div>
-            {monthlyAggregateData.length === 0 ? (
-              <p className="text-muted-foreground text-sm text-center py-8">
-                Немає даних для побудови графіка
-              </p>
-            ) : (
-              <div className="h-52">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthlyAggregateData} barGap={4}>
-                    <XAxis
-                      dataKey="month"
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fill: 'hsl(210, 15%, 55%)', fontSize: 10 }}
-                    />
-                    <YAxis hide />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'hsl(220, 35%, 11%)',
-                        border: '1px solid hsl(220, 30%, 18%)',
-                        borderRadius: '12px',
-                        color: 'hsl(180, 10%, 94%)',
-                      }}
-                      formatter={(value: number, name: string) => [
-                        `${value.toLocaleString('uk-UA')} ${settings.currency}`,
-                        name === 'income' ? 'Дохід' : 'Витрати',
-                      ]}
-                      labelFormatter={(label) => label}
-                    />
-                    <Bar dataKey="income" fill="hsl(160, 65%, 50%)" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="expense" fill="hsl(0, 60%, 55%)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Category Breakdown */}
+        {/* Mini Dynamics Chart moved from Home */}
         <div className="bg-card rounded-2xl p-5 border border-border/50">
           <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
+              <TrendingUp className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-semibold text-sm">Динаміка</h3>
+          </div>
+          {/* Reuse monthly dailyData chart here in compact form */}
+          {dailyData.length === 0 ? (
+            <p className="text-muted-foreground text-sm text-center py-8">
+              Немає даних за цей місяць
+            </p>
+          ) : (
+            <div className="h-40">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={dailyData} barGap={2}>
+                  <XAxis
+                    dataKey="day"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'hsl(210, 15%, 55%)', fontSize: 10 }}
+                  />
+                  <YAxis hide />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(220, 35%, 11%)',
+                      border: '1px solid hsl(220, 30%, 18%)',
+                      borderRadius: '12px',
+                      color: 'hsl(180, 10%, 94%)',
+                    }}
+                    formatter={(value: number, name: string) => [
+                      `${value.toLocaleString('uk-UA')} ${settings.currency}`,
+                      name === 'income' ? 'Дохід' : 'Витрати',
+                    ]}
+                    labelFormatter={(label) => `День ${label}`}
+                  />
+                  <Bar dataKey="income" fill="hsl(160, 65%, 50%)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="expense" fill="hsl(0, 60%, 55%)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </div>
+
+        {/* Category Breakdown - Premium Locked */}
+        <div className="bg-card rounded-2xl p-5 border border-border/50 relative overflow-hidden">
+          <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
               <PieChart className="h-4 w-4 text-primary" />
             </div>
             <h3 className="font-semibold text-sm">Витрати по категоріях</h3>
           </div>
-          {categoryData.length === 0 ? (
-            <p className="text-muted-foreground text-sm text-center py-8">
-              Немає витрат за цей період
-            </p>
-          ) : (
-            <div className="flex items-center gap-4">
-              <div className="w-28 h-28">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsPieChart>
-                    <Pie
-                      data={categoryData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={22}
-                      outerRadius={45}
-                      paddingAngle={3}
-                      dataKey="value"
-                    >
-                      {categoryData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                  </RechartsPieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="flex-1 space-y-2.5">
-                {categoryData.slice(0, 5).map((item, index) => (
-                  <div key={item.name} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-2.5 h-2.5 rounded-full"
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                      />
-                      <span className="text-muted-foreground text-xs">{item.name}</span>
-                    </div>
-                    <span className="font-medium text-xs">{item.value.toLocaleString('uk-UA')}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <p className="text-xs text-muted-foreground mb-4">
+            Детальна аналітика за категоріями доступна в преміум-підписці.
+          </p>
+          <div className="absolute inset-0 bg-background/70 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+            <p className="text-sm font-medium">Преміум-аналітика</p>
+            <button
+              type="button"
+              className="px-4 h-9 rounded-full bg-primary text-primary-foreground text-xs font-semibold shadow-md"
+            >
+              Преміум $3/міс
+            </button>
+          </div>
         </div>
 
         {/* AI Analysis Block */}
