@@ -93,15 +93,27 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
         console.log('Synced transactions count:', rawTransactions.length);
 
-        // Replace ALL transactions with what we got from n8n - no database storage
-        const appTransactions: Transaction[] = rawTransactions.map((t: any) => ({
-          id: t.id || crypto.randomUUID(),
-          type: t.type as 'income' | 'expense',
-          amount: Number(t.amount),
-          description: t.description || t.category || '',
-          date: t.transaction_date || t.date || new Date().toISOString(),
-          category: t.category || undefined,
-        }));
+        const appTransactions: Transaction[] = rawTransactions.map((t: any) => {
+          const description = t.description || t.category || '';
+          const category = t.category || undefined;
+          const lower = `${description} ${category || ''}`.toLowerCase();
+          const isRegular =
+            lower.includes('оренда') ||
+            lower.includes('комунал') ||
+            lower.includes('підписк') ||
+            lower.includes('підписка') ||
+            lower.includes('subscription');
+
+          return {
+            id: t.id || crypto.randomUUID(),
+            type: t.type as 'income' | 'expense',
+            amount: Number(t.amount),
+            description,
+            date: t.transaction_date || t.date || new Date().toISOString(),
+            category,
+            isRegular,
+          };
+        });
         setTransactions(appTransactions);
 
         // Optional settings coming from webhook: categories, regular payments, family budget
