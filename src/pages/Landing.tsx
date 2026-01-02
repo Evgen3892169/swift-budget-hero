@@ -282,7 +282,7 @@ const LandingPage = () => {
 
           <div className="grid gap-4 lg:grid-cols-3 items-stretch">
             {/* History preview like in the screenshot */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 h-full hover-scale animate-fade-in">
               <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <div className="flex flex-col">
                   <span className="font-semibold text-sm sm:text-base">
@@ -334,7 +334,7 @@ const LandingPage = () => {
             </article>
 
             {/* Bars chart - looks like your example */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 h-full hover-scale animate-fade-in">
               <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
@@ -371,7 +371,7 @@ const LandingPage = () => {
             </article>
 
             {/* Line chart - like separate block on screenshot */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-5 lg:col-span-1 hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-5 lg:col-span-1 h-full hover-scale animate-fade-in">
               <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
@@ -406,7 +406,7 @@ const LandingPage = () => {
             </article>
 
             {/* Regular incomes / expenses */}
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-1 hover-scale">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-1 h-full hover-scale animate-fade-in">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span className="font-medium">
                   {lang === "ua" ? "Регулярні доходи" : "Recurring income"}
@@ -451,7 +451,7 @@ const LandingPage = () => {
               </div>
             </article>
 
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-1 hover-scale">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-1 h-full hover-scale animate-fade-in">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span className="font-medium">
                   {lang === "ua" ? "Регулярні витрати" : "Recurring expenses"}
@@ -504,7 +504,7 @@ const LandingPage = () => {
             </article>
 
             {/* Extra bar chart preview from screenshot */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 h-full hover-scale animate-fade-in">
               <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
@@ -526,7 +526,7 @@ const LandingPage = () => {
             </article>
 
             {/* Categories & premium preview from screenshot */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-3 lg:col-span-1 hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-3 lg:col-span-1 h-full hover-scale animate-fade-in">
               <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <span className="font-medium">
                   {lang === "ua" ? "Категорії та преміум" : "Categories & premium"}
@@ -541,6 +541,7 @@ const LandingPage = () => {
                 />
               </div>
             </article>
+          </div>
         </section>
 
         {/* Who is this for & pains */}
