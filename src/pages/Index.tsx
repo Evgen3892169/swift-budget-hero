@@ -37,41 +37,10 @@ const Index = () => {
   const isPageLoading = isUserLoading;
   const isDataLoading = isLoading || isSyncing && !isInitialized;
 
-  // Діапазони тижнів всередині обраного місяця: 1–7, 8–14, 15–21, 22–28, 29–кінець місяця
-  const weekRanges = useMemo(() => {
-    const monthIndex = currentDate.getMonth();
-    const daysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
-    const ranges: Array<[number, number]> = [[1, 7], [8, 14], [15, 21], [22, 28]];
-    if (daysInMonth > 28) {
-      ranges.push([29, daysInMonth]);
-    }
-    return ranges;
-  }, [currentDate, currentYear]);
-  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
-
-  // Автовибір тижня з останніми операціями, щоб одразу бачити стовпчики
-  useEffect(() => {
-    if (weekRanges.length === 0 || monthTransactions.length === 0) return;
-
-    const latest = monthTransactions.reduce((latestTx, tx) => {
-      return new Date(tx.date) > new Date(latestTx.date) ? tx : latestTx;
-    }, monthTransactions[0]);
-
-    const latestDay = new Date(latest.date).getDate();
-    const index = weekRanges.findIndex(([start, end]) => latestDay >= start && latestDay <= end);
-    if (index !== -1) {
-      setSelectedWeekIndex(index);
-    }
-  }, [monthTransactions, weekRanges]);
-
   const weeklyData = useMemo(() => {
-    const monthIndex = currentDate.getMonth();
-    if (weekRanges.length === 0) return [];
-
-    const safeIndex = Math.min(selectedWeekIndex, weekRanges.length - 1);
-    const [startDay, endDay] = weekRanges[safeIndex];
-
     const dayNames = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const today = new Date();
+
     const days: {
       label: string;
       dayNumber: number;
@@ -79,27 +48,30 @@ const Index = () => {
       expense: number;
     }[] = [];
 
-    for (let d = startDay; d <= endDay; d++) {
-      const date = new Date(currentYear, monthIndex, d);
-      const income = monthTransactions
+    // Останні 7 днів: від старішого до сьогодні
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+
+      const income = transactions
         .filter(t => {
           const td = new Date(t.date);
           return (
-            td.getFullYear() === currentYear &&
-            td.getMonth() === monthIndex &&
-            td.getDate() === d &&
+            td.getFullYear() === date.getFullYear() &&
+            td.getMonth() === date.getMonth() &&
+            td.getDate() === date.getDate() &&
             t.type === 'income'
           );
         })
         .reduce((sum, t) => sum + t.amount, 0);
 
-      const expense = monthTransactions
+      const expense = transactions
         .filter(t => {
           const td = new Date(t.date);
           return (
-            td.getFullYear() === currentYear &&
-            td.getMonth() === monthIndex &&
-            td.getDate() === d &&
+            td.getFullYear() === date.getFullYear() &&
+            td.getMonth() === date.getMonth() &&
+            td.getDate() === date.getDate() &&
             t.type === 'expense'
           );
         })
@@ -107,7 +79,7 @@ const Index = () => {
 
       days.push({
         label: dayNames[date.getDay()],
-        dayNumber: d,
+        dayNumber: date.getDate(),
         income,
         expense,
       });
@@ -120,7 +92,7 @@ const Index = () => {
       incomeHeight: (v.income / maxValue) * 100,
       expenseHeight: (v.expense / maxValue) * 100,
     }));
-  }, [monthTransactions, currentDate, currentYear, weekRanges, selectedWeekIndex]);
+  }, [transactions]);
   if (isPageLoading || isDataLoading && !isInitialized) {
     return <div className="min-h-screen flex items-center justify-center loading-screen">
         <div className="text-center space-y-4">
@@ -185,13 +157,11 @@ const Index = () => {
                 </div>
               </div>
               <div className="inline-flex items-center gap-1 bg-secondary/40 rounded-full p-0.5">
-                {weekRanges.map((range, index) => (
-                  <button
-                    key={`${range[0]}-${range[1]}`}
-                    type="button"
-                    onClick={() => setSelectedWeekIndex(index)}
+                {weeklyData.map((d, index) => (
+                  <span
+                    key={`${d.label}-${d.dayNumber}-${index}`}
                     className={`w-5 h-5 rounded-full border transition-colors ${
-                      selectedWeekIndex === index
+                      d.income > 0 || d.expense > 0
                         ? 'bg-primary border-primary'
                         : 'bg-background/60 border-border/60'
                     }`}
