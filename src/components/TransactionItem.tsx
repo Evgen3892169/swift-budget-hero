@@ -18,9 +18,15 @@ export const TransactionItem = ({
 }: TransactionItemProps) => {
   const isIncome = transaction.type === 'income';
   const date = new Date(transaction.date);
+  const isRegular = transaction.isRegular;
   
   return (
-    <div className="flex items-center justify-between py-3 border-b border-border last:border-0">
+    <div
+      className={cn(
+        "flex items-center justify-between py-3 border-b border-border last:border-0",
+        isRegular && "bg-primary/5 border-primary/40 animate-fade-in"
+      )}
+    >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           {showDate && (
@@ -39,8 +45,13 @@ export const TransactionItem = ({
             })}
           </p>
         </div>
-        <p className="text-sm font-medium truncate">
+        <p className="text-sm font-medium truncate flex items-center gap-1">
           {transaction.description || (isIncome ? 'Дохід' : 'Витрата')}
+          {isRegular && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+              Регулярний
+            </span>
+          )}
         </p>
       </div>
       
