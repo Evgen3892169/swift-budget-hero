@@ -93,9 +93,20 @@ const Index = () => {
       if (d < startDate || d > endDate) return;
       const key = d.toDateString();
       if (!weekMap[key]) return;
-      if (t.type === 'income') weekMap[key].income += t.amount;else weekMap[key].expense += t.amount;
+      if (t.type === 'income') weekMap[key].income += t.amount;
+      else weekMap[key].expense += t.amount;
     });
+
     const values = Object.values(weekMap);
+    console.log('Weekly block debug:', {
+      startDay,
+      endDay,
+      ranges,
+      selectedWeekIndex: safeIndex,
+      monthTransactionsCount: monthTransactions.length,
+      values,
+    });
+
     const maxValue = Math.max(1, ...values.map(v => Math.max(v.income, v.expense)));
     const dayNames = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
     return values.map(v => ({
@@ -103,8 +114,8 @@ const Index = () => {
       dayNumber: v.date.getDate(),
       income: v.income,
       expense: v.expense,
-      incomeHeight: v.income / maxValue * 100,
-      expenseHeight: v.expense / maxValue * 100
+      incomeHeight: (v.income / maxValue) * 100,
+      expenseHeight: (v.expense / maxValue) * 100,
     }));
   }, [monthTransactions, currentDate, currentYear, weekRanges, selectedWeekIndex]);
   if (isPageLoading || isDataLoading && !isInitialized) {
