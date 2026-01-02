@@ -425,6 +425,27 @@ const LandingPage = () => {
                   </div>
                   <span className="font-semibold text-income">+34 989 {lang === "ua" ? "грн" : "UAH"}</span>
                 </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span>{lang === "ua" ? "фриланс‑проєкти" : "freelance projects"}</span>
+                    <span className="text-muted-foreground">щопʼятниці</span>
+                  </div>
+                  <span className="font-semibold text-income">+12 000 {lang === "ua" ? "грн" : "UAH"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span>{lang === "ua" ? "основна зарплата" : "main salary"}</span>
+                    <span className="text-muted-foreground">10 {lang === "ua" ? "число місяця" : "day of month"}</span>
+                  </div>
+                  <span className="font-semibold text-income">+45 000 {lang === "ua" ? "грн" : "UAH"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span>{lang === "ua" ? "рента квартири" : "apartment rent"}</span>
+                    <span className="text-muted-foreground">1 {lang === "ua" ? "число місяця" : "day of month"}</span>
+                  </div>
+                  <span className="font-semibold text-income">+18 500 {lang === "ua" ? "грн" : "UAH"}</span>
+                </div>
               </div>
             </article>
 
