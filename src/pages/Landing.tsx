@@ -388,7 +388,7 @@ const LandingPage = () => {
                   </button>
                 </div>
               </div>
-              <div className="relative h-20 sm:h-24 rounded-xl overflow-hidden animate-fade-in">
+              <div className="relative h-32 sm:h-36 rounded-xl overflow-hidden animate-fade-in">
                 <img
                   src={landingLineChart}
                   alt={lang === "ua" ? "Скріншот графіка динаміки лініями" : "Screenshot of dynamics line chart"}
