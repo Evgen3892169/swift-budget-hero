@@ -88,15 +88,6 @@ const History = () => {
     );
   }
 
-  if (!telegramUserId) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="text-center space-y-4">
-          <p className="text-muted-foreground">Будь ласка, відкрийте додаток через Telegram</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background pb-28">

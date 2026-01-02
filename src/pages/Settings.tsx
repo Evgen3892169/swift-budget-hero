@@ -204,7 +204,7 @@ const Settings = () => {
                   <p className="text-sm font-medium">
                     {telegramUserName || 'Telegram користувач'}
                   </p>
-                  <p className="text-xs text-muted-foreground">Telegram User ID: {telegramUserId}</p>
+                  <p className="text-xs text-muted-foreground">Зайти в Telegram</p>
                 </div>
               </div>
             </div>
