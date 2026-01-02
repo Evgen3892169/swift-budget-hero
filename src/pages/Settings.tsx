@@ -343,7 +343,10 @@ const Settings = () => {
 
 
         {/* Categories Management */}
-        <div className="bg-card rounded-lg p-4 shadow-sm relative overflow-hidden">
+        <div
+          className="bg-card rounded-lg p-4 shadow-sm relative overflow-hidden border border-border/60 cursor-pointer hover:border-primary/40 transition-colors"
+          onClick={() => setIsPremiumDialogOpen(true)}
+        >
           <div className="flex items-center gap-2 mb-2">
             <Label className="text-base font-semibold flex items-center gap-2">
               Категорії
@@ -458,7 +461,10 @@ const Settings = () => {
         </div>
 
         {/* Premium Feature: Receipt Scanner */}
-        <div className="bg-card rounded-lg p-4 shadow-sm border border-border/60 flex items-center justify-between gap-3">
+        <div
+          className="bg-card rounded-lg p-4 shadow-sm border border-border/60 flex items-center justify-between gap-3 cursor-pointer hover:border-primary/40 transition-colors"
+          onClick={() => setIsPremiumDialogOpen(true)}
+        >
           <div className="flex items-center gap-3">
             <div className="bg-primary/10 p-1.5 rounded-full border border-primary/20">
               <ReceiptText className="h-4 w-4 text-primary" />
@@ -480,7 +486,10 @@ const Settings = () => {
         </div>
 
         {/* Premium Feature: Voice Records */}
-        <div className="bg-card rounded-lg p-4 shadow-sm border border-border/60 flex items-center justify-between gap-3">
+        <div
+          className="bg-card rounded-lg p-4 shadow-sm border border-border/60 flex items-center justify-between gap-3 cursor-pointer hover:border-primary/40 transition-colors"
+          onClick={() => setIsPremiumDialogOpen(true)}
+        >
           <div className="flex items-center gap-3">
             <div className="bg-primary/10 p-1.5 rounded-full border border-primary/20">
               <Mic className="h-4 w-4 text-primary" />
