@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2 } from "lucide-react";
 import dashboardMain from "@/assets/landing-dashboard-1.png";
@@ -112,6 +112,68 @@ const en = {
 const LandingPage = () => {
   const [lang, setLang] = useState<"ua" | "en">("ua");
   const t = lang === "ua" ? ua : en;
+
+  useEffect(() => {
+    const title = t.heroTitle;
+    const description = t.heroSubtitle;
+    const url = window.location.href;
+    const origin = window.location.origin;
+    const ogImage = `${origin}/favicon.ico`;
+
+    document.title = title;
+
+    const upsertMeta = (key: "name" | "property", keyValue: string, content: string) => {
+      let meta = document.querySelector<HTMLMetaElement>(`meta[${key}="${keyValue}"]`);
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.setAttribute(key, keyValue);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute("content", content);
+    };
+
+    upsertMeta("name", "description", description);
+    upsertMeta("property", "og:title", title);
+    upsertMeta("property", "og:description", description);
+    upsertMeta("property", "og:type", "website");
+    upsertMeta("property", "og:url", url);
+    upsertMeta("property", "og:image", ogImage);
+
+    upsertMeta("name", "twitter:card", "summary_large_image");
+    upsertMeta("name", "twitter:title", title);
+    upsertMeta("name", "twitter:description", description);
+    upsertMeta("name", "twitter:image", ogImage);
+
+    let canonical = document.querySelector<HTMLLinkElement>("link[rel='canonical']");
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", url);
+
+    const faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: t.faq.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.a,
+        },
+      })),
+    };
+
+    let faqScript = document.getElementById("landing-faq-schema") as HTMLScriptElement | null;
+    if (!faqScript) {
+      faqScript = document.createElement("script");
+      faqScript.id = "landing-faq-schema";
+      faqScript.type = "application/ld+json";
+      document.head.appendChild(faqScript);
+    }
+    faqScript.text = JSON.stringify(faqSchema);
+  }, [t]);
 
   const handleOpenTelegram = () => {
     window.open(telegramLink, "_blank");
