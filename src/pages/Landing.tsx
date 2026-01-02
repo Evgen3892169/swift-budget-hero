@@ -451,6 +451,27 @@ const LandingPage = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
+                    <span>{lang === "ua" ? "стрімінгові підписки" : "streaming subscriptions"}</span>
+                    <span className="text-muted-foreground">5 {lang === "ua" ? "число місяця" : "day of month"}</span>
+                  </div>
+                  <span className="font-semibold text-destructive">-799 {lang === "ua" ? "грн" : "UAH"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span>{lang === "ua" ? "таксі та доставка" : "taxi and delivery"}</span>
+                    <span className="text-muted-foreground">щотижня</span>
+                  </div>
+                  <span className="font-semibold text-destructive">-2 400 {lang === "ua" ? "грн" : "UAH"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span>{lang === "ua" ? "кава та кафе" : "coffee and cafes"}</span>
+                    <span className="text-muted-foreground">кожні 2–3 дні</span>
+                  </div>
+                  <span className="font-semibold text-destructive">-1 200 {lang === "ua" ? "грн" : "UAH"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
                     <span>{lang === "ua" ? "бургер" : "burger"}</span>
                     <span className="text-muted-foreground">24 {lang === "ua" ? "число місяця" : "day of month"}</span>
                   </div>
