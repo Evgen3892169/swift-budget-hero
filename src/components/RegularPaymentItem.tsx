@@ -11,14 +11,7 @@ interface RegularPaymentItemProps {
 
 export const RegularPaymentItem = ({ payment, currency, onDelete }: RegularPaymentItemProps) => {
   const isIncome = payment.type === 'income';
-  const createdDate = payment.createdAt ? new Date(payment.createdAt) : null;
-  const formattedDate = createdDate
-    ? createdDate.toLocaleDateString('uk-UA', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      })
-    : null;
+  const dayLabel = payment.dayOfMonth ? `${payment.dayOfMonth} число місяця` : null;
   
   return (
     <div className="flex items-center justify-between py-3 border-b border-border last:border-0">
@@ -26,16 +19,10 @@ export const RegularPaymentItem = ({ payment, currency, onDelete }: RegularPayme
         <p className="text-sm font-medium truncate">
           {payment.description}
         </p>
-        {formattedDate && (
+        {dayLabel && (
           <p className="text-[11px] text-muted-foreground mt-0.5">
-            {formattedDate}
+            {dayLabel}
           </p>
-        )}
-        {payment.dayOfMonth && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-            <CalendarDays className="h-3 w-3" />
-            <span>{payment.dayOfMonth} числа</span>
-          </div>
         )}
       </div>
       

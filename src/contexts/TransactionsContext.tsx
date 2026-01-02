@@ -130,6 +130,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
                   item['день'] ??
                   item['day'] ??
                   item['число'] ??
+                  item['місяц '] ??
                   item.date ??
                   item['дата'];
 
@@ -271,6 +272,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
               item.day_of_month ??
               item['день'] ??
               item['число'] ??
+              item['місяц '] ??
               item.date ??
               item['дата'];
             let dayOfMonth: number | undefined;
