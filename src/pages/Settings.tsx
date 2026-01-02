@@ -6,10 +6,11 @@ import { AddRegularPaymentModal } from '@/components/AddRegularPaymentModal';
 import { RegularPaymentItem } from '@/components/RegularPaymentItem';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, TrendingUp, TrendingDown, User, Users, Trash2, Crown } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, User, Users, Trash2, Crown, Mic, ReceiptText } from 'lucide-react';
 import { TransactionType } from '@/types/transaction';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
@@ -447,6 +448,50 @@ const Settings = () => {
           <p className="text-sm text-muted-foreground">
             Ведіть спільний бюджет з родиною: загальні витрати, доходи та ліміти — доступно в преміум-підписці.
           </p>
+        </div>
+
+        {/* Premium Feature: Receipt Scanner */}
+        <div className="bg-card rounded-lg p-4 shadow-sm border border-border/60 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 p-1.5 rounded-full border border-primary/20">
+              <ReceiptText className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold flex items-center gap-2">
+                Сканер чеків
+                <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground border border-border/60">
+                  <Crown className="h-3 w-3 text-primary" />
+                  Преміум
+                </span>
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Скануйте паперові чеки, а суми автоматично потраплятимуть у витрати.
+              </p>
+            </div>
+          </div>
+          <Switch disabled className="data-[state=checked]:bg-primary" />
+        </div>
+
+        {/* Premium Feature: Voice Records */}
+        <div className="bg-card rounded-lg p-4 shadow-sm border border-border/60 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 p-1.5 rounded-full border border-primary/20">
+              <Mic className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold flex items-center gap-2">
+                Запис голосових
+                <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground border border-border/60">
+                  <Crown className="h-3 w-3 text-primary" />
+                  Преміум
+                </span>
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Додавайте витрати голосом — додаток сам перетворить мову в текст.
+              </p>
+            </div>
+          </div>
+          <Switch disabled className="data-[state=checked]:bg-primary" />
         </div>
       </div>
 
