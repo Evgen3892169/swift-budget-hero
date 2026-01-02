@@ -226,9 +226,47 @@ const Analytics = () => {
             </div>
           </div>
 
-          {dynamicsScope === 'month' ? <MiniChart transactions={transactions} currentMonth={currentMonth} currentYear={currentYear} currency={settings.currency} /> : yearlyDynamicsData.every(d => d.income === 0 && d.expense === 0) ? <p className="text-muted-foreground text-sm text-center py-8">
+          {dynamicsScope === 'month' ? (
+            dailyData.length === 0 ? (
+              <p className="text-muted-foreground text-sm text-center py-8">
+                Немає даних за цей місяць
+              </p>
+            ) : (
+              <div className="h-40">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={dailyData} barCategoryGap={4}>
+                    <XAxis
+                      dataKey="day"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: 'hsl(210, 15%, 55%)', fontSize: 10 }}
+                    />
+                    <YAxis hide />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(220, 35%, 11%)',
+                        border: '1px solid hsl(220, 30%, 18%)',
+                        borderRadius: '12px',
+                        color: 'hsl(180, 10%, 94%)',
+                      }}
+                      formatter={(value: number, name: string) => [
+                        `${value.toLocaleString('uk-UA')} ${settings.currency}`,
+                        name === 'income' ? 'Доходи за день' : 'Витрати за день',
+                      ]}
+                      labelFormatter={(label) => `День ${label}`}
+                    />
+                    <Bar dataKey="income" stackId="day" fill="hsl(160, 65%, 50%)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="expense" stackId="day" fill="hsl(0, 60%, 55%)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )
+          ) : yearlyDynamicsData.every(d => d.income === 0 && d.expense === 0) ? (
+            <p className="text-muted-foreground text-sm text-center py-8">
               Немає даних за цей рік
-            </p> : <div className="h-40">
+            </p>
+          ) : (
+            <div className="h-40">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={yearlyDynamicsData}>
                   <defs>
@@ -241,22 +279,47 @@ const Analytics = () => {
                       <stop offset="100%" stopColor="hsl(0, 60%, 55%)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{
-                fill: 'hsl(210, 15%, 55%)',
-                fontSize: 10
-              }} />
+                  <XAxis
+                    dataKey="label"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{
+                      fill: 'hsl(210, 15%, 55%)',
+                      fontSize: 10,
+                    }}
+                  />
                   <YAxis hide />
-                  <Tooltip contentStyle={{
-                backgroundColor: 'hsl(220, 35%, 11%)',
-                border: '1px solid hsl(220, 30%, 18%)',
-                borderRadius: '12px',
-                color: 'hsl(180, 10%, 94%)'
-              }} formatter={(value: number, name: string) => [`${value.toLocaleString('uk-UA')} ${settings.currency}`, name === 'income' ? 'Кумулятивний дохід' : 'Кумулятивні витрати']} labelFormatter={label => `Місяць ${label}`} />
-                  <Area type="monotone" dataKey="income" stroke="hsl(160, 65%, 50%)" strokeWidth={2} fill="url(#yearIncome)" />
-                  <Area type="monotone" dataKey="expense" stroke="hsl(0, 60%, 55%)" strokeWidth={2} fill="url(#yearExpense)" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(220, 35%, 11%)',
+                      border: '1px solid hsl(220, 30%, 18%)',
+                      borderRadius: '12px',
+                      color: 'hsl(180, 10%, 94%)',
+                    }}
+                    formatter={(value: number, name: string) => [
+                      `${value.toLocaleString('uk-UA')} ${settings.currency}`,
+                      name === 'income' ? 'Кумулятивний дохід' : 'Кумулятивні витрати',
+                    ]}
+                    labelFormatter={(label) => `Місяць ${label}`}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="income"
+                    stroke="hsl(160, 65%, 50%)"
+                    strokeWidth={2}
+                    fill="url(#yearIncome)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="expense"
+                    stroke="hsl(0, 60%, 55%)"
+                    strokeWidth={2}
+                    fill="url(#yearExpense)"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
-            </div>}
+            </div>
+          )}
         </div>
 
         {/* Category Breakdown - Premium Locked */}
