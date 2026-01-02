@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import landingLineChart from "@/assets/landing-line-chart-3.png";
+import landingBarsPreview from "@/assets/landing-bars-preview.png";
+import landingCategoriesPreview from "@/assets/landing-categories-preview.png";
 import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2, Users, ReceiptText, Mic } from "lucide-react";
 const telegramLink = "https://t.me"; // TODO: replace with real bot link
 
@@ -500,7 +502,45 @@ const LandingPage = () => {
                 </div>
               </div>
             </article>
-          </div>
+
+            {/* Extra bar chart preview from screenshot */}
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale animate-fade-in">
+              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
+                    <BarChart3 className="size-4 text-income" />
+                  </div>
+                  <span className="font-medium">
+                    {lang === "ua" ? "Динаміка по днях" : "Daily dynamics"}
+                  </span>
+                </div>
+              </div>
+              <div className="relative h-32 rounded-xl overflow-hidden animate-fade-in">
+                <img
+                  src={landingBarsPreview}
+                  alt={lang === "ua" ? "Скріншот динаміки по днях" : "Screenshot of daily dynamics chart"}
+                  className="w-full h-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            </article>
+
+            {/* Categories & premium preview from screenshot */}
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-3 lg:col-span-1 hover-scale animate-fade-in">
+              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
+                <span className="font-medium">
+                  {lang === "ua" ? "Категорії та преміум" : "Categories & premium"}
+                </span>
+              </div>
+              <div className="relative h-32 rounded-xl overflow-hidden animate-fade-in">
+                <img
+                  src={landingCategoriesPreview}
+                  alt={lang === "ua" ? "Скріншот екрану категорій і сімейного бюджету" : "Screenshot of categories and family budget screen"}
+                  className="w-full h-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            </article>
         </section>
 
         {/* Who is this for & pains */}
