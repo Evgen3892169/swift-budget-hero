@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2 } from "lucide-react";
-import dashboardMain from "@/assets/landing-dashboard-1.png";
-import dashboardAnalytics from "@/assets/landing-dashboard-2.png";
-import recentOps from "@/assets/landing-recent-ops.png";
-import regularSettings from "@/assets/landing-settings-regular.png";
-import premiumFeatures from "@/assets/landing-premium.png";
 
 const telegramLink = "https://t.me"; // TODO: replace with real bot link
 
@@ -250,21 +245,77 @@ const LandingPage = () => {
             </div>
           </div>
           <div className="relative max-w-sm mx-auto w-full">
-            <div className="glass-card rounded-[1.75rem] overflow-hidden glow-primary border border-balance/50 bg-balance-soft max-h-[420px]">
-              <img
-                src={dashboardMain}
-                alt="Головний екран фінансового застосунку — баланс та доходи/витрати"
-                className="w-full h-full object-contain"
-                loading="lazy"
-              />
-            </div>
-            <div className="absolute -bottom-6 -right-4 w-32 glass-card rounded-2xl overflow-hidden border border-border/60 hidden sm:block">
-              <img
-                src={recentOps}
-                alt="Список останніх операцій у застосунку Мої фінанси"
-                className="w-full h-full object-contain"
-                loading="lazy"
-              />
+            <div className="glass-card rounded-[1.75rem] overflow-hidden glow-primary border border-balance/50 bg-balance-soft p-4 flex flex-col gap-4 max-h-[420px]">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>{lang === "ua" ? "Мій місяць" : "My month"}</span>
+                <span className="px-2 py-0.5 rounded-full bg-secondary/70 text-[11px]">
+                  {lang === "ua" ? "Ліміт: 50 000 ₴" : "Limit: 50 000 ₴"}
+                </span>
+              </div>
+              <div className="space-y-2">
+                <p className="text-[11px] text-muted-foreground">
+                  {lang === "ua" ? "Залишок на цей місяць" : "Balance for this month"}
+                </p>
+                <p className="text-3xl font-semibold tracking-tight">31 600 ₴</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {lang === "ua" ? "Витрати за перші 10 днів: 18 400 ₴" : "Spent in first 10 days: 18 400 ₴"}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 text-[11px]">
+                <div className="rounded-xl bg-card border border-border/60 p-2 flex flex-col gap-1">
+                  <span className="text-muted-foreground">
+                    {lang === "ua" ? "Доходи" : "Income"}
+                  </span>
+                  <span className="font-semibold text-income">+52 300 ₴</span>
+                </div>
+                <div className="rounded-xl bg-card border border-border/60 p-2 flex flex-col gap-1">
+                  <span className="text-muted-foreground">
+                    {lang === "ua" ? "Витрати" : "Expenses"}
+                  </span>
+                  <span className="font-semibold text-destructive">-18 400 ₴</span>
+                </div>
+                <div className="rounded-xl bg-card border border-border/60 p-2 flex flex-col gap-1">
+                  <span className="text-muted-foreground">
+                    {lang === "ua" ? "Баланс" : "Balance"}
+                  </span>
+                  <span className="font-semibold">31 600 ₴</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>{lang === "ua" ? "Сьогодні" : "Today"}</span>
+                  <span>{lang === "ua" ? "1 560 ₴ витрат" : "1 560 ₴ spent"}</span>
+                </div>
+                <div className="flex items-end gap-1 h-20">
+                  {[40, 65, 30, 80, 55, 20, 60].map((height, index) => (
+                    <div
+                      key={index}
+                      className="flex-1 rounded-full bg-secondary/70 overflow-hidden flex items-end"
+                    >
+                      <div
+                        className="w-full rounded-full bg-primary"
+                        style={{ height: `${height}%` }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-auto rounded-2xl bg-card border border-border/60 p-3 flex items-start gap-2 text-[11px]">
+                <Sparkles className="size-4 text-primary mt-0.5" />
+                <div className="space-y-1">
+                  <p className="font-medium text-xs">
+                    {lang === "ua" ? "AI‑підказка" : "AI tip"}
+                  </p>
+                  <p className="text-muted-foreground">
+                    {lang === "ua"
+                      ? "Якщо скоротиш доставку їжі вдвічі, за місяць заощадиш ще 2 900 ₴."
+                      : "If you cut food delivery in half, you’ll save extra 2 900 ₴ this month."}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -290,41 +341,99 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Screenshots */}
+        {/* Inside preview (no real screenshots) */}
         <section className="space-y-6">
           <div className="flex flex-col gap-2 max-w-xl">
-            <h2 className="text-2xl sm:text-3xl font-semibold">{t.screenshotsTitle}</h2>
-            <p className="text-sm text-muted-foreground">{t.screenshotsSubtitle}</p>
+            <h2 className="text-2xl sm:text-3xl font-semibold">
+              {lang === "ua" ? "Як усе виглядає всередині" : "What it looks like inside"}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {lang === "ua"
+                ? "Коротко: один погляд — і ти розумієш, скільки вже витратив, що болить і де можна зекономити без стресу."
+                : "In one glance you see how much you’ve spent, what hurts and where you can save without feeling restricted."}
+            </p>
           </div>
-          <div className="grid gap-4 md:grid-cols-3 items-start">
-            <div className="space-y-4 md:col-span-2">
-              <div className="glass-card rounded-[1.5rem] overflow-hidden max-h-[360px]">
-                <img
-                  src={dashboardAnalytics}
-                  alt="Аналітика доходів та витрат у вигляді графіків в застосунку Мої фінанси"
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                />
+          <div className="grid gap-4 md:grid-cols-3 items-stretch">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3">
+              <h3 className="font-semibold text-sm sm:text-base">
+                {lang === "ua" ? "Головний екран" : "Main dashboard"}
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                {lang === "ua"
+                  ? "Баланс місяця, ліміт і скільки ти вже витратив. Без цифр, які нічого не пояснюють — тільки те, що реально важливо."
+                  : "Monthly balance, limit and how much you’ve already spent. No meaningless numbers — only what truly matters."}
+              </p>
+              <div className="mt-1 rounded-xl bg-card border border-border/60 p-3 text-[11px] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{lang === "ua" ? "Баланс" : "Balance"}</span>
+                  <span className="font-semibold">31 600 ₴</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{lang === "ua" ? "Витрати цього тижня" : "This week’s spend"}</span>
+                  <span className="font-semibold text-destructive">-6 420 ₴</span>
+                </div>
               </div>
-            </div>
-            <div className="space-y-4 md:col-span-1">
-              <div className="glass-card rounded-2xl overflow-hidden max-h-[220px]">
-                <img
-                  src={regularSettings}
-                  alt="Налаштування регулярних доходів і витрат у застосунку Мої фінанси"
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                />
+            </article>
+
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3">
+              <h3 className="font-semibold text-sm sm:text-base">
+                {lang === "ua" ? "Список витрат" : "Expense list"}
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                {lang === "ua"
+                  ? "Кожна покупка з категорією: продукти, таксі, кафе, підписки. Легко знайти, що з’їдає більшу частину бюджету."
+                  : "Every purchase with a category: groceries, taxi, coffee, subscriptions. Easy to spot what eats most of your budget."}
+              </p>
+              <div className="mt-1 space-y-2 text-[11px]">
+                <div className="flex items-center justify-between rounded-xl bg-card border border-border/60 px-3 py-2">
+                  <div className="flex flex-col">
+                    <span>Продукти • Сільпо</span>
+                    <span className="text-muted-foreground">{lang === "ua" ? "сьогодні" : "today"}</span>
+                  </div>
+                  <span className="font-semibold text-destructive">-640 ₴</span>
+                </div>
+                <div className="flex items-center justify-between rounded-xl bg-card border border-border/60 px-3 py-2">
+                  <div className="flex flex-col">
+                    <span>Транспорт • Uber</span>
+                    <span className="text-muted-foreground">{lang === "ua" ? "вчора" : "yesterday"}</span>
+                  </div>
+                  <span className="font-semibold text-destructive">-210 ₴</span>
+                </div>
+                <div className="flex items-center justify-between rounded-xl bg-card border border-border/60 px-3 py-2">
+                  <div className="flex flex-col">
+                    <span>Підписка • Netflix</span>
+                    <span className="text-muted-foreground">{lang === "ua" ? "щомісяця" : "monthly"}</span>
+                  </div>
+                  <span className="font-semibold text-destructive">-279 ₴</span>
+                </div>
               </div>
-              <div className="glass-card rounded-2xl overflow-hidden max-h-[220px]">
-                <img
-                  src={premiumFeatures}
-                  alt="Преміум‑функції: сімейний бюджет, сканер чеків, запис голосових витрат"
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                />
+            </article>
+
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3">
+              <h3 className="font-semibold text-sm sm:text-base">
+                {lang === "ua" ? "AI‑пояснення людською мовою" : "AI, but human"}
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                {lang === "ua"
+                  ? "Замість сухої статистики — короткі висновки: де ти стабільно переплачуєш, на скільки можна зменшити витрати і що зробити прямо сьогодні."
+                  : "Instead of dry stats you get short insights: where you overspend, how much you could cut and what to do today."}
+              </p>
+              <div className="mt-1 rounded-2xl bg-card border border-border/60 p-3 text-[11px] space-y-2">
+                <p className="text-muted-foreground">
+                  {lang === "ua"
+                    ? "Ти витрачаєш 12 800 ₴ на їжу поза домом. Якщо перейти на доставку через день — це мінус 3 200 ₴ витрат щомісяця."
+                    : "You spend 12 800 ₴ eating out. Switching to every‑other‑day delivery saves around 3 200 ₴ per month."}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">
+                    {lang === "ua" ? "Поставити ліміт на кафе" : "Set a cafe limit"}
+                  </span>
+                  <span className="text-primary text-[11px] font-medium">
+                    {lang === "ua" ? "+ Додати ціль" : "+ Add goal"}
+                  </span>
+                </div>
               </div>
-            </div>
+            </article>
           </div>
         </section>
 
