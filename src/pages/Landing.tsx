@@ -319,7 +319,62 @@ const LandingPage = () => {
             </article>
 
             {/* Bars chart - looks like your example */}
-            
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale">
+              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
+                    <BarChart3 className="size-4 text-income" />
+                  </div>
+                  <span className="font-medium">
+                    {lang === "ua" ? "Динаміка по днях" : "Daily dynamics"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px]">
+                  <button className="px-2 py-0.5 rounded-full bg-secondary/80">
+                    {lang === "ua" ? "Тиждень" : "Week"}
+                  </button>
+                  <button className="px-2 py-0.5 rounded-full bg-secondary/40">
+                    {lang === "ua" ? "Місяць" : "Month"}
+                  </button>
+                </div>
+              </div>
+              <div className="relative h-24 sm:h-28 rounded-xl bg-gradient-to-b from-background/10 to-background/40 overflow-hidden animate-fade-in">
+                <svg viewBox="0 0 120 40" className="absolute inset-0 w-full h-full">
+                  {/* Grid lines */}
+                  <g className="text-muted-foreground/40" stroke="currentColor" strokeWidth="0.3">
+                    <line x1="0" y1="35" x2="120" y2="35" />
+                    <line x1="0" y1="25" x2="120" y2="25" />
+                    <line x1="0" y1="15" x2="120" y2="15" />
+                  </g>
+                  {/* Income bars */}
+                  <g className="text-income" fill="currentColor">
+                    <rect x="5" y="18" width="6" height="17" rx="1.5" />
+                    <rect x="23" y="15" width="6" height="20" rx="1.5" />
+                    <rect x="41" y="10" width="6" height="25" rx="1.5" />
+                    <rect x="59" y="8" width="6" height="27" rx="1.5" />
+                    <rect x="77" y="12" width="6" height="23" rx="1.5" />
+                    <rect x="95" y="20" width="6" height="15" rx="1.5" />
+                  </g>
+                  {/* Expense bars */}
+                  <g className="text-destructive/80" fill="currentColor">
+                    <rect x="12" y="24" width="4" height="11" rx="1" />
+                    <rect x="30" y="22" width="4" height="13" rx="1" />
+                    <rect x="48" y="20" width="4" height="15" rx="1" />
+                    <rect x="66" y="23" width="4" height="12" rx="1" />
+                    <rect x="84" y="26" width="4" height="9" rx="1" />
+                    <rect x="102" y="28" width="4" height="7" rx="1" />
+                  </g>
+                </svg>
+              </div>
+              <div className="flex justify-between text-[10px] text-muted-foreground">
+                <span>Пн</span>
+                <span>Вт</span>
+                <span>Ср</span>
+                <span>Чт</span>
+                <span>Пт</span>
+                <span>Сб</span>
+              </div>
+            </article>
 
             {/* Line chart - like separate block on screenshot */}
             <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale">
