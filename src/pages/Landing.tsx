@@ -345,27 +345,29 @@ const LandingPage = () => {
                   </span>
                 </div>
               </div>
-              <div className="relative h-28 sm:h-32 rounded-xl bg-gradient-to-b from-background/10 to-background/40 overflow-hidden animate-fade-in">
-                <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-90">
-                  {/* Green income bars */}
-                  <rect x="4" y="8" width="6" height="28" className="fill-income" rx="1" />
-                  <rect x="18" y="24" width="6" height="12" className="fill-income" rx="1" />
-                  <rect x="60" y="20" width="6" height="16" className="fill-income" rx="1" />
+              <div className="relative h-28 sm:h-32 rounded-xl bg-gradient-to-b from-background/5 via-background/25 to-background/70 overflow-hidden animate-fade-in">
+                <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-95">
+                  {/* Green income bars (як на скріні) */}
+                  <rect x="6" y="4" width="6" height="32" className="fill-income" rx="2" />
+                  <rect x="18" y="22" width="4" height="14" className="fill-income" rx="2" />
+                  <rect x="46" y="24" width="4" height="12" className="fill-income" rx="2" />
+                  <rect x="78" y="26" width="4" height="10" className="fill-income" rx="2" />
 
                   {/* Red expense bars */}
-                  <rect x="32" y="18" width="6" height="18" className="fill-destructive" rx="1" />
-                  <rect x="46" y="26" width="6" height="10" className="fill-destructive" rx="1" />
-                  <rect x="74" y="24" width="6" height="12" className="fill-destructive" rx="1" />
-                  <rect x="88" y="22" width="6" height="14" className="fill-destructive" rx="1" />
+                  <rect x="26" y="24" width="4" height="12" className="fill-destructive" rx="2" />
+                  <rect x="34" y="16" width="5" height="20" className="fill-destructive" rx="2" />
+                  <rect x="62" y="26" width="4" height="10" className="fill-destructive" rx="2" />
+                  <rect x="90" y="26" width="4" height="10" className="fill-destructive" rx="2" />
 
-                  {/* Bottom axis labels (approximate days) */}
+                  {/* Bottom axis labels (дні) */}
                   <text x="7" y="38" className="fill-muted-foreground" fontSize="4">1</text>
-                  <text x="21" y="38" className="fill-muted-foreground" fontSize="4">2</text>
-                  <text x="35" y="38" className="fill-muted-foreground" fontSize="4">4</text>
-                  <text x="49" y="38" className="fill-muted-foreground" fontSize="4">6</text>
-                  <text x="63" y="38" className="fill-muted-foreground" fontSize="4">10</text>
-                  <text x="77" y="38" className="fill-muted-foreground" fontSize="4">18</text>
-                  <text x="91" y="38" className="fill-muted-foreground" fontSize="4">27</text>
+                  <text x="19" y="38" className="fill-muted-foreground" fontSize="4">2</text>
+                  <text x="27" y="38" className="fill-muted-foreground" fontSize="4">3</text>
+                  <text x="35" y="38" className="fill-muted-foreground" fontSize="4">5</text>
+                  <text x="47" y="38" className="fill-muted-foreground" fontSize="4">6</text>
+                  <text x="63" y="38" className="fill-muted-foreground" fontSize="4">8</text>
+                  <text x="79" y="38" className="fill-muted-foreground" fontSize="4">15</text>
+                  <text x="91" y="38" className="fill-muted-foreground" fontSize="4">22</text>
                 </svg>
               </div>
             </article>
