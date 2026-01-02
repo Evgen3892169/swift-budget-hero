@@ -124,14 +124,26 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
                   item.day_of_month ??
                   item['день'] ??
                   item['day'] ??
-                  item['число'];
+                  item['число'] ??
+                  item.date ??
+                  item['дата'];
 
-                const dayOfMonth =
-                  typeof dayOfMonthRaw === 'number'
-                    ? dayOfMonthRaw
-                    : dayOfMonthRaw
-                    ? Number(dayOfMonthRaw)
-                    : undefined;
+                let dayOfMonth: number | undefined;
+                if (typeof dayOfMonthRaw === 'number') {
+                  dayOfMonth = dayOfMonthRaw;
+                } else if (dayOfMonthRaw) {
+                  // Try to parse from string or date
+                  const asNumber = Number(dayOfMonthRaw);
+                  if (!isNaN(asNumber) && asNumber > 0 && asNumber <= 31) {
+                    dayOfMonth = asNumber;
+                  } else {
+                    const parsed = new Date(dayOfMonthRaw);
+                    const day = parsed.getDate();
+                    if (!isNaN(day)) {
+                      dayOfMonth = day;
+                    }
+                  }
+                }
 
                 const type: 'income' | 'expense' =
                   item.type === 'income' || item.type === 'expense'
@@ -142,7 +154,14 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
                   id: item.id || crypto.randomUUID(),
                   type,
                   amount,
-                  description: item.description || item.name || item['опис'] || '',
+                  description:
+                    item.description ||
+                    item.name ||
+                    item.title ||
+                    item['назва'] ||
+                    item['Назва'] ||
+                    item['опис'] ||
+                    '',
                   dayOfMonth,
                 } as RegularPayment;
               })
@@ -234,13 +253,24 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
               item.dayOfMonth ??
               item.day_of_month ??
               item['день'] ??
-              item['число'];
-            const dayOfMonth =
-              typeof dayRaw === 'number'
-                ? dayRaw
-                : dayRaw
-                ? Number(dayRaw)
-                : undefined;
+              item['число'] ??
+              item.date ??
+              item['дата'];
+            let dayOfMonth: number | undefined;
+            if (typeof dayRaw === 'number') {
+              dayOfMonth = dayRaw;
+            } else if (dayRaw) {
+              const asNumber = Number(dayRaw);
+              if (!isNaN(asNumber) && asNumber > 0 && asNumber <= 31) {
+                dayOfMonth = asNumber;
+              } else {
+                const parsed = new Date(dayRaw);
+                const day = parsed.getDate();
+                if (!isNaN(day)) {
+                  dayOfMonth = day;
+                }
+              }
+            }
 
             const payment: RegularPayment = {
               id:
@@ -251,7 +281,14 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
               type,
               amount: Math.abs(amount),
               description:
-                item.description || item.name || item['опис'] || item['Категорія'] || '',
+                item.description ||
+                item.name ||
+                item.title ||
+                item['назва'] ||
+                item['Назва'] ||
+                item['опис'] ||
+                item['Категорія'] ||
+                '',
               dayOfMonth,
             };
 
