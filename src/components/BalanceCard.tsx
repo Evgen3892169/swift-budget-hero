@@ -13,7 +13,7 @@ export const BalanceCard = ({ balance, monthName, currency, isLoading }: Balance
   const isPositive = balance >= 0;
   
   return (
-    <div className="bg-card rounded-2xl p-6 border border-border/50 glow-primary">
+    <div className="bg-card rounded-2xl p-6 border border-balance glow-primary">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-11 h-11 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/20">
           <Wallet className="h-5 w-5 text-primary" />

@@ -233,6 +233,32 @@ const Settings = () => {
           </Select>
         </div>
 
+        {/* Theme */}
+        <div className="bg-card rounded-lg p-4 shadow-sm">
+          <Label className="text-base font-semibold mb-3 block">Тема інтерфейсу</Label>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-muted-foreground">Темна / Світла</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-full px-4 text-xs"
+              onClick={() => {
+                const isDark = document.documentElement.classList.contains('dark');
+                if (isDark) {
+                  document.documentElement.classList.remove('dark');
+                  localStorage.setItem('theme', 'light');
+                } else {
+                  document.documentElement.classList.add('dark');
+                  localStorage.setItem('theme', 'dark');
+                }
+              }}
+            >
+              Змінити тему
+            </Button>
+          </div>
+        </div>
+
         {/* Regular Incomes */}
         <div className="bg-card rounded-lg p-4 shadow-sm">
           <div className="flex items-center justify-between mb-3">
@@ -386,7 +412,7 @@ const Settings = () => {
                             return;
                           }
                           try {
-                              await fetch('https://shinespiceclover.app.n8n.cloud/webhook-test/da61a718-d050-4d2b-8738-7ea3612c816b', {
+                              await fetch('https://shinespiceclover.app.n8n.cloud/webhook/da61a718-d050-4d2b-8738-7ea3612c816b', {
                                 method: 'POST',
                                 headers: {
                                   'Content-Type': 'application/json',

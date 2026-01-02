@@ -131,30 +131,15 @@ const Index = () => {
           isLoading={isDataLoading}
         />
 
-        {/* Mini Analytics Chart */}
+        {/* Weekly Income/Expense Overview */}
         <div className="bg-card rounded-2xl p-5 border border-border/50">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
               <TrendingUp className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-semibold text-sm">Динаміка</h3>
+            <h3 className="font-semibold text-sm">Тиждень</h3>
           </div>
-          <MiniChart
-            transactions={transactions}
-            currentMonth={currentMonth}
-            currentYear={currentYear}
-            currency={settings.currency}
-          />
-          <div className="flex items-center justify-center gap-8 mt-4 text-xs">
-            <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-income"></div>
-              <span className="text-muted-foreground">Доходи</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-expense"></div>
-              <span className="text-muted-foreground">Витрати</span>
-            </div>
-          </div>
+          {/* TODO: Weekly chart implementation will go here */}
         </div>
       </div>
 
