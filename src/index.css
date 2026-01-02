@@ -199,4 +199,16 @@
   .border-balance {
     border-color: hsl(var(--balance-border));
   }
+
+  .bg-balance-soft {
+    background-color: hsl(var(--balance-border) / 0.13);
+  }
+
+  .text-balance {
+    color: hsl(var(--balance-border));
+  }
+
+  .glow-balance {
+    box-shadow: 0 0 28px hsl(var(--balance-border) / 0.25);
+  }
 }

@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTransactionsContext } from '@/contexts/TransactionsContext';
 import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { MonthNavigator } from '@/components/MonthNavigator';
 import { BalanceCard } from '@/components/BalanceCard';
 import { StatsCard } from '@/components/StatsCard';
 import { RecentTransactions } from '@/components/RecentTransactions';
-import { MiniChart } from '@/components/MiniChart';
 import { BottomNav } from '@/components/BottomNav';
 import { RefreshCw, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -27,7 +26,6 @@ const Index = () => {
     goToNextMonth,
     getMonthName,
     setTelegramUserId,
-    currentMonth,
     currentYear,
   } = useTransactionsContext();
 
@@ -39,6 +37,47 @@ const Index = () => {
 
   const isPageLoading = isUserLoading;
   const isDataLoading = isLoading || (isSyncing && !isInitialized);
+
+  const weeklyData = useMemo(() => {
+    const now = new Date();
+    const start = new Date(now);
+    start.setDate(now.getDate() - 6);
+
+    const weekMap: { [key: string]: { income: number; expense: number; date: Date } } = {};
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      const key = d.toDateString();
+      weekMap[key] = { income: 0, expense: 0, date: d };
+    }
+
+    transactions.forEach((t) => {
+      const d = new Date(t.date);
+      if (d < start || d > now) return;
+      const key = d.toDateString();
+      if (!weekMap[key]) return;
+      if (t.type === 'income') weekMap[key].income += t.amount;
+      else weekMap[key].expense += t.amount;
+    });
+
+    const values = Object.values(weekMap);
+    const maxValue = Math.max(
+      1,
+      ...values.map((v) => Math.max(v.income, v.expense))
+    );
+
+    const dayNames = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
+    return values.map((v) => ({
+      label: dayNames[v.date.getDay()],
+      dayNumber: v.date.getDate(),
+      income: v.income,
+      expense: v.expense,
+      incomeHeight: (v.income / maxValue) * 100,
+      expenseHeight: (v.expense / maxValue) * 100,
+    }));
+  }, [transactions]);
 
   if (isPageLoading || (isDataLoading && !isInitialized)) {
     return (
@@ -139,7 +178,32 @@ const Index = () => {
             </div>
             <h3 className="font-semibold text-sm">Тиждень</h3>
           </div>
-          {/* TODO: Weekly chart implementation will go here */}
+          {weeklyData.every(d => d.income === 0 && d.expense === 0) ? (
+            <p className="text-muted-foreground text-sm text-center py-6">
+              Немає даних за останній тиждень
+            </p>
+          ) : (
+            <div className="flex items-end justify-between gap-2 h-32">
+              {weeklyData.map((d) => (
+                <div key={`${d.label}-${d.dayNumber}`} className="flex-1 flex flex-col items-center gap-1 text-[10px]">
+                  <span className="text-muted-foreground">{d.label}</span>
+                  <div className="relative w-full flex-1 flex items-end gap-1">
+                    <div
+                      className="w-1.5 rounded-full bg-income/80"
+                      style={{ height: `${d.incomeHeight}%` }}
+                    />
+                    <div
+                      className="w-1.5 rounded-full bg-expense/80"
+                      style={{ height: `${d.expenseHeight}%` }}
+                    />
+                  </div>
+                  <span className="text-muted-foreground/70">
+                    {d.dayNumber}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
