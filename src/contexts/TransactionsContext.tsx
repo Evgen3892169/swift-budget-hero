@@ -170,6 +170,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
                     item.title ||
                     item['назва'] ||
                     item['Назва'] ||
+                    item['назва '] ||
                     item['опис'] ||
                     '',
                   dayOfMonth,
@@ -307,6 +308,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
                 item.title ||
                 item['назва'] ||
                 item['Назва'] ||
+                item['назва '] ||
                 item['опис'] ||
                 item['Категорія'] ||
                 '',
