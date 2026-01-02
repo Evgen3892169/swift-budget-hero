@@ -519,14 +519,16 @@ const Settings = () => {
               Преміум-підписка
             </DialogTitle>
             <p className="text-xs text-muted-foreground">
-              Відкрийте сімейний бюджет, сканер чеків та голосові витрати в одному пакеті.
+              Отримайте розширену аналітику та зручні інструменти фіксації витрат.
             </p>
           </DialogHeader>
           <div className="mt-3 space-y-3 text-xs">
             <ul className="space-y-1.5 text-muted-foreground">
+              <li>• Голосова фіксація витрат та доходів</li>
+              <li>• ШІ-аналіз витрат за місяць та рік</li>
+              <li>• Фотофіксація чеків</li>
+              <li>• Витрати по категоріях + власні категорії</li>
               <li>• Сімейний бюджет для спільних витрат</li>
-              <li>• Сканер чеків з автоматичним додаванням витрат</li>
-              <li>• Запис голосових витрат з перетворенням у текст</li>
             </ul>
             <div className="grid grid-cols-2 gap-2 mt-2">
               <div className="border border-primary/40 rounded-xl p-3 flex flex-col gap-1 bg-primary/5">
