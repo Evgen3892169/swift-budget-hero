@@ -369,7 +369,7 @@ const LandingPage = () => {
             </article>
 
             {/* Line chart - like separate block on screenshot */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-5 lg:col-span-1 hover-scale animate-fade-in">
               <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
@@ -396,7 +396,7 @@ const LandingPage = () => {
                   loading="lazy"
                 />
               </div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="mt-2 text-[11px] text-muted-foreground">
                 {lang === "ua"
                   ? "Зелена лінія — накопичений залишок, червона — витрати. Чим далі вони одна від одної, тим спокійніше за гроші."
                   : "Green line is your accumulated balance, red is expenses. The further they are apart, the safer your money."}
