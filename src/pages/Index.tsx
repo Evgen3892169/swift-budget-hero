@@ -172,11 +172,23 @@ const Index = () => {
 
         {/* Weekly Income/Expense Overview */}
         <div className="bg-card rounded-2xl p-5 border border-border/50">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
-              <TrendingUp className="h-4 w-4 text-primary" />
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </div>
+              <h3 className="font-semibold text-sm">Тиждень</h3>
             </div>
-            <h3 className="font-semibold text-sm">Тиждень</h3>
+            <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-income/80" />
+                <span>Дохід</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-expense/80" />
+                <span>Витрати</span>
+              </div>
+            </div>
           </div>
           {weeklyData.every(d => d.income === 0 && d.expense === 0) ? (
             <p className="text-muted-foreground text-sm text-center py-6">

@@ -375,7 +375,7 @@ const Analytics = () => {
             Детальна аналітика за категоріями, фото-чеків та ШІ-аналіз доступні в преміум-підписці.
           </p>
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-fade-in">
-            <p className="text-sm font-medium">Відкрийте повну аналітику</p>
+            <p className="text-sm font-medium">Аналітика категорій</p>
             <Button
               type="button"
               size="sm"
@@ -387,59 +387,37 @@ const Analytics = () => {
           </div>
         </div>
 
-        {/* AI Analysis Block */}
-        <div className="bg-card rounded-2xl p-5 border border-border/50 mt-1">
+        {/* AI Analysis Block - Premium Locked */}
+        <div className="bg-card rounded-2xl p-5 border border-border/50 mt-1 relative overflow-hidden">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
               <Sparkles className="h-4 w-4 text-primary" />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-0.5">ШІ-аналіз витрат</p>
-              <h3 className="font-semibold text-sm">Рекомендації та огляд витрат</h3>
+            <div className="flex items-center gap-2">
+              <div>
+                <p className="text-xs text-muted-foreground mb-0.5">ШІ-аналіз витрат</p>
+                <h3 className="font-semibold text-sm">Рекомендації та огляд витрат</h3>
+              </div>
+              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground border border-border/60">
+                <Crown className="h-3 w-3 text-primary" />
+                Преміум
+              </span>
             </div>
           </div>
           <p className="text-xs text-muted-foreground mb-3">
-            Натисніть «Аналіз», щоб отримати розбір витрат, доходів та поради, на чому можна зекономити.
+            Короткий розбір витрат, доходів та поради від ШІ — доступно в преміум-підписці.
           </p>
-          <button
-            type="button"
-            onClick={async () => {
-              if (!telegramUserId) {
-                toast.error('Не знайдено user id користувача');
-                return;
-              }
-              try {
-                setIsAiLoading(true);
-                const response = await fetch(
-                  'https://shinespiceclover.app.n8n.cloud/webhook-test/39b5d691-23dc-495a-ba66-339e341e9eb6',
-                  {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ user_id: telegramUserId }),
-                  }
-                );
-
-                if (!response.ok) {
-                  throw new Error('Помилка підключення до ШІ аналізу');
-                }
-
-                await response.json().catch(() => null);
-                toast.success('Запит на ШІ-аналіз відправлено');
-              } catch (error) {
-                console.error(error);
-                toast.error('Не вдалося виконати ШІ-аналіз');
-              } finally {
-                setIsAiLoading(false);
-              }
-            }}
-            className="inline-flex items-center gap-2 rounded-xl h-10 px-4 bg-primary text-primary-foreground text-sm font-medium disabled:opacity-60"
-            disabled={isAiLoading}
-          >
-            <Sparkles className="h-4 w-4" />
-            {isAiLoading ? 'Аналіз...' : 'Аналіз'}
-          </button>
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-fade-in">
+            <p className="text-sm font-medium">ШІ аналітика</p>
+            <Button
+              type="button"
+              size="sm"
+              className="rounded-full px-5 text-xs font-semibold gap-2 hover-scale"
+              onClick={() => setIsPremiumOpen(true)}
+            >
+              <Crown className="h-4 w-4" /> Преміум від $2/міс
+            </Button>
+          </div>
         </div>
 
         {/* Premium modal */}
@@ -460,6 +438,7 @@ const Analytics = () => {
                 <li>• ШІ-аналіз витрат за місяць та рік</li>
                 <li>• Фотофіксація чеків</li>
                 <li>• Витрати по категоріях + власні категорії</li>
+                <li>• Сімейний бюджет для спільних витрат</li>
               </ul>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 <div className="border border-primary/40 rounded-xl p-3 flex flex-col gap-1 bg-primary/5">

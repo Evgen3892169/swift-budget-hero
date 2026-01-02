@@ -128,7 +128,7 @@ const History = () => {
             placeholder="По дату"
             className="flex-1"
           />
-          {(startDate || endDate) && (
+          {startDate || endDate ? (
             <Button
               variant="ghost"
               size="icon"
@@ -140,15 +140,16 @@ const History = () => {
             >
               <X className="h-4 w-4" />
             </Button>
+          ) : (
+            <Button
+              variant={showAllHistory ? 'default' : 'outline'}
+              onClick={() => setShowAllHistory(!showAllHistory)}
+              className="shrink-0 rounded-xl gap-2 h-10"
+            >
+              <List className="h-4 w-4" />
+              <span className="text-xs">{showAllHistory ? 'Місяць' : 'Все'}</span>
+            </Button>
           )}
-          <Button
-            variant={showAllHistory ? "default" : "outline"}
-            onClick={() => setShowAllHistory(!showAllHistory)}
-            className="shrink-0 rounded-xl gap-2 h-10"
-          >
-            <List className="h-4 w-4" />
-            <span className="text-xs">{showAllHistory ? 'Місяць' : 'Все'}</span>
-          </Button>
         </div>
 
         {!isInitialized ? (
