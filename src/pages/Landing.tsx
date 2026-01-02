@@ -374,31 +374,58 @@ const LandingPage = () => {
             </article>
 
             {/* Charts */}
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-2">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-2">
+              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
                     <BarChart3 className="size-4 text-income" />
                   </div>
                   <span className="font-medium">
-                    {lang === "ua" ? "Динаміка по днях" : "Daily dynamics"}
+                    {lang === "ua" ? "Динаміка по днях (стовпчики)" : "Daily dynamics (bars)"}
                   </span>
                 </div>
-              </div>
-              <div className="h-24 flex items-end gap-1 mt-2">
-                {[100, 25, 18, 60, 12, 15, 10, 35].map((height, index) => (
-                  <div key={index} className="flex-1 flex flex-col justify-end gap-1">
-                    <div
-                      className={`${index === 0 || index === 3 || index === 7 ? "bg-income" : "bg-destructive"} rounded-t-full`}
-                      style={{ height: `${height}%` }}
-                    />
+                <div className="flex items-center gap-3 text-[10px] sm:text-[11px]">
+                  <div className="flex items-center gap-1">
+                    <span className="inline-block w-3 h-1 rounded-full bg-income" />
+                    <span>{lang === "ua" ? "дні в плюсі" : "days in plus"}</span>
                   </div>
-                ))}
+                  <div className="flex items-center gap-1">
+                    <span className="inline-block w-3 h-1 rounded-full bg-destructive" />
+                    <span>{lang === "ua" ? "дні з перевитратою" : "overspend days"}</span>
+                  </div>
+                </div>
               </div>
-              <div className="mt-4 rounded-2xl bg-card border border-border/60 p-3 text-[11px] flex flex-col gap-2">
+
+              {/* Simple fake chart */}
+              <div className="space-y-2">
+                <div className="h-24 flex items-end gap-1 mt-1">
+                  {[100, 25, 18, 60, 12, 15, 10, 35].map((height, index) => (
+                    <div key={index} className="flex-1 flex flex-col justify-end gap-1">
+                      <div
+                        className={`${index === 0 || index === 3 || index === 7 ? "bg-income" : "bg-destructive"} rounded-t-full`}
+                        style={{ height: `${height}%` }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between text-[10px] text-muted-foreground px-0.5">
+                  <span>1</span>
+                  <span>3</span>
+                  <span>5</span>
+                  <span>7</span>
+                  <span>10</span>
+                  <span>15</span>
+                  <span>22</span>
+                  <span>26</span>
+                </div>
+              </div>
+
+              {/* AI insight explaining the chart */}
+              <div className="mt-2 rounded-2xl bg-card border border-border/60 p-3 sm:p-4 text-[11px] flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    {lang === "ua" ? "AI‑висновок" : "AI summary"}
+                  <span className="text-muted-foreground font-medium flex items-center gap-1">
+                    <Sparkles className="size-3 text-income" />
+                    {lang === "ua" ? "AI‑висновок за місяць" : "AI monthly insight"}
                   </span>
                   <span className="px-2 py-0.5 rounded-full bg-secondary/80 text-[10px]">
                     {lang === "ua" ? "Місяць" : "Month"}
@@ -406,9 +433,21 @@ const LandingPage = () => {
                 </div>
                 <p className="text-muted-foreground">
                   {lang === "ua"
-                    ? "Ти витрачаєш найбільше на їжу та підписки. Зменшивши їх на 15%, ти збережеш ще 6 000 грн на рік."
-                    : "Your top spend is food and subscriptions. Cutting them by 15% saves around 6 000 UAH per year."}
+                    ? "Бачиш червоні стовпчики? У ці дні ти витрачаєш у 2–3 рази більше норми — переважно на доставку їжі та розваги."
+                    : "See the red bars? On these days you spend 2–3x more than your norm — mostly on food delivery and entertainment."}
                 </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                  <li>
+                    {lang === "ua"
+                      ? "Якщо зробити 2 з 8 червоних днів зеленими — заощадиш близько 1 200 грн на місяць."
+                      : "Turning 2 of 8 red days into green ones saves you about 1 200 UAH per month."}
+                  </li>
+                  <li>
+                    {lang === "ua"
+                      ? "Додай ліміт на розваги — бот попередить, коли ти наближаєшся до нього."
+                      : "Add an entertainment limit — the bot warns you when you’re getting close."}
+                  </li>
+                </ul>
               </div>
             </article>
 
