@@ -199,11 +199,13 @@ const Analytics = () => {
           />
           <button
              type="button"
-             className={`text-xs px-4 h-10 rounded-full border text-nowrap flex items-center justify-center transition-colors ${
-               range === 'all'
-                 ? 'bg-primary text-primary-foreground border-primary'
-                 : 'bg-card text-muted-foreground border-border/60'
-             }`}
+             className={`text-xs px-5 h-11 rounded-full border text-nowrap flex items-center justify-center transition-colors whitespace-nowrap
+               ${
+                 range === 'all'
+                   ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                   : 'bg-card text-muted-foreground border-border/60 hover:border-primary/50 hover:text-foreground'
+               }
+             `}
              onClick={() => setRange((prev) => (prev === 'all' ? 'month' : 'all'))}
            >
             За весь період
