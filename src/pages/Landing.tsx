@@ -530,8 +530,8 @@ const LandingPage = () => {
             </h2>
             <p className="text-sm text-muted-foreground">
               {lang === "ua"
-                ? "Ми створили бота не для фінансистів, а для звичайних людей, яким набрид хаос у витратах."
-                : "This is not for finance pros — it’s for normal people tired of money chaos."}
+                ? "Бот для тих, хто втомився жити від зарплати до зарплати й хоче нарешті відчути контроль, а не провину за кожну витрачену гривню."
+                : "A bot for people tired of living paycheck to paycheck who want control and peace of mind instead of guilt over every purchase."}
             </p>
           </div>
 
@@ -542,8 +542,8 @@ const LandingPage = () => {
               </h3>
               <p className="text-xs text-muted-foreground">
                 {lang === "ua"
-                  ? "Доходи ростуть, а відчуття, що грошей немає. Бот показує, куди зникає зарплата й де ти переплачуєш."
-                  : "Income grows but it still feels like no money. The bot shows where salary disappears and where you overpay."}
+                  ? "Працюєш по 10+ годин, а гроші розчиняються. Бот збирає всі доходи та витрати в одну картинку й показує, скільки в тебе реально вільних грошей після обов'язкових платежів."
+                  : "You work 10+ hour days yet money evaporates. The bot gathers all income and spending into one picture and shows how much is truly free after mandatory bills."}
               </p>
             </article>
             <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
@@ -552,8 +552,8 @@ const LandingPage = () => {
               </h3>
               <p className="text-xs text-muted-foreground">
                 {lang === "ua"
-                  ? "Нестабільні доходи, податки, підписки. Застосунок тримає все в одному місці й показує, який мінімальний дохід потрібен."
-                  : "Unstable income, taxes, subscriptions — the app keeps everything in one place and shows your minimum safe income."}
+                  ? "Сьогодні є замовлення — завтра тиша. Бот рахує, які витрати ти можеш собі дозволити при різних доходах і яка мінімальна сума дає тобі спокій на місяць."
+                  : "One month is packed, the next is empty. The app calculates what expenses you can safely afford at different income levels and what minimum keeps you calm for the month."}
               </p>
             </article>
             <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
@@ -562,8 +562,8 @@ const LandingPage = () => {
               </h3>
               <p className="text-xs text-muted-foreground">
                 {lang === "ua"
-                  ? "Спільні витрати, кредити, діти. Бот допомагає бачити загальну картину й готуватися до великих покупок."
-                  : "Shared expenses, loans, kids — the bot helps see the full picture and prepare for big purchases."}
+                  ? "Спільні покупки, кредити, діти, поїздки. Бот показує, скільки ваша сім'я реально тягне, щоб ви планували відпустки й великі цілі без сварок про гроші."
+                  : "Shared purchases, loans, kids, trips. The bot shows what your family can truly afford so you can plan vacations and big goals without constant money fights."}
               </p>
             </article>
           </div>
@@ -574,9 +574,9 @@ const LandingPage = () => {
                 {lang === "ua" ? "Твої болі" : "Your pains"}
               </h3>
               <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                <li>{lang === "ua" ? "Не розумієш, куди зникають гроші в кінці місяця." : "You don’t understand where money disappears."}</li>
-                <li>{lang === "ua" ? "Боїшся пропустити оплату оренди, кредиту чи підписки." : "You fear missing rent, loan or subscription payments."}</li>
-                <li>{lang === "ua" ? "Excel і фінансові застосунки здаються занадто складними." : "Excel and finance apps feel too complex."}</li>
+                <li>{lang === "ua" ? "В кінці місяця карта в нулі, а ти не можеш згадати, на що пішли гроші." : "At the end of the month your card is empty and you can't remember where it all went."}</li>
+                <li>{lang === "ua" ? "Живеш у постійному фоні тривоги: а раптом не вистачить на оренду, кредит чи підписки?" : "Background anxiety all the time: what if there isn't enough for rent, loans or subscriptions?"}</li>
+                <li>{lang === "ua" ? "Пробував таблиці й застосунки, але кидав, бо це займає пів вечора й не дає швидкої відповіді 'я можу собі це дозволити?'." : "You tried spreadsheets and apps but quit because they eat your evenings and still don't answer fast if you can afford something."}</li>
               </ul>
             </article>
             <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
@@ -584,9 +584,9 @@ const LandingPage = () => {
                 {lang === "ua" ? "Як бот це вирішує" : "How the bot fixes this"}
               </h3>
               <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                <li>{lang === "ua" ? "Показує просту картинку: скільки заходить, скільки виходить і що залишиться." : "Shows a simple picture: what comes in, what goes out and what’s left."}</li>
-                <li>{lang === "ua" ? "Нагадує про регулярні платежі та рахує, чи вистачить на них грошей." : "Reminds about recurring payments and checks if you have enough for them."}</li>
-                <li>{lang === "ua" ? "AI пояснює, де ти переплачуєш, людською мовою, без фінансового сленгу." : "AI explains where you overpay in plain human language."}</li>
+                <li>{lang === "ua" ? "Щодня рахує: скільки вже зайшло грошей, скільки ти витратив і який реальний залишок до кінця місяця." : "Every day it counts how much came in, how much you spent, and what your real buffer is until month end."}</li>
+                <li>{lang === "ua" ? "Попереджає про регулярні платежі заздалегідь і показує, чи витримає їх твій баланс без боргів." : "Warns you about upcoming recurring payments and shows if your balance can handle them without going into debt."}</li>
+                <li>{lang === "ua" ? "AI розбирає твої витрати по поличках і дає конкретні підказки: де можна зменшити, щоб ти відчув різницю вже в наступному місяці." : "AI breaks your spending down and gives concrete tips where to cut so you feel the difference as soon as next month."}</li>
               </ul>
             </article>
           </div>
