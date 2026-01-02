@@ -170,14 +170,14 @@ const Analytics = () => {
             onNext={goToNextMonth}
           />
           <button
-            type="button"
-            className={`text-[11px] px-3 py-1.5 rounded-full border text-nowrap h-9 flex items-center justify-center transition-colors ${
-              range === 'all'
-                ? 'bg-primary text-primary-foreground border-primary'
-                : 'bg-card text-muted-foreground border-border/60'
-            }`}
-            onClick={() => setRange((prev) => (prev === 'all' ? 'month' : 'all'))}
-          >
+             type="button"
+             className={`text-xs px-4 h-10 rounded-full border text-nowrap flex items-center justify-center transition-colors ${
+               range === 'all'
+                 ? 'bg-primary text-primary-foreground border-primary'
+                 : 'bg-card text-muted-foreground border-border/60'
+             }`}
+             onClick={() => setRange((prev) => (prev === 'all' ? 'month' : 'all'))}
+           >
             За весь період
           </button>
         </div>

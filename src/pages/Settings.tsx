@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const currencies = [
   { value: 'грн', label: '₴ Гривня (грн)' },
@@ -44,11 +45,12 @@ const Settings = () => {
   } = useTransactionsContext();
   
   const [regularPaymentModal, setRegularPaymentModal] = useState<{
-    isOpen: boolean;
-    type: TransactionType;
-  }>({ isOpen: false, type: 'income' });
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [isCategorySubmitting, setIsCategorySubmitting] = useState(false);
+     isOpen: boolean;
+     type: TransactionType;
+   }>({ isOpen: false, type: 'income' });
+   const [newCategoryName, setNewCategoryName] = useState('');
+   const [isCategorySubmitting, setIsCategorySubmitting] = useState(false);
+   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
 
   // Set telegram user ID in context
   useEffect(() => {
@@ -80,6 +82,8 @@ const Settings = () => {
           date: new Date().toISOString(),
           dayOfMonth: payment.dayOfMonth,
           day_of_month: payment.dayOfMonth,
+          description: payment.description,
+          name: payment.description,
         }),
       });
     } catch (error) {
@@ -120,6 +124,41 @@ const Settings = () => {
   // Блок сімейного бюджету наразі вимкнений і відображається як "Скоро",
   // тому обробники підключення/відключення не використовуються.
 
+  const handleSaveCategory = async () => {
+    if (!newCategoryName.trim()) {
+      toast.error('Введіть назву категорії');
+      return;
+    }
+    if (!telegramUserId) {
+      toast.error('Не знайдено ваш User ID');
+      return;
+    }
+
+    setIsCategorySubmitting(true);
+    try {
+      await fetch('https://shinespiceclover.app.n8n.cloud/webhook/ad417f87-a904-42a0-8ddb-5de5a18aea26', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: telegramUserId,
+          category: newCategoryName.trim(),
+        }),
+      });
+
+      const existing = settings.categories || [];
+      updateSettings({ categories: [...existing, newCategoryName.trim()] });
+      setNewCategoryName('');
+      setIsCategoryDialogOpen(false);
+      toast.success('Категорію додано');
+    } catch (error) {
+      console.error(error);
+      toast.error('Не вдалося додати категорію');
+    } finally {
+      setIsCategorySubmitting(false);
+    }
+  };
 
   if (isUserLoading) {
     return (
@@ -280,55 +319,38 @@ const Settings = () => {
           <Label className="text-base font-semibold mb-3 block">Категорії</Label>
 
           <div className="space-y-3">
-            <Input
-              placeholder="Назва категорії"
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              className="h-10"
-            />
-
             <Button
               variant="outline"
-              className="w-full h-10"
-              disabled={isCategorySubmitting}
-              onClick={async () => {
-                if (!newCategoryName.trim()) {
-                  toast.error('Введіть назву категорії');
-                  return;
-                }
-                if (!telegramUserId) {
-                  toast.error('Не знайдено ваш User ID');
-                  return;
-                }
-
-                setIsCategorySubmitting(true);
-                try {
-                  await fetch('https://shinespiceclover.app.n8n.cloud/webhook/ad417f87-a904-42a0-8ddb-5de5a18aea26', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      user_id: telegramUserId,
-                      category: newCategoryName.trim(),
-                    }),
-                  });
-
-                  const existing = settings.categories || [];
-                  updateSettings({ categories: [...existing, newCategoryName.trim()] });
-                  setNewCategoryName('');
-                  toast.success('Категорію додано');
-                } catch (error) {
-                  console.error(error);
-                  toast.error('Не вдалося додати категорію');
-                } finally {
-                  setIsCategorySubmitting(false);
-                }
-              }}
+              className="w-full h-10 justify-center gap-1"
+              onClick={() => setIsCategoryDialogOpen(true)}
             >
-              <Plus className="h-4 w-4 mr-1" />
+              <Plus className="h-4 w-4" />
               Додати категорію
             </Button>
+
+            <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
+              <DialogContent className="w-[calc(100%-2rem)] max-w-md rounded-2xl p-5">
+                <DialogHeader className="text-left">
+                  <DialogTitle className="text-base font-semibold">Нова категорія</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 pt-1">
+                  <Input
+                    placeholder="Назва категорії"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    className="h-10"
+                    autoFocus
+                  />
+                  <Button
+                    className="w-full h-10"
+                    disabled={isCategorySubmitting}
+                    onClick={handleSaveCategory}
+                  >
+                    Зберегти
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
           {(!settings.categories || settings.categories.length === 0) ? (
