@@ -7,7 +7,7 @@ import { StatsCard } from '@/components/StatsCard';
 import { RecentTransactions } from '@/components/RecentTransactions';
 import { MiniChart } from '@/components/MiniChart';
 import { BottomNav } from '@/components/BottomNav';
-import { RefreshCw, TrendingUp, Sparkles } from 'lucide-react';
+import { RefreshCw, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -155,21 +155,6 @@ const Index = () => {
               <span className="text-muted-foreground">Витрати</span>
             </div>
           </div>
-        </div>
-
-        {/* AI Analysis Block */}
-        <div className="bg-card rounded-2xl p-5 border border-border/50 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">ШІ асистент</p>
-            <h3 className="font-semibold text-sm">Аналіз витрат</h3>
-            <p className="text-xs text-muted-foreground mt-1">
-              Отримайте короткий розбір ваших витрат за місяць.
-            </p>
-          </div>
-          <Button className="rounded-xl h-10 px-4 gap-2" variant="default">
-            <Sparkles className="h-4 w-4" />
-            <span className="text-sm font-medium">ШІ аналіз</span>
-          </Button>
         </div>
       </div>
 

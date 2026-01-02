@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 interface RegularPaymentItemProps {
   payment: RegularPayment;
   currency: string;
-  onDelete: (id: string) => void;
+  onDelete: (id: string, dayOfMonth?: number) => void;
 }
 
 export const RegularPaymentItem = ({ payment, currency, onDelete }: RegularPaymentItemProps) => {
@@ -38,7 +38,7 @@ export const RegularPaymentItem = ({ payment, currency, onDelete }: RegularPayme
           variant="ghost"
           size="icon"
           className="h-8 w-8 text-muted-foreground hover:text-expense"
-          onClick={() => onDelete(payment.id)}
+          onClick={() => onDelete(payment.id, payment.dayOfMonth)}
         >
           <Trash2 className="h-4 w-4" />
         </Button>

@@ -215,12 +215,20 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
             const amount = Number(rawAmount);
             if (!amount || isNaN(amount)) return;
 
-            const rawType = item.type ?? item['тип'];
-            const isExpense =
-              String(rawType).toLowerCase().includes('розход') ||
-              String(rawType).toLowerCase().includes('витрат') ||
-              amount < 0;
-            const type: 'income' | 'expense' = isExpense ? 'expense' : 'income';
+            const rawType = (item.type ?? item['тип'] ?? '').toString().toLowerCase();
+            let type: 'income' | 'expense';
+
+            if (rawType === 'income') {
+              type = 'income';
+            } else if (rawType === 'expense') {
+              type = 'expense';
+            } else {
+              const isExpense =
+                rawType.includes('розход') ||
+                rawType.includes('витрат') ||
+                amount < 0;
+              type = isExpense ? 'expense' : 'income';
+            }
 
             const dayRaw =
               item.dayOfMonth ??
