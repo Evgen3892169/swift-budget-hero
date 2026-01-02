@@ -48,6 +48,22 @@ const Index = () => {
     return ranges;
   }, [currentDate, currentYear]);
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
+
+  // Автовибір тижня з останніми операціями, щоб одразу бачити стовпчики
+  useEffect(() => {
+    if (weekRanges.length === 0 || monthTransactions.length === 0) return;
+
+    const latest = monthTransactions.reduce((latestTx, tx) => {
+      return new Date(tx.date) > new Date(latestTx.date) ? tx : latestTx;
+    }, monthTransactions[0]);
+
+    const latestDay = new Date(latest.date).getDate();
+    const index = weekRanges.findIndex(([start, end]) => latestDay >= start && latestDay <= end);
+    if (index !== -1) {
+      setSelectedWeekIndex(index);
+    }
+  }, [monthTransactions, weekRanges]);
+
   const weeklyData = useMemo(() => {
     const monthIndex = currentDate.getMonth();
     const ranges = weekRanges;
