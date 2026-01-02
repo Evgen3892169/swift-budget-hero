@@ -13,7 +13,7 @@ export const MonthNavigator = ({
   onNext,
 }: MonthNavigatorProps) => {
   return (
-    <div className="flex items-center justify-between bg-card/80 backdrop-blur-sm rounded-2xl p-2 border border-border/50">
+    <div className="flex w-full items-center justify-between bg-card/80 backdrop-blur-sm rounded-2xl p-2 border border-border/50">
       <Button 
         variant="ghost" 
         size="icon"
