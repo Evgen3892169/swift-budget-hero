@@ -39,8 +39,7 @@ const Analytics = () => {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isPremiumOpen, setIsPremiumOpen] = useState(false);
   const [dynamicsScope, setDynamicsScope] = useState<'month' | 'year'>('month');
-  const [monthChartType, setMonthChartType] = useState<'area' | 'bar'>('area');
-  const isPageLoading = isUserLoading || isLoading && !isInitialized;
+  const isPageLoading = isUserLoading || (isLoading && !isInitialized);
   const categoryData = useMemo(() => {
     const sourceTransactions = range === 'month' ? transactions.filter(t => {
       const date = new Date(t.date);
@@ -208,69 +207,17 @@ const Analytics = () => {
            </div>
         </div>
 
-        {/* Dynamics Chart with month/year toggle */}
-        <div className="bg-card rounded-2xl p-5 border border-border/50">
-          <div className="flex items-center justify-between mb-4 gap-2">
-            <div className="flex items-center gap-2">
+        {/* Daily dynamics - columns */}
+        {range === 'month' && (
+          <div className="bg-card rounded-2xl p-5 border border-border/50">
+            <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
                 <TrendingUp className="h-4 w-4 text-primary" />
               </div>
-              <h3 className="font-semibold text-sm">Динаміка</h3>
-            </div>
-            <div className="inline-flex items-center gap-1 bg-secondary/40 rounded-full p-0.5">
-              <button
-                type="button"
-                className={`px-3 h-7 rounded-full text-[11px] font-medium transition-colors ${
-                  dynamicsScope === 'month' ? 'bg-background text-foreground' : 'text-muted-foreground'
-                }`}
-                onClick={() => setDynamicsScope('month')}
-              >
-                Місяць
-              </button>
-              <button
-                type="button"
-                className={`px-3 h-7 rounded-full text-[11px] font-medium transition-colors ${
-                  dynamicsScope === 'year' ? 'bg-background text-foreground' : 'text-muted-foreground'
-                }`}
-                onClick={() => setDynamicsScope('year')}
-              >
-                Рік
-              </button>
+              <h3 className="font-semibold text-sm">Динаміка по днях (стовпчики)</h3>
             </div>
 
-            {dynamicsScope === 'month' && (
-              <div className="inline-flex items-center gap-1 bg-secondary/40 rounded-full p-0.5">
-                <button
-                  type="button"
-                  className={`px-2 h-7 rounded-full text-[10px] font-medium transition-colors ${
-                    monthChartType === 'area' ? 'bg-background text-foreground' : 'text-muted-foreground'
-                  }`}
-                  onClick={() => setMonthChartType('area')}
-                >
-                  Лінія
-                </button>
-                <button
-                  type="button"
-                  className={`px-2 h-7 rounded-full text-[10px] font-medium transition-colors ${
-                    monthChartType === 'bar' ? 'bg-background text-foreground' : 'text-muted-foreground'
-                  }`}
-                  onClick={() => setMonthChartType('bar')}
-                >
-                  Стовпчики
-                </button>
-              </div>
-            )}
-          </div>
-
-          {dynamicsScope === 'month' ? (
-            monthChartType === 'area' ? (
-              <MiniChart
-                transactions={transactions}
-                currentMonth={currentMonth}
-                currentYear={currentYear}
-                currency={settings.currency}
-              />
-            ) : dailyData.length === 0 ? (
+            {dailyData.length === 0 ? (
               <p className="text-muted-foreground text-sm text-center py-8">
                 Немає даних за цей місяць
               </p>
@@ -303,7 +250,48 @@ const Analytics = () => {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-            )
+            )}
+          </div>
+        )}
+
+        {/* Dynamics Chart with month/year toggle - line charts */}
+        <div className="bg-card rounded-2xl p-5 border border-border/50">
+          <div className="flex items-center justify-between mb-4 gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </div>
+              <h3 className="font-semibold text-sm">Динаміка (лінії)</h3>
+            </div>
+            <div className="inline-flex items-center gap-1 bg-secondary/40 rounded-full p-0.5">
+              <button
+                type="button"
+                className={`px-3 h-7 rounded-full text-[11px] font-medium transition-colors ${
+                  dynamicsScope === 'month' ? 'bg-background text-foreground' : 'text-muted-foreground'
+                }`}
+                onClick={() => setDynamicsScope('month')}
+              >
+                Місяць
+              </button>
+              <button
+                type="button"
+                className={`px-3 h-7 rounded-full text-[11px] font-medium transition-colors ${
+                  dynamicsScope === 'year' ? 'bg-background text-foreground' : 'text-muted-foreground'
+                }`}
+                onClick={() => setDynamicsScope('year')}
+              >
+                Рік
+              </button>
+            </div>
+          </div>
+
+          {dynamicsScope === 'month' ? (
+            <MiniChart
+              transactions={transactions}
+              currentMonth={currentMonth}
+              currentYear={currentYear}
+              currency={settings.currency}
+            />
           ) : yearlyDynamicsData.every(d => d.income === 0 && d.expense === 0) ? (
             <p className="text-muted-foreground text-sm text-center py-8">
               Немає даних за цей рік

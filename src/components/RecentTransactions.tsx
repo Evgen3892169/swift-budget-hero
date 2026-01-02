@@ -12,7 +12,9 @@ interface RecentTransactionsProps {
 }
 
 export const RecentTransactions = ({ transactions, currency, isLoading }: RecentTransactionsProps) => {
-  const recentTransactions = transactions.slice(0, 3);
+  const recentTransactions = [...transactions]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
   
   return (
     <div className="bg-card rounded-2xl p-5 border border-border/50">
