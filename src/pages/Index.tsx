@@ -40,11 +40,14 @@ const Index = () => {
   const weeklyData = useMemo(() => {
     const dayNames = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
-    if (!monthTransactions || monthTransactions.length === 0) {
+    if (!transactions || transactions.length === 0) {
       return [];
     }
 
-    // Агрегуємо доходи/витрати по днях поточного місяця
+    const selectedMonth = currentDate.getMonth();
+    const selectedYear = currentYear;
+
+    // Агрегуємо доходи/витрати по днях обраного місяця (як в аналітиці)
     const dayMap: {
       [key: number]: {
         income: number;
@@ -52,10 +55,11 @@ const Index = () => {
       };
     } = {};
 
-    monthTransactions.forEach(t => {
+    transactions.forEach(t => {
       const date = new Date(t.date);
-      const day = date.getDate();
+      if (date.getMonth() !== selectedMonth || date.getFullYear() !== selectedYear) return;
 
+      const day = date.getDate();
       if (!dayMap[day]) {
         dayMap[day] = { income: 0, expense: 0 };
       }
@@ -71,11 +75,13 @@ const Index = () => {
       .map(Number)
       .sort((a, b) => a - b);
 
+    if (sortedDays.length === 0) return [];
+
     // Беремо останні 7 днів з транзакціями у вибраному місяці
     const lastSevenDays = sortedDays.slice(-7);
 
     const days = lastSevenDays.map(day => {
-      const date = new Date(currentYear, currentDate.getMonth(), day);
+      const date = new Date(selectedYear, selectedMonth, day);
       const { income, expense } = dayMap[day];
 
       return {
@@ -93,7 +99,7 @@ const Index = () => {
       incomeHeight: (v.income / maxValue) * 100,
       expenseHeight: (v.expense / maxValue) * 100,
     }));
-  }, [monthTransactions, currentDate, currentYear]);
+  }, [transactions, currentDate, currentYear]);
   if (isPageLoading || isDataLoading && !isInitialized) {
     return <div className="min-h-screen flex items-center justify-center loading-screen">
         <div className="text-center space-y-4">
