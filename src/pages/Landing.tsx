@@ -387,23 +387,27 @@ const LandingPage = () => {
                   </button>
                 </div>
               </div>
-              <div className="relative h-24 rounded-xl bg-gradient-to-b from-background/10 to-background/40 overflow-hidden animate-fade-in">
-                <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-80">
-                  {/* Income line */}
+              <div className="relative h-24 rounded-xl bg-gradient-to-b from-background/5 via-background/20 to-background/60 overflow-hidden animate-fade-in">
+                <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-90">
+                  {/* Income line - step-like accumulated balance */}
                   <polyline
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="1.5"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     className="text-income"
-                    points="0,35 10,30 20,25 35,22 50,18 65,15 80,12 100,10"
+                    points="0,30 10,30 20,30 30,25 40,25 55,20 70,20 85,15 100,15"
                   />
-                  {/* Expense line */}
+                  {/* Expense line - catching up from below */}
                   <polyline
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="1.5"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     className="text-destructive"
-                    points="0,36 10,34 20,32 35,30 50,28 65,27 80,26 100,25"
+                    points="0,37 15,37 25,32 40,32 55,29 70,27 85,27 100,27"
                   />
                 </svg>
               </div>
