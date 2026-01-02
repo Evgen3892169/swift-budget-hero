@@ -39,22 +39,33 @@ const Index = () => {
   const isDataLoading = isLoading || (isSyncing && !isInitialized);
 
   const weeklyData = useMemo(() => {
-    const now = new Date();
-    const start = new Date(now);
-    start.setDate(now.getDate() - 6);
+    // Якщо є операції в поточному місяці — будуємо тиждень від останньої дати з цього місяця
+    let endDate: Date;
+
+    if (monthTransactions.length > 0) {
+      const dates = monthTransactions.map((t) => new Date(t.date));
+      const latestTime = Math.max(...dates.map((d) => d.getTime()));
+      endDate = new Date(latestTime);
+    } else {
+      // Якщо операцій немає, орієнтуємось на кінець обраного місяця
+      endDate = new Date(currentYear, currentDate.getMonth() + 1, 0);
+    }
+
+    const startDate = new Date(endDate);
+    startDate.setDate(endDate.getDate() - 6);
 
     const weekMap: { [key: string]: { income: number; expense: number; date: Date } } = {};
 
     for (let i = 0; i < 7; i++) {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
+      const d = new Date(startDate);
+      d.setDate(startDate.getDate() + i);
       const key = d.toDateString();
       weekMap[key] = { income: 0, expense: 0, date: d };
     }
 
-    transactions.forEach((t) => {
+    monthTransactions.forEach((t) => {
       const d = new Date(t.date);
-      if (d < start || d > now) return;
+      if (d < startDate || d > endDate) return;
       const key = d.toDateString();
       if (!weekMap[key]) return;
       if (t.type === 'income') weekMap[key].income += t.amount;
@@ -62,10 +73,7 @@ const Index = () => {
     });
 
     const values = Object.values(weekMap);
-    const maxValue = Math.max(
-      1,
-      ...values.map((v) => Math.max(v.income, v.expense))
-    );
+    const maxValue = Math.max(1, ...values.map((v) => Math.max(v.income, v.expense)));
 
     const dayNames = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
@@ -77,7 +85,7 @@ const Index = () => {
       incomeHeight: (v.income / maxValue) * 100,
       expenseHeight: (v.expense / maxValue) * 100,
     }));
-  }, [transactions]);
+  }, [monthTransactions, currentDate, currentYear]);
 
   if (isPageLoading || (isDataLoading && !isInitialized)) {
     return (
