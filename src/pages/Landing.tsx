@@ -398,8 +398,8 @@ const LandingPage = () => {
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">
                 {lang === "ua"
-                  ? "Зелена лінія — накопичений залишок, червона — витрати. Чим далі вони одна від одної, тим спокійніше за гроші."
-                  : "Green line is your accumulated balance, red is expenses. The further they are apart, the safer your money."}
+                  ? "ШІ вже проаналізував твій бюджет за період і показує, як змінюється баланс після кожної витрати та доходу."
+                  : "AI has already analysed your budget for this period and shows how your balance changes after every expense and income."}
               </p>
             </article>
 
