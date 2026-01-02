@@ -374,7 +374,7 @@ const LandingPage = () => {
             </article>
 
             {/* Bars chart - looks like your example */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale">
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale border border-border/60">
               <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
@@ -386,8 +386,8 @@ const LandingPage = () => {
                 </div>
               </div>
               <div className="space-y-3 animate-fade-in">
-                {/* Simple bar chart, like on your screenshot */}
-                <div className="h-28 flex items-end gap-1 mt-1">
+                {/* Simple bar chart, like on your screenshot, with premium animation */}
+                <div className="h-28 flex items-end gap-1 mt-1 group">
                   {[
                     { day: 1, height: 100, positive: true },
                     { day: 2, height: 18, positive: true },
@@ -403,7 +403,7 @@ const LandingPage = () => {
                   ].map((bar) => (
                     <div key={bar.day} className="flex-1 flex flex-col justify-end">
                       <div
-                        className={`${bar.positive ? "bg-income" : "bg-destructive"} rounded-t-full`}
+                        className={`${bar.positive ? "bg-income" : "bg-destructive"} rounded-t-full transition-transform duration-200 ease-out group-hover:scale-y-105 hover:opacity-100`}
                         style={{ height: `${bar.height}%` }}
                       />
                     </div>
