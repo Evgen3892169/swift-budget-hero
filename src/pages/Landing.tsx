@@ -1,122 +1,96 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2, Users, ReceiptText, Mic, FolderTree } from "lucide-react";
-
+import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2, Users, ReceiptText, Mic } from "lucide-react";
 const telegramLink = "https://t.me"; // TODO: replace with real bot link
 
 const ua = {
   heroBadge: "AI‑трекер витрат у Telegram для звичайних людей",
   heroTitle: "Перестань зливати гроші непомітно — керуй ними кожен день",
-  heroSubtitle:
-    "Записуй витрати у Telegram, а ШІ сам збирає аналітику, показує, куди тече найбільше грошей, і дає прості кроки, як залишатися в плюсах.",
+  heroSubtitle: "Записуй витрати у Telegram, а ШІ сам збирає аналітику, показує, куди тече найбільше грошей, і дає прості кроки, як залишатися в плюсах.",
   heroCtaPrimary: "Запустити бота в Telegram",
   heroCtaSecondary: "Побачити, як це працює",
   heroNote: "Без Excel і фінансової освіти • Усе працює прямо в Telegram",
   featuresTitle: "Що конкретно дає тобі бот з першого тижня",
-  features: [
-    {
-      icon: <Sparkles className="text-primary" />,
-      title: "AI, який говорить людською мовою",
-      text: "Декілька днів витрат — і ШІ вже показує, де ти зливаєш гроші, які категорії тягнуть бюджет вниз і що можна прибрати без відчуття 'жити впроголодь'.",
-    },
-    {
-      icon: <BarChart3 className="text-income" />,
-      title: "Графіки, що одразу показують, ти в плюсах чи мінусах",
-      text: "Доходи, витрати та баланс по днях і місяцях. Жодних складних термінів — тільки зрозумілі стовпчики та лінії, як на скрінах нижче.",
-    },
-    {
-      icon: <ShieldCheck className="text-accent-foreground" />,
-      title: "Фінанси, які не страшно відкривати",
-      text: "Інтерфейс українською, продуманий під телефон. Все виглядає як звичайний чат і мобільний застосунок — без 'дебет/кредит' і нудних таблиць.",
-    },
-  ],
+  features: [{
+    icon: <Sparkles className="text-primary" />,
+    title: "AI, який говорить людською мовою",
+    text: "Декілька днів витрат — і ШІ вже показує, де ти зливаєш гроші, які категорії тягнуть бюджет вниз і що можна прибрати без відчуття 'жити впроголодь'."
+  }, {
+    icon: <BarChart3 className="text-income" />,
+    title: "Графіки, що одразу показують, ти в плюсах чи мінусах",
+    text: "Доходи, витрати та баланс по днях і місяцях. Жодних складних термінів — тільки зрозумілі стовпчики та лінії, як на скрінах нижче."
+  }, {
+    icon: <ShieldCheck className="text-accent-foreground" />,
+    title: "Фінанси, які не страшно відкривати",
+    text: "Інтерфейс українською, продуманий під телефон. Все виглядає як звичайний чат і мобільний застосунок — без 'дебет/кредит' і нудних таблиць."
+  }],
   screenshotsTitle: "Як виглядає твій фінансовий день усередині",
   screenshotsSubtitle: "Баланс, останні операції, аналітика, регулярні платежі та AI‑коментарі в одному Telegram‑застосунку.",
   faqTitle: "Часті запитання перед стартом",
-  faq: [
-    {
-      q: "Це окремий застосунок чи бот?",
-      a: "Це Telegram‑застосунок: відкриваєш його у Telegram і одразу ведеш свої фінанси.",
-    },
-    {
-      q: "Навіщо тут ШІ?",
-      a: "ШІ допомагає аналізувати витрати, бачити динаміку і дає підказки, де ти системно переплачуєш.",
-    },
-    {
-      q: "Чи складно розібратися?",
-      a: "Ні. Інтерфейс як у звичайного мобільного застосунку: категорії, суми, графіки — все зрозуміло з першого екрану.",
-    },
-    {
-      q: "Чи буде преміум?",
-      a: "Так. Плануються сімейний бюджет, сканер чеків та голосове додавання витрат.",
-    },
-  ],
-  langLabel: "Українська",
+  faq: [{
+    q: "Це окремий застосунок чи бот?",
+    a: "Це Telegram‑застосунок: відкриваєш його у Telegram і одразу ведеш свої фінанси."
+  }, {
+    q: "Навіщо тут ШІ?",
+    a: "ШІ допомагає аналізувати витрати, бачити динаміку і дає підказки, де ти системно переплачуєш."
+  }, {
+    q: "Чи складно розібратися?",
+    a: "Ні. Інтерфейс як у звичайного мобільного застосунку: категорії, суми, графіки — все зрозуміло з першого екрану."
+  }, {
+    q: "Чи буде преміум?",
+    a: "Так. Плануються сімейний бюджет, сканер чеків та голосове додавання витрат."
+  }],
+  langLabel: "Українська"
 };
-
 const en = {
   heroBadge: "AI‑powered money tracker in Telegram",
   heroTitle: "Stop leaking money silently — take control every day",
-  heroSubtitle:
-    "Log expenses in Telegram and let AI turn them into clear insights: where most of your money flows and what to tweak to stay in the green.",
+  heroSubtitle: "Log expenses in Telegram and let AI turn them into clear insights: where most of your money flows and what to tweak to stay in the green.",
   heroCtaPrimary: "Launch the bot in Telegram",
   heroCtaSecondary: "See it in action",
   heroNote: "No spreadsheets or finance degree • Everything lives inside Telegram",
   featuresTitle: "What this bot actually gives you in the first week",
-  features: [
-    {
-      icon: <Sparkles className="text-primary" />,
-      title: "AI that talks like a human, not a banker",
-      text: "After a few days of tracking AI shows where you silently leak money, your heaviest categories and what you can cut without feeling miserable.",
-    },
-    {
-      icon: <BarChart3 className="text-income" />,
-      title: "Charts that instantly show if you're safe or burning cash",
-      text: "Income, expenses and balance by day and month. Simple bars and lines — like on the screenshots below — instead of confusing reports.",
-    },
-    {
-      icon: <ShieldCheck className="text-accent-foreground" />,
-      title: "Finances that don't scare you away",
-      text: "Mobile‑first interface. Everything looks like a normal chat and finance app — no 'debit/credit' jargon or ugly spreadsheets.",
-    },
-  ],
+  features: [{
+    icon: <Sparkles className="text-primary" />,
+    title: "AI that talks like a human, not a banker",
+    text: "After a few days of tracking AI shows where you silently leak money, your heaviest categories and what you can cut without feeling miserable."
+  }, {
+    icon: <BarChart3 className="text-income" />,
+    title: "Charts that instantly show if you're safe or burning cash",
+    text: "Income, expenses and balance by day and month. Simple bars and lines — like on the screenshots below — instead of confusing reports."
+  }, {
+    icon: <ShieldCheck className="text-accent-foreground" />,
+    title: "Finances that don't scare you away",
+    text: "Mobile‑first interface. Everything looks like a normal chat and finance app — no 'debit/credit' jargon or ugly spreadsheets."
+  }],
   screenshotsTitle: "How your financial day looks inside",
   screenshotsSubtitle: "Balance, recent operations, analytics, recurring payments and AI insights — all inside one Telegram app.",
   faqTitle: "Questions people ask before they start",
-  faq: [
-    {
-      q: "Is it an app or a bot?",
-      a: "It’s a Telegram application: you open it inside Telegram and manage your finances there.",
-    },
-    {
-      q: "Why do you need AI here?",
-      a: "AI helps you understand your spending habits, see dynamics and spot where you overspend regularly.",
-    },
-    {
-      q: "Is it hard to use?",
-      a: "No. The interface feels like a modern mobile finance app — categories, amounts and charts are easy to read.",
-    },
-    {
-      q: "Will there be premium features?",
-      a: "Yes. Family budget, receipt scanner and voice input are planned as premium features.",
-    },
-  ],
-  langLabel: "English",
+  faq: [{
+    q: "Is it an app or a bot?",
+    a: "It’s a Telegram application: you open it inside Telegram and manage your finances there."
+  }, {
+    q: "Why do you need AI here?",
+    a: "AI helps you understand your spending habits, see dynamics and spot where you overspend regularly."
+  }, {
+    q: "Is it hard to use?",
+    a: "No. The interface feels like a modern mobile finance app — categories, amounts and charts are easy to read."
+  }, {
+    q: "Will there be premium features?",
+    a: "Yes. Family budget, receipt scanner and voice input are planned as premium features."
+  }],
+  langLabel: "English"
 };
-
 const LandingPage = () => {
   const [lang, setLang] = useState<"ua" | "en">("ua");
   const t = lang === "ua" ? ua : en;
-
   useEffect(() => {
     const title = t.heroTitle;
     const description = t.heroSubtitle;
     const url = window.location.href;
     const origin = window.location.origin;
     const ogImage = `${origin}/favicon.ico`;
-
     document.title = title;
-
     const upsertMeta = (key: "name" | "property", keyValue: string, content: string) => {
       let meta = document.querySelector<HTMLMetaElement>(`meta[${key}="${keyValue}"]`);
       if (!meta) {
@@ -126,19 +100,16 @@ const LandingPage = () => {
       }
       meta.setAttribute("content", content);
     };
-
     upsertMeta("name", "description", description);
     upsertMeta("property", "og:title", title);
     upsertMeta("property", "og:description", description);
     upsertMeta("property", "og:type", "website");
     upsertMeta("property", "og:url", url);
     upsertMeta("property", "og:image", ogImage);
-
     upsertMeta("name", "twitter:card", "summary_large_image");
     upsertMeta("name", "twitter:title", title);
     upsertMeta("name", "twitter:description", description);
     upsertMeta("name", "twitter:image", ogImage);
-
     let canonical = document.querySelector<HTMLLinkElement>("link[rel='canonical']");
     if (!canonical) {
       canonical = document.createElement("link");
@@ -146,20 +117,18 @@ const LandingPage = () => {
       document.head.appendChild(canonical);
     }
     canonical.setAttribute("href", url);
-
     const faqSchema = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: t.faq.map((item) => ({
+      mainEntity: t.faq.map(item => ({
         "@type": "Question",
         name: item.q,
         acceptedAnswer: {
           "@type": "Answer",
-          text: item.a,
-        },
-      })),
+          text: item.a
+        }
+      }))
     };
-
     let faqScript = document.getElementById("landing-faq-schema") as HTMLScriptElement | null;
     if (!faqScript) {
       faqScript = document.createElement("script");
@@ -169,13 +138,10 @@ const LandingPage = () => {
     }
     faqScript.text = JSON.stringify(faqSchema);
   }, [t]);
-
   const handleOpenTelegram = () => {
     window.open(telegramLink, "_blank");
   };
-
-  return (
-    <div className="min-h-screen bg-background text-foreground">
+  return <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border/60 bg-background/80 backdrop-blur-md sticky top-0 z-30">
         <div className="container flex items-center justify-between py-4">
           <div className="flex items-center gap-2">
@@ -190,22 +156,10 @@ const LandingPage = () => {
           <div className="flex items-center gap-2">
             <div className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-1 text-[11px] text-muted-foreground">
               <Globe2 className="size-3" />
-              <button
-                type="button"
-                onClick={() => setLang("ua")}
-                className={`px-2 py-0.5 rounded-full transition-colors text-xs ${
-                  lang === "ua" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
-                }`}
-              >
+              <button type="button" onClick={() => setLang("ua")} className={`px-2 py-0.5 rounded-full transition-colors text-xs ${lang === "ua" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
                 UA
               </button>
-              <button
-                type="button"
-                onClick={() => setLang("en")}
-                className={`px-2 py-0.5 rounded-full transition-colors text-xs ${
-                  lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
-                }`}
-              >
+              <button type="button" onClick={() => setLang("en")} className={`px-2 py-0.5 rounded-full transition-colors text-xs ${lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
                 EN
               </button>
             </div>
@@ -264,9 +218,7 @@ const LandingPage = () => {
                 +41 528<span className="text-sm align-top ml-1">{lang === "ua" ? "грн" : "UAH"}</span>
               </p>
               <p className="text-[11px] text-muted-foreground">
-                {lang === "ua"
-                  ? "Це сума, яка залишиться після всіх запланованих витрат цього місяця."
-                  : "This is what’s left after all planned expenses this month."}
+                {lang === "ua" ? "Це сума, яка залишиться після всіх запланованих витрат цього місяця." : "This is what’s left after all planned expenses this month."}
               </p>
             </div>
 
@@ -304,18 +256,13 @@ const LandingPage = () => {
             <h2 className="text-2xl sm:text-3xl font-semibold">{t.featuresTitle}</h2>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
-            {t.features.map((feature) => (
-              <article
-                key={feature.title}
-                className="glass-card rounded-2xl p-5 flex flex-col gap-3 h-full"
-              >
+            {t.features.map(feature => <article key={feature.title} className="glass-card rounded-2xl p-5 flex flex-col gap-3 h-full">
                 <div className="size-9 rounded-xl bg-secondary flex items-center justify-center">
                   {feature.icon}
                 </div>
                 <h3 className="font-semibold text-sm sm:text-base">{feature.title}</h3>
                 <p className="text-xs sm:text-sm text-muted-foreground">{feature.text}</p>
-              </article>
-            ))}
+              </article>)}
           </div>
         </section>
 
@@ -326,9 +273,7 @@ const LandingPage = () => {
               {lang === "ua" ? "Що ти бачиш усередині" : "What you see inside"}
             </h2>
             <p className="text-sm text-muted-foreground">
-              {lang === "ua"
-                ? "Баланс, останні операції, динаміка й регулярні платежі — як на справжній фінансовій панелі."
-                : "Balance, recent operations, dynamics and recurring payments — like a real personal finance cockpit."}
+              {lang === "ua" ? "Баланс, останні операції, динаміка й регулярні платежі — як на справжній фінансовій панелі." : "Balance, recent operations, dynamics and recurring payments — like a real personal finance cockpit."}
             </p>
           </div>
 
@@ -374,48 +319,7 @@ const LandingPage = () => {
             </article>
 
             {/* Bars chart - looks like your example */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale border border-border/60">
-              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
-                    <BarChart3 className="size-4 text-income" />
-                  </div>
-                  <span className="font-medium">
-                    {lang === "ua" ? "Динаміка по днях (стовпчики)" : "Daily dynamics (bars)"}
-                  </span>
-                </div>
-              </div>
-              <div className="space-y-3 animate-fade-in">
-                {/* Simple bar chart, like on your screenshot, with premium animation */}
-                <div className="h-28 flex items-end gap-1 mt-1 group">
-                  {[
-                    { day: 1, height: 100, positive: true },
-                    { day: 2, height: 18, positive: true },
-                    { day: 3, height: 16, positive: true },
-                    { day: 5, height: 20, positive: true },
-                    { day: 6, height: 55, positive: false },
-                    { day: 8, height: 24, positive: true },
-                    { day: 10, height: 18, positive: true },
-                    { day: 15, height: 14, positive: false },
-                    { day: 18, height: 16, positive: true },
-                    { day: 22, height: 14, positive: false },
-                    { day: 26, height: 15, positive: true },
-                  ].map((bar) => (
-                    <div key={bar.day} className="flex-1 flex flex-col justify-end">
-                      <div
-                        className={`${bar.positive ? "bg-income" : "bg-destructive"} rounded-t-full transition-transform duration-200 ease-out group-hover:scale-y-105 hover:opacity-100`}
-                        style={{ height: `${bar.height}%` }}
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="flex justify-between text-[10px] text-muted-foreground px-0.5">
-                  {[1, 2, 3, 5, 6, 8, 10, 15, 18, 22, 26].map((day) => (
-                    <span key={day}>{day}</span>
-                  ))}
-                </div>
-              </div>
-            </article>
+            
 
             {/* Line chart - like separate block on screenshot */}
             <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale">
@@ -440,27 +344,13 @@ const LandingPage = () => {
               <div className="relative h-24 rounded-xl bg-gradient-to-b from-background/10 to-background/40 overflow-hidden animate-fade-in">
                 <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-80">
                   {/* Income line */}
-                  <polyline
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    className="text-income"
-                    points="0,35 10,30 20,25 35,22 50,18 65,15 80,12 100,10"
-                  />
+                  <polyline fill="none" stroke="currentColor" strokeWidth="1.5" className="text-income" points="0,35 10,30 20,25 35,22 50,18 65,15 80,12 100,10" />
                   {/* Expense line */}
-                  <polyline
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    className="text-destructive"
-                    points="0,36 10,34 20,32 35,30 50,28 65,27 80,26 100,25"
-                  />
+                  <polyline fill="none" stroke="currentColor" strokeWidth="1.5" className="text-destructive" points="0,36 10,34 20,32 35,30 50,28 65,27 80,26 100,25" />
                 </svg>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                {lang === "ua"
-                  ? "Зелена лінія — накопичений залишок, червона — витрати. Чим далі вони одна від одної, тим спокійніше за гроші."
-                  : "Green line is your accumulated balance, red is expenses. The further they are apart, the safer your money."}
+                {lang === "ua" ? "Зелена лінія — накопичений залишок, червона — витрати. Чим далі вони одна від одної, тим спокійніше за гроші." : "Green line is your accumulated balance, red is expenses. The further they are apart, the safer your money."}
               </p>
             </article>
 
@@ -523,47 +413,39 @@ const LandingPage = () => {
         </section>
 
         {/* Who is this for & pains */}
-        <section className="space-y-8 animate-fade-in">
+        <section className="space-y-8">
           <div className="flex flex-col gap-2 max-w-xl">
             <h2 className="text-2xl sm:text-3xl font-semibold">
               {lang === "ua" ? "Для кого ця програма" : "Who this app is for"}
             </h2>
             <p className="text-sm text-muted-foreground">
-              {lang === "ua"
-                ? "Для тих, хто хоче простий фінансовий помічник у Telegram замість складного банківського застосунку."
-                : "For people who want a simple money helper in Telegram instead of a complex banking app."}
+              {lang === "ua" ? "Бот для тих, хто втомився жити від зарплати до зарплати й хоче нарешті відчути контроль, а не провину за кожну витрачену гривню." : "A bot for people tired of living paycheck to paycheck who want control and peace of mind instead of guilt over every purchase."}
             </p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
               <h3 className="font-semibold text-sm">
                 {lang === "ua" ? "Зайняті айтішники" : "Busy tech people"}
               </h3>
               <p className="text-xs text-muted-foreground">
-                {lang === "ua"
-                  ? "Багато працюєш, дохід нормальний, але в кінці місяця грошей знову немає — бот показує, куди саме вони зникають."
-                  : "You work a lot and earn well but at month‑end money is gone again — the bot shows exactly where it disappears."}
+                {lang === "ua" ? "Працюєш по 10+ годин, а гроші розчиняються. Бот збирає всі доходи та витрати в одну картинку й показує, скільки в тебе реально вільних грошей після обов'язкових платежів." : "You work 10+ hour days yet money evaporates. The bot gathers all income and spending into one picture and shows how much is truly free after mandatory bills."}
               </p>
             </article>
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
               <h3 className="font-semibold text-sm">
                 {lang === "ua" ? "Фрилансери та самозайняті" : "Freelancers"}
               </h3>
               <p className="text-xs text-muted-foreground">
-                {lang === "ua"
-                  ? "Доходи стрибають, складно планувати місяць. Бот рахує, скільки можна витратити без страху залишитись без грошей."
-                  : "Income jumps up and down, planning is hard. The app calculates how much you can safely spend without ending up broke."}
+                {lang === "ua" ? "Сьогодні є замовлення — завтра тиша. Бот рахує, які витрати ти можеш собі дозволити при різних доходах і яка мінімальна сума дає тобі спокій на місяць." : "One month is packed, the next is empty. The app calculates what expenses you can safely afford at different income levels and what minimum keeps you calm for the month."}
               </p>
             </article>
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
               <h3 className="font-semibold text-sm">
                 {lang === "ua" ? "Пари та сім’ї" : "Couples & families"}
               </h3>
               <p className="text-xs text-muted-foreground">
-                {lang === "ua"
-                  ? "Спільні витрати, кредити, діти. Бот допомагає швидко бачити загальний баланс, щоб менше сваритись через гроші."
-                  : "Shared expenses, loans, kids. The bot makes it easy to see the full balance so there are fewer money arguments."}
+                {lang === "ua" ? "Спільні покупки, кредити, діти, поїздки. Бот показує, скільки ваша сім'я реально тягне, щоб ви планували відпустки й великі цілі без сварок про гроші." : "Shared purchases, loans, kids, trips. The bot shows what your family can truly afford so you can plan vacations and big goals without constant money fights."}
               </p>
             </article>
           </div>
@@ -574,9 +456,9 @@ const LandingPage = () => {
                 {lang === "ua" ? "Твої болі" : "Your pains"}
               </h3>
               <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                <li>{lang === "ua" ? "Складні фінансові застосунки, купа кнопок і графіків — лячно навіть відкривати." : "Finance apps look overloaded with buttons and charts — you are afraid to even open them."}</li>
-                <li>{lang === "ua" ? "Незрозуміло, що саме натискати щодня, щоб це реально допомагало, а не забирало час." : "You don't know what to tap every day so that it actually helps instead of wasting time."}</li>
-                <li>{lang === "ua" ? "Немає простого ШІ, який сам аналізує витрати та пояснює людською мовою, що з ними робити." : "There is no simple AI that analyses spending for you and explains in plain language what to do about it."}</li>
+                <li>{lang === "ua" ? "В кінці місяця карта в нулі, а ти не можеш згадати, на що пішли гроші." : "At the end of the month your card is empty and you can't remember where it all went."}</li>
+                <li>{lang === "ua" ? "Живеш у постійному фоні тривоги: а раптом не вистачить на оренду, кредит чи підписки?" : "Background anxiety all the time: what if there isn't enough for rent, loans or subscriptions?"}</li>
+                <li>{lang === "ua" ? "Пробував таблиці й застосунки, але кидав, бо це займає пів вечора й не дає швидкої відповіді 'я можу собі це дозволити?'." : "You tried spreadsheets and apps but quit because they eat your evenings and still don't answer fast if you can afford something."}</li>
               </ul>
             </article>
             <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
@@ -599,87 +481,27 @@ const LandingPage = () => {
               {lang === "ua" ? "Преміум‑можливості, які економлять час і нерви" : "Premium features that save time and nerves"}
             </h2>
             <p className="text-sm text-muted-foreground">
-              {lang === "ua"
-                ? "Базового функціоналу вистачає, щоб навести лад у грошах. Преміум додає інструменти, які зазвичай є лише в важких фінансових застосунках — але в простому Telegram‑форматі."
-                : "The basic version is enough to get order in your money. Premium adds powerful tools usually found only in heavy finance apps — but wrapped into a simple Telegram experience."}
+              {lang === "ua" ? "Базового функціоналу вистачає, щоб навести лад у грошах. Преміум додає інструменти, які зазвичай є лише в важких фінансових застосунках — але в простому Telegram‑форматі." : "The basic version is enough to get order in your money. Premium adds powerful tools usually found only in heavy finance apps — but wrapped into a simple Telegram experience."}
             </p>
           </div>
 
           <div className="space-y-3">
-            {/* Voice tracking */}
-            <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
-              <div className="flex items-center gap-3">
-                <div className="size-9 rounded-full bg-primary/15 flex items-center justify-center">
-                  <Mic className="size-4 text-primary" />
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm font-semibold">
-                    <span>{lang === "ua" ? "Голосова фіксація" : "Voice tracking"}</span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
-                      <Sparkles className="size-3 text-primary" />
-                      <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground max-w-xl">
-                    {lang === "ua"
-                      ? "Фіксуй витрати та доходи голосом прямо по дорозі — бот розпізнає мову, запише суму й категорію. Ідеально, коли немає часу щось натискати."
-                      : "Log expenses and income by voice on the go — the bot recognises speech, records the amount and category. Perfect when you have no time to tap around."}
-                  </p>
-                </div>
-              </div>
-              <div className="hidden sm:flex items-center">
-                <div className="w-9 h-5 rounded-full bg-background/40 border border-border/60 flex items-center px-0.5 opacity-60">
-                  <div className="size-4 rounded-full bg-muted" />
-                </div>
-              </div>
-            </article>
-
-            {/* AI monthly/yearly analysis */}
+            {/* Family budget */}
             <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
               <div className="flex items-center gap-3">
                 <div className="size-9 rounded-full bg-income-light flex items-center justify-center">
-                  <BarChart3 className="size-4 text-income" />
+                  <Users className="size-4 text-income" />
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-sm font-semibold">
-                    <span>{lang === "ua" ? "ШІ‑аналіз за місяць і рік" : "AI analysis by month and year"}</span>
+                    <span>{lang === "ua" ? "Сімейний бюджет" : "Family budget"}</span>
                     <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
                       <Sparkles className="size-3 text-primary" />
                       <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground max-w-xl">
-                    {lang === "ua"
-                      ? "Щомісячні та річні зрізи: бот підсумовує витрати, показує тренди й дає людською мовою висновки — де ти системно переплачуєш і що змінити."
-                      : "Monthly and yearly breakdowns: the bot sums up spending, shows trends and explains in plain language where you overspend and what to adjust."}
-                  </p>
-                </div>
-              </div>
-              <div className="hidden sm:flex items-center">
-                <div className="w-9 h-5 rounded-full bg-background/40 border border-border/60 flex items-center px-0.5 opacity-60">
-                  <div className="size-4 rounded-full bg-muted" />
-                </div>
-              </div>
-            </article>
-
-            {/* Categories + custom categories */}
-            <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
-              <div className="flex items-center gap-3">
-                <div className="size-9 rounded-full bg-accent/20 flex items-center justify-center">
-                  <FolderTree className="size-4 text-accent-foreground" />
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm font-semibold">
-                    <span>{lang === "ua" ? "Витрати по категоріях" : "Spending by category"}</span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
-                      <Sparkles className="size-3 text-primary" />
-                      <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground max-w-xl">
-                    {lang === "ua"
-                      ? "Готові категорії плюс власні — під твій стиль життя. Бачиш, скільки йде на їжу, житло, розваги чи хобі, і швидко знаходиш, що можна підрізати."
-                      : "Built‑in and custom categories matched to your lifestyle. See how much goes to food, housing, fun or hobbies and quickly spot where to trim."}
+                    {lang === "ua" ? "Ведіть спільний бюджет з партнером чи родиною: загальні витрати, доходи та ліміти в одному місці, без зведення табличок вручну." : "Run a shared budget with a partner or family: joint expenses, income and limits in one place — no manual spreadsheet merging."}
                   </p>
                 </div>
               </div>
@@ -698,16 +520,14 @@ const LandingPage = () => {
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-sm font-semibold">
-                    <span>{lang === "ua" ? "Фотофіксація чеків" : "Photo receipt capture"}</span>
+                    <span>{lang === "ua" ? "Сканер чеків" : "Receipt scanner"}</span>
                     <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
                       <Sparkles className="size-3 text-primary" />
                       <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground max-w-xl">
-                    {lang === "ua"
-                      ? "Фотографуй чеки — бот читає суми та позиції й сам заносить витрати. Зручно після супермаркетів чи великих покупок."
-                      : "Snap receipts and let the bot read amounts and items, then add them as expenses. Ideal after supermarket runs or big purchases."}
+                    {lang === "ua" ? "Скануйте паперові чеки — суми й категорії автоматично потрапляють у витрати. Жодного ручного перенесення з фото в застосунок." : "Scan paper receipts and let the app automatically add amounts and categories to your expenses — no more manual typing from photos."}
                   </p>
                 </div>
               </div>
@@ -718,24 +538,22 @@ const LandingPage = () => {
               </div>
             </article>
 
-            {/* Family budget */}
+            {/* Voice input */}
             <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
               <div className="flex items-center gap-3">
-                <div className="size-9 rounded-full bg-income-light flex items-center justify-center">
-                  <Users className="size-4 text-income" />
+                <div className="size-9 rounded-full bg-primary/15 flex items-center justify-center">
+                  <Mic className="size-4 text-primary" />
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-sm font-semibold">
-                    <span>{lang === "ua" ? "Сімейний бюджет" : "Family budget"}</span>
+                    <span>{lang === "ua" ? "Запис голосом" : "Voice input"}</span>
                     <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
                       <Sparkles className="size-3 text-primary" />
                       <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground max-w-xl">
-                    {lang === "ua"
-                      ? "Спільні витрати для пари чи родини: бачите загальний баланс, хто що оплатив і скільки можна витратити без сварок про гроші."
-                      : "Shared spending for couples or families: see the total balance, who paid for what and how much you can spend without money fights."}
+                    {lang === "ua" ? "Додавай витрати голосом по дорозі — бот сам розпізнає текст і розкладе все по категоріях. Менше натискань — більше контролю." : "Add expenses by voice on the go — the bot converts speech to text and assigns categories for you. Fewer taps, more control."}
                   </p>
                 </div>
               </div>
@@ -755,18 +573,13 @@ const LandingPage = () => {
             <h2 className="text-2xl sm:text-3xl font-semibold">{t.faqTitle}</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
-            {t.faq.map((item) => (
-              <article
-                key={item.q}
-                className="glass-card rounded-2xl p-4 flex flex-col gap-2"
-              >
+            {t.faq.map(item => <article key={item.q} className="glass-card rounded-2xl p-4 flex flex-col gap-2">
                 <h3 className="font-semibold text-sm sm:text-base flex items-center gap-2">
                   <CheckCircle2 className="size-4 text-primary" />
                   {item.q}
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground">{item.a}</p>
-              </article>
-            ))}
+              </article>)}
           </div>
         </section>
 
@@ -778,16 +591,10 @@ const LandingPage = () => {
                 {lang === "ua" ? "Запусти свого фінансового бота зараз" : "Launch your personal money bot now"}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {lang === "ua"
-                  ? "Натисни одну кнопку, додай кілька останніх витрат — і вже за тиждень ти побачиш, скільки в тебе реально вільних грошей."
-                  : "Tap one button, add a few recent expenses — and within a week you'll see how much free money you truly have."}
+                {lang === "ua" ? "Натисни одну кнопку, додай кілька останніх витрат — і вже за тиждень ти побачиш, скільки в тебе реально вільних грошей." : "Tap one button, add a few recent expenses — and within a week you'll see how much free money you truly have."}
               </p>
             </div>
-            <Button
-              size="lg"
-              onClick={handleOpenTelegram}
-              className="gradient-primary text-primary-foreground glow-primary min-w-[220px]"
-            >
+            <Button size="lg" onClick={handleOpenTelegram} className="gradient-primary text-primary-foreground glow-primary min-w-[220px]">
               {t.heroCtaPrimary}
               <ArrowRight className="size-4" />
             </Button>
@@ -800,14 +607,10 @@ const LandingPage = () => {
           <span>© {new Date().getFullYear()} My Finances</span>
           <span className="flex items-center gap-1">
             <Sparkles className="size-3" />
-            {lang === "ua"
-              ? "Створено як перший український AI‑фінансовий Telegram‑стартап"
-              : "Built as a Ukrainian AI‑powered finance startup inside Telegram"}
+            {lang === "ua" ? "Створено як перший український AI‑фінансовий Telegram‑стартап" : "Built as a Ukrainian AI‑powered finance startup inside Telegram"}
           </span>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default LandingPage;
