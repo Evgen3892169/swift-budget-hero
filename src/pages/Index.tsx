@@ -39,51 +39,52 @@ const Index = () => {
 
   const weeklyData = useMemo(() => {
     const dayNames = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-    const today = new Date();
 
-    const days: {
-      label: string;
-      dayNumber: number;
-      income: number;
-      expense: number;
-    }[] = [];
+    if (!monthTransactions || monthTransactions.length === 0) {
+      return [];
+    }
 
-    // Останні 7 днів: від старішого до сьогодні
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
+    // Агрегуємо доходи/витрати по днях поточного місяця
+    const dayMap: {
+      [key: number]: {
+        income: number;
+        expense: number;
+      };
+    } = {};
 
-      const income = transactions
-        .filter(t => {
-          const td = new Date(t.date);
-          return (
-            td.getFullYear() === date.getFullYear() &&
-            td.getMonth() === date.getMonth() &&
-            td.getDate() === date.getDate() &&
-            t.type === 'income'
-          );
-        })
-        .reduce((sum, t) => sum + t.amount, 0);
+    monthTransactions.forEach(t => {
+      const date = new Date(t.date);
+      const day = date.getDate();
 
-      const expense = transactions
-        .filter(t => {
-          const td = new Date(t.date);
-          return (
-            td.getFullYear() === date.getFullYear() &&
-            td.getMonth() === date.getMonth() &&
-            td.getDate() === date.getDate() &&
-            t.type === 'expense'
-          );
-        })
-        .reduce((sum, t) => sum + t.amount, 0);
+      if (!dayMap[day]) {
+        dayMap[day] = { income: 0, expense: 0 };
+      }
 
-      days.push({
+      if (t.type === 'income') {
+        dayMap[day].income += t.amount;
+      } else {
+        dayMap[day].expense += t.amount;
+      }
+    });
+
+    const sortedDays = Object.keys(dayMap)
+      .map(Number)
+      .sort((a, b) => a - b);
+
+    // Беремо останні 7 днів з транзакціями у вибраному місяці
+    const lastSevenDays = sortedDays.slice(-7);
+
+    const days = lastSevenDays.map(day => {
+      const date = new Date(currentYear, currentDate.getMonth(), day);
+      const { income, expense } = dayMap[day];
+
+      return {
         label: dayNames[date.getDay()],
-        dayNumber: date.getDate(),
+        dayNumber: day,
         income,
         expense,
-      });
-    }
+      };
+    });
 
     const maxValue = Math.max(1, ...days.map(v => Math.max(v.income, v.expense)));
 
@@ -92,7 +93,7 @@ const Index = () => {
       incomeHeight: (v.income / maxValue) * 100,
       expenseHeight: (v.expense / maxValue) * 100,
     }));
-  }, [transactions]);
+  }, [monthTransactions, currentDate, currentYear]);
   if (isPageLoading || isDataLoading && !isInitialized) {
     return <div className="min-h-screen flex items-center justify-center loading-screen">
         <div className="text-center space-y-4">
