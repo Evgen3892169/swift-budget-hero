@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2, Users, ReceiptText, Mic } from "lucide-react";
+import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2, Users, ReceiptText, Mic, FolderTree } from "lucide-react";
 
 const telegramLink = "https://t.me"; // TODO: replace with real bot link
 
@@ -606,15 +606,15 @@ const LandingPage = () => {
           </div>
 
           <div className="space-y-3">
-            {/* Family budget */}
+            {/* Voice tracking */}
             <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
               <div className="flex items-center gap-3">
-                <div className="size-9 rounded-full bg-income-light flex items-center justify-center">
-                  <Users className="size-4 text-income" />
+                <div className="size-9 rounded-full bg-primary/15 flex items-center justify-center">
+                  <Mic className="size-4 text-primary" />
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-sm font-semibold">
-                    <span>{lang === "ua" ? "Сімейний бюджет" : "Family budget"}</span>
+                    <span>{lang === "ua" ? "Голосова фіксація" : "Voice tracking"}</span>
                     <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
                       <Sparkles className="size-3 text-primary" />
                       <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
@@ -622,8 +622,64 @@ const LandingPage = () => {
                   </div>
                   <p className="text-xs text-muted-foreground max-w-xl">
                     {lang === "ua"
-                      ? "Ведіть спільний бюджет з партнером чи родиною: загальні витрати, доходи та ліміти в одному місці, без зведення табличок вручну."
-                      : "Run a shared budget with a partner or family: joint expenses, income and limits in one place — no manual spreadsheet merging."}
+                      ? "Фіксуй витрати та доходи голосом прямо по дорозі — бот розпізнає мову, запише суму й категорію. Ідеально, коли немає часу щось натискати."
+                      : "Log expenses and income by voice on the go — the bot recognises speech, records the amount and category. Perfect when you have no time to tap around."}
+                  </p>
+                </div>
+              </div>
+              <div className="hidden sm:flex items-center">
+                <div className="w-9 h-5 rounded-full bg-background/40 border border-border/60 flex items-center px-0.5 opacity-60">
+                  <div className="size-4 rounded-full bg-muted" />
+                </div>
+              </div>
+            </article>
+
+            {/* AI monthly/yearly analysis */}
+            <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-full bg-income-light flex items-center justify-center">
+                  <BarChart3 className="size-4 text-income" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <span>{lang === "ua" ? "ШІ‑аналіз за місяць і рік" : "AI analysis by month and year"}</span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
+                      <Sparkles className="size-3 text-primary" />
+                      <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground max-w-xl">
+                    {lang === "ua"
+                      ? "Щомісячні та річні зрізи: бот підсумовує витрати, показує тренди й дає людською мовою висновки — де ти системно переплачуєш і що змінити."
+                      : "Monthly and yearly breakdowns: the bot sums up spending, shows trends and explains in plain language where you overspend and what to adjust."}
+                  </p>
+                </div>
+              </div>
+              <div className="hidden sm:flex items-center">
+                <div className="w-9 h-5 rounded-full bg-background/40 border border-border/60 flex items-center px-0.5 opacity-60">
+                  <div className="size-4 rounded-full bg-muted" />
+                </div>
+              </div>
+            </article>
+
+            {/* Categories + custom categories */}
+            <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-full bg-accent/20 flex items-center justify-center">
+                  <FolderTree className="size-4 text-accent-foreground" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <span>{lang === "ua" ? "Витрати по категоріях" : "Spending by category"}</span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
+                      <Sparkles className="size-3 text-primary" />
+                      <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground max-w-xl">
+                    {lang === "ua"
+                      ? "Готові категорії плюс власні — під твій стиль життя. Бачиш, скільки йде на їжу, житло, розваги чи хобі, і швидко знаходиш, що можна підрізати."
+                      : "Built‑in and custom categories matched to your lifestyle. See how much goes to food, housing, fun or hobbies and quickly spot where to trim."}
                   </p>
                 </div>
               </div>
@@ -642,7 +698,7 @@ const LandingPage = () => {
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-sm font-semibold">
-                    <span>{lang === "ua" ? "Сканер чеків" : "Receipt scanner"}</span>
+                    <span>{lang === "ua" ? "Фотофіксація чеків" : "Photo receipt capture"}</span>
                     <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
                       <Sparkles className="size-3 text-primary" />
                       <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
@@ -650,8 +706,8 @@ const LandingPage = () => {
                   </div>
                   <p className="text-xs text-muted-foreground max-w-xl">
                     {lang === "ua"
-                      ? "Скануйте паперові чеки — суми й категорії автоматично потрапляють у витрати. Жодного ручного перенесення з фото в застосунок."
-                      : "Scan paper receipts and let the app automatically add amounts and categories to your expenses — no more manual typing from photos."}
+                      ? "Фотографуй чеки — бот читає суми та позиції й сам заносить витрати. Зручно після супермаркетів чи великих покупок."
+                      : "Snap receipts and let the bot read amounts and items, then add them as expenses. Ideal after supermarket runs or big purchases."}
                   </p>
                 </div>
               </div>
@@ -662,15 +718,15 @@ const LandingPage = () => {
               </div>
             </article>
 
-            {/* Voice input */}
+            {/* Family budget */}
             <article className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between hover-scale">
               <div className="flex items-center gap-3">
-                <div className="size-9 rounded-full bg-primary/15 flex items-center justify-center">
-                  <Mic className="size-4 text-primary" />
+                <div className="size-9 rounded-full bg-income-light flex items-center justify-center">
+                  <Users className="size-4 text-income" />
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-sm font-semibold">
-                    <span>{lang === "ua" ? "Запис голосом" : "Voice input"}</span>
+                    <span>{lang === "ua" ? "Сімейний бюджет" : "Family budget"}</span>
                     <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide">
                       <Sparkles className="size-3 text-primary" />
                       <span>{lang === "ua" ? "Преміум" : "Premium"}</span>
@@ -678,8 +734,8 @@ const LandingPage = () => {
                   </div>
                   <p className="text-xs text-muted-foreground max-w-xl">
                     {lang === "ua"
-                      ? "Додавай витрати голосом по дорозі — бот сам розпізнає текст і розкладе все по категоріях. Менше натискань — більше контролю."
-                      : "Add expenses by voice on the go — the bot converts speech to text and assigns categories for you. Fewer taps, more control."}
+                      ? "Спільні витрати для пари чи родини: бачите загальний баланс, хто що оплатив і скільки можна витратити без сварок про гроші."
+                      : "Shared spending for couples or families: see the total balance, who paid for what and how much you can spend without money fights."}
                   </p>
                 </div>
               </div>
