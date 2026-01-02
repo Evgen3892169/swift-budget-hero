@@ -10,29 +10,29 @@ import premiumFeatures from "@/assets/landing-premium.png";
 const telegramLink = "https://t.me"; // TODO: replace with real bot link
 
 const ua = {
-  heroBadge: "Перший AI‑трекер витрат у Telegram",
-  heroTitle: "Мої фінанси — контроль бюджету без таблиць і нервів",
+  heroBadge: "AI‑трекер витрат у Telegram для звичайних людей",
+  heroTitle: "Тримай гроші під контролем за кілька хвилин на день",
   heroSubtitle:
-    "Фіксуй доходи та витрати в Telegram, а ШІ покаже, куди зникають гроші і як тримати баланс.",
+    "Просто записуй витрати, а ШІ сам збирає статистику, показує, куди зникають гроші, і допомагає не вилітати з бюджету.",
   heroCtaPrimary: "Відкрити в Telegram",
   heroCtaSecondary: "Подивитись можливості",
-  heroNote: "Працює прямо в Telegram • Безкоштовний старт",
-  featuresTitle: "Чому це не просто ще один фінтрекер",
+  heroNote: "Жодних таблиць в Excel • Усе працює прямо в Telegram",
+  featuresTitle: "Що ти отримуєш з першого дня",
   features: [
     {
-      icon: <Sparkles className="text-primary" />, 
-      title: "AI‑аналіз витрат",
-      text: "ШІ підсумовує витрати, показує патерни і допомагає знаходити, де можна економити без болю.",
+      icon: <Sparkles className="text-primary" />,
+      title: "Розумний аналіз витрат",
+      text: "Додай кілька днів витрат — і ШІ покаже, на що йде найбільше грошей, де ти переплачуєш і як це змінити без жорсткої економії.",
     },
     {
-      icon: <BarChart3 className="text-income" />, 
-      title: "Живі графіки та динаміка",
-      text: "Доходи, витрати, баланс по днях і місяцях — все в наочних графіках, а не в сухих таблицях.",
+      icon: <BarChart3 className="text-income" />,
+      title: "Графіки, які все пояснюють за 3 секунди",
+      text: "Доходи, витрати та баланс по днях і місяцях. Чітко видно, коли ти виходиш у плюс, а коли «горить» бюджет.",
     },
     {
-      icon: <ShieldCheck className="text-accent-foreground" />, 
-      title: "Для звичайних людей, не для бухгалтерів",
-      text: "Інтерфейс простий, українською, заточений під телефон. Додати витрату — справа кількох секунд.",
+      icon: <ShieldCheck className="text-accent-foreground" />,
+      title: "Фінанси без складних термінів",
+      text: "Інтерфейс українською, продуманий для телефону. Ніяких «дебет/кредит» — тільки зрозумілі категорії та суми.",
     },
   ],
   screenshotsTitle: "Як виглядає всередині",
@@ -60,29 +60,29 @@ const ua = {
 };
 
 const en = {
-  heroBadge: "AI‑powered finance tracker in Telegram",
-  heroTitle: "My Finances — control your money without spreadsheets",
+  heroBadge: "AI‑powered money tracker in Telegram",
+  heroTitle: "Stay in control of your money in a few minutes a day",
   heroSubtitle:
-    "Track income and expenses right inside Telegram. AI explains where your money goes and how to stay in control.",
+    "Simply log your expenses and AI will group them, show where your money really goes and how not to break your budget.",
   heroCtaPrimary: "Open in Telegram",
-  heroCtaSecondary: "See the features",
-  heroNote: "Works inside Telegram • Free to start",
-  featuresTitle: "Why it’s more than just another expense app",
+  heroCtaSecondary: "See how it works",
+  heroNote: "No spreadsheets • Everything lives inside Telegram",
+  featuresTitle: "What you get from day one",
   features: [
     {
-      icon: <Sparkles className="text-primary" />, 
-      title: "AI spending insights",
-      text: "AI groups your expenses, spots patterns and shows where you can save without changing your life completely.",
+      icon: <Sparkles className="text-primary" />,
+      title: "Smart spending insights",
+      text: "After a few days of tracking AI shows your top spending categories, hidden leaks and realistic ways to save.",
     },
     {
-      icon: <BarChart3 className="text-income" />, 
-      title: "Clean charts and dynamics",
-      text: "Income, expenses and balance by days and months — visual charts instead of boring tables.",
+      icon: <BarChart3 className="text-income" />,
+      title: "Charts that tell the story",
+      text: "Income, expenses and balance by day and month. You instantly see when you are in the green or burning cash.",
     },
     {
-      icon: <ShieldCheck className="text-accent-foreground" />, 
-      title: "Built for humans, not accountants",
-      text: "Simple mobile‑first UI in Ukrainian. Adding a new expense literally takes a few seconds.",
+      icon: <ShieldCheck className="text-accent-foreground" />,
+      title: "Friendly, not financial‑jargon heavy",
+      text: "Mobile‑first interface in Ukrainian. No accounting terms — just clear categories, amounts and trends.",
     },
   ],
   screenshotsTitle: "What it looks like inside",
@@ -249,20 +249,20 @@ const LandingPage = () => {
               <span>{t.heroNote}</span>
             </div>
           </div>
-          <div className="relative max-w-md mx-auto w-full">
-            <div className="glass-card rounded-[1.75rem] overflow-hidden glow-primary border border-balance/50 bg-balance-soft">
+          <div className="relative max-w-sm mx-auto w-full">
+            <div className="glass-card rounded-[1.75rem] overflow-hidden glow-primary border border-balance/50 bg-balance-soft max-h-[420px]">
               <img
                 src={dashboardMain}
                 alt="Головний екран фінансового застосунку — баланс та доходи/витрати"
-                className="w-full h-auto object-cover"
+                className="w-full h-full object-contain"
                 loading="lazy"
               />
             </div>
-            <div className="absolute -bottom-10 -right-6 w-40 glass-card rounded-2xl overflow-hidden border border-border/60 hidden sm:block">
+            <div className="absolute -bottom-6 -right-4 w-32 glass-card rounded-2xl overflow-hidden border border-border/60 hidden sm:block">
               <img
                 src={recentOps}
                 alt="Список останніх операцій у застосунку Мої фінанси"
-                className="w-full h-auto object-cover"
+                className="w-full h-full object-contain"
                 loading="lazy"
               />
             </div>
@@ -296,31 +296,31 @@ const LandingPage = () => {
             <h2 className="text-2xl sm:text-3xl font-semibold">{t.screenshotsTitle}</h2>
             <p className="text-sm text-muted-foreground">{t.screenshotsSubtitle}</p>
           </div>
-          <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr] items-start">
-            <div className="space-y-4">
-              <div className="glass-card rounded-[1.75rem] overflow-hidden">
+          <div className="grid gap-4 md:grid-cols-3 items-start">
+            <div className="space-y-4 md:col-span-2">
+              <div className="glass-card rounded-[1.5rem] overflow-hidden max-h-[360px]">
                 <img
                   src={dashboardAnalytics}
                   alt="Аналітика доходів та витрат у вигляді графіків в застосунку Мої фінанси"
-                  className="w-full h-auto object-cover"
+                  className="w-full h-full object-contain"
                   loading="lazy"
                 />
               </div>
             </div>
-            <div className="space-y-4">
-              <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="space-y-4 md:col-span-1">
+              <div className="glass-card rounded-2xl overflow-hidden max-h-[220px]">
                 <img
                   src={regularSettings}
                   alt="Налаштування регулярних доходів і витрат у застосунку Мої фінанси"
-                  className="w-full h-auto object-cover"
+                  className="w-full h-full object-contain"
                   loading="lazy"
                 />
               </div>
-              <div className="glass-card rounded-2xl overflow-hidden">
+              <div className="glass-card rounded-2xl overflow-hidden max-h-[220px]">
                 <img
                   src={premiumFeatures}
                   alt="Преміум‑функції: сімейний бюджет, сканер чеків, запис голосових витрат"
-                  className="w-full h-auto object-cover"
+                  className="w-full h-full object-contain"
                   loading="lazy"
                 />
               </div>
