@@ -278,51 +278,97 @@ const LandingPage = () => {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3 items-stretch">
-            {/* Last operations */}
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-1 hover-scale">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+            {/* History preview like in the screenshot */}
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale animate-fade-in">
+              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm sm:text-base">
+                    {lang === "ua" ? "Історія" : "History"}
+                  </span>
+                  <span className="text-[11px] sm:text-xs">
+                    {lang === "ua" ? "Всі операції" : "All operations"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Month selector mock */}
+              <div className="mt-1 flex items-center justify-between rounded-2xl bg-secondary/60 px-3 py-2 text-xs sm:text-sm">
+                <button className="text-muted-foreground">◀</button>
+                <span className="font-medium">
+                  {lang === "ua" ? "листопад 2025 р." : "November 2025"}
+                </span>
+                <button className="text-muted-foreground">▶</button>
+              </div>
+
+              {/* Operations list */}
+              <div className="space-y-3 text-[11px] sm:text-xs mt-1">
+                <div className="text-muted-foreground uppercase tracking-wide text-[10px] sm:text-[11px]">
+                  {lang === "ua" ? "26 листопада 2025 р." : "26 November 2025"}
+                </div>
+                <div className="rounded-2xl bg-card/80 border border-border/60 px-3 py-2 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-muted-foreground">17:55</span>
+                    <span>{lang === "ua" ? "аптека" : "pharmacy"}</span>
+                  </div>
+                  <span className="font-semibold text-destructive">
+                    -1 300 {lang === "ua" ? "грн" : "UAH"}
+                  </span>
+                </div>
+
+                <div className="text-muted-foreground uppercase tracking-wide text-[10px] sm:text-[11px]">
+                  {lang === "ua" ? "22 листопада 2025 р." : "22 November 2025"}
+                </div>
+                <div className="rounded-2xl bg-card/80 border border-border/60 px-3 py-2 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-muted-foreground">14:30</span>
+                    <span>{lang === "ua" ? "підробіток" : "side job"}</span>
+                  </div>
+                  <span className="font-semibold text-income">
+                    +3 000 {lang === "ua" ? "грн" : "UAH"}
+                  </span>
+                </div>
+              </div>
+            </article>
+
+            {/* Bars chart - looks like your example */}
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale animate-fade-in">
+              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
                     <BarChart3 className="size-4 text-income" />
                   </div>
                   <span className="font-medium">
-                    {lang === "ua" ? "Останні операції" : "Recent operations"}
+                    {lang === "ua" ? "Динаміка по днях (стовпчики)" : "Daily dynamics (bars)"}
                   </span>
                 </div>
               </div>
-              <div className="space-y-3 text-[11px] flex-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-muted-foreground">17:55</span>
-                    <span>{lang === "ua" ? "аптека" : "pharmacy"}</span>
-                  </div>
-                  <span className="font-semibold text-destructive">-1 300 {lang === "ua" ? "грн" : "UAH"}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-muted-foreground">14:30</span>
-                    <span>{lang === "ua" ? "підробіток" : "side job"}</span>
-                  </div>
-                  <span className="font-semibold text-income">+3 000 {lang === "ua" ? "грн" : "UAH"}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-muted-foreground">20:45</span>
-                    <span>{lang === "ua" ? "розваги" : "entertainment"}</span>
-                  </div>
-                  <span className="font-semibold text-destructive">-1 600 {lang === "ua" ? "грн" : "UAH"}</span>
-                </div>
+              <div className="relative h-28 sm:h-32 rounded-xl bg-gradient-to-b from-background/10 to-background/40 overflow-hidden animate-fade-in">
+                <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-90">
+                  {/* Green income bars */}
+                  <rect x="4" y="8" width="6" height="28" className="fill-income" rx="1" />
+                  <rect x="18" y="24" width="6" height="12" className="fill-income" rx="1" />
+                  <rect x="60" y="20" width="6" height="16" className="fill-income" rx="1" />
+
+                  {/* Red expense bars */}
+                  <rect x="32" y="18" width="6" height="18" className="fill-destructive" rx="1" />
+                  <rect x="46" y="26" width="6" height="10" className="fill-destructive" rx="1" />
+                  <rect x="74" y="24" width="6" height="12" className="fill-destructive" rx="1" />
+                  <rect x="88" y="22" width="6" height="14" className="fill-destructive" rx="1" />
+
+                  {/* Bottom axis labels (approximate days) */}
+                  <text x="7" y="38" className="fill-muted-foreground" fontSize="4">1</text>
+                  <text x="21" y="38" className="fill-muted-foreground" fontSize="4">2</text>
+                  <text x="35" y="38" className="fill-muted-foreground" fontSize="4">4</text>
+                  <text x="49" y="38" className="fill-muted-foreground" fontSize="4">6</text>
+                  <text x="63" y="38" className="fill-muted-foreground" fontSize="4">10</text>
+                  <text x="77" y="38" className="fill-muted-foreground" fontSize="4">18</text>
+                  <text x="91" y="38" className="fill-muted-foreground" fontSize="4">27</text>
+                </svg>
               </div>
-              <button className="mt-2 text-xs text-primary text-left">
-                {lang === "ua" ? "Вся історія" : "Full history"} →
-              </button>
             </article>
 
-            {/* Bars chart - looks like your example */}
-            
-
             {/* Line chart - like separate block on screenshot */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale">
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale animate-fade-in">
               <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
@@ -344,13 +390,27 @@ const LandingPage = () => {
               <div className="relative h-24 rounded-xl bg-gradient-to-b from-background/10 to-background/40 overflow-hidden animate-fade-in">
                 <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-80">
                   {/* Income line */}
-                  <polyline fill="none" stroke="currentColor" strokeWidth="1.5" className="text-income" points="0,35 10,30 20,25 35,22 50,18 65,15 80,12 100,10" />
+                  <polyline
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    className="text-income"
+                    points="0,35 10,30 20,25 35,22 50,18 65,15 80,12 100,10"
+                  />
                   {/* Expense line */}
-                  <polyline fill="none" stroke="currentColor" strokeWidth="1.5" className="text-destructive" points="0,36 10,34 20,32 35,30 50,28 65,27 80,26 100,25" />
+                  <polyline
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    className="text-destructive"
+                    points="0,36 10,34 20,32 35,30 50,28 65,27 80,26 100,25"
+                  />
                 </svg>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                {lang === "ua" ? "Зелена лінія — накопичений залишок, червона — витрати. Чим далі вони одна від одної, тим спокійніше за гроші." : "Green line is your accumulated balance, red is expenses. The further they are apart, the safer your money."}
+                {lang === "ua"
+                  ? "Зелена лінія — накопичений залишок, червона — витрати. Чим далі вони одна від одної, тим спокійніше за гроші."
+                  : "Green line is your accumulated balance, red is expenses. The further they are apart, the safer your money."}
               </p>
             </article>
 
