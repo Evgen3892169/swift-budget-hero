@@ -249,24 +249,26 @@ const Settings = () => {
 
         {/* Theme */}
         <div className="bg-card rounded-lg p-4 shadow-sm">
-          <Label className="text-base font-semibold mb-3 block">Тема інтерфейсу</Label>
-          <div className="flex items-center justify-center gap-4">
-            <Moon className={`h-5 w-5 ${!isDarkTheme ? 'text-muted-foreground' : 'text-primary'}`} />
-            <Switch
-              checked={isDarkTheme}
-              onCheckedChange={(checked) => {
-                setIsDarkTheme(checked);
-                if (checked) {
-                  document.documentElement.classList.add('dark');
-                  localStorage.setItem('theme', 'dark');
-                } else {
-                  document.documentElement.classList.remove('dark');
-                  localStorage.setItem('theme', 'light');
-                }
-              }}
-              aria-label="Перемикач темної та світлої теми"
-            />
-            <Sun className={`h-5 w-5 ${isDarkTheme ? 'text-muted-foreground' : 'text-primary'}`} />
+          <div className="flex items-center justify-between gap-4">
+            <Label className="text-base font-semibold">Тема інтерфейсу</Label>
+            <div className="flex items-center gap-3">
+              <Moon className={`h-5 w-5 ${!isDarkTheme ? 'text-muted-foreground' : 'text-primary'}`} />
+              <Switch
+                checked={isDarkTheme}
+                onCheckedChange={(checked) => {
+                  setIsDarkTheme(checked);
+                  if (checked) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                  }
+                }}
+                aria-label="Перемикач темної та світлої теми"
+              />
+              <Sun className={`h-5 w-5 ${isDarkTheme ? 'text-muted-foreground' : 'text-primary'}`} />
+            </div>
           </div>
         </div>
 
