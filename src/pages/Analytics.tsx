@@ -4,6 +4,7 @@ import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { MonthNavigator } from '@/components/MonthNavigator';
 import { BottomNav } from '@/components/BottomNav';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { MiniChart } from '@/components/MiniChart';
 import { TrendingUp, TrendingDown, Wallet, PieChart, Sparkles, Crown } from 'lucide-react';
 import {
   BarChart,
@@ -12,6 +13,8 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  AreaChart,
+  Area,
 } from 'recharts';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -52,6 +55,7 @@ const Analytics = () => {
   const [range, setRange] = useState<'month' | 'all'>('month');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isPremiumOpen, setIsPremiumOpen] = useState(false);
+  const [dynamicsScope, setDynamicsScope] = useState<'month' | 'year'>('month');
 
   const isPageLoading = isUserLoading || (isLoading && !isInitialized);
 
@@ -137,6 +141,39 @@ const Analytics = () => {
       .sort((a, b) => (a.month > b.month ? 1 : -1));
   }, [transactions, range]);
 
+  const yearlyDynamicsData = useMemo(() => {
+    // Дані тільки за поточний рік
+    const yearMap: { [month: number]: { income: number; expense: number } } = {};
+    for (let m = 0; m < 12; m++) {
+      yearMap[m] = { income: 0, expense: 0 };
+    }
+
+    transactions.forEach((t) => {
+      const date = new Date(t.date);
+      if (date.getFullYear() !== currentYear) return;
+      const m = date.getMonth();
+      if (!yearMap[m]) yearMap[m] = { income: 0, expense: 0 };
+      if (t.type === 'income') yearMap[m].income += t.amount;
+      else yearMap[m].expense += t.amount;
+    });
+
+    const monthLabels = ['Січ', 'Лют', 'Бер', 'Квіт', 'Трав', 'Черв', 'Лип', 'Серп', 'Вер', 'Жовт', 'Лист', 'Груд'];
+
+    let cumulativeIncome = 0;
+    let cumulativeExpense = 0;
+
+    return Object.entries(yearMap).map(([m, data]) => {
+      const monthIndex = Number(m);
+      cumulativeIncome += data.income;
+      cumulativeExpense += data.expense;
+      return {
+        label: monthLabels[monthIndex],
+        income: cumulativeIncome,
+        expense: cumulativeExpense,
+      };
+    });
+  }, [transactions, currentYear]);
+
   if (isPageLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -220,24 +257,68 @@ const Analytics = () => {
            </div>
         </div>
 
-        {/* Mini Dynamics Chart moved from Home */}
+        {/* Dynamics Chart with month/year toggle */}
         <div className="bg-card rounded-2xl p-5 border border-border/50">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
-              <TrendingUp className="h-4 w-4 text-primary" />
+          <div className="flex items-center justify-between mb-4 gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </div>
+              <h3 className="font-semibold text-sm">Динаміка</h3>
             </div>
-            <h3 className="font-semibold text-sm">Динаміка</h3>
+            <div className="inline-flex items-center gap-1 bg-secondary/40 rounded-full p-0.5">
+              <button
+                type="button"
+                className={`px-3 h-7 rounded-full text-[11px] font-medium transition-colors ${
+                  dynamicsScope === 'month'
+                    ? 'bg-background text-foreground'
+                    : 'text-muted-foreground'
+                }`}
+                onClick={() => setDynamicsScope('month')}
+              >
+                Місяць
+              </button>
+              <button
+                type="button"
+                className={`px-3 h-7 rounded-full text-[11px] font-medium transition-colors ${
+                  dynamicsScope === 'year'
+                    ? 'bg-background text-foreground'
+                    : 'text-muted-foreground'
+                }`}
+                onClick={() => setDynamicsScope('year')}
+              >
+                Рік
+              </button>
+            </div>
           </div>
-          {dailyData.length === 0 ? (
+
+          {dynamicsScope === 'month' ? (
+            <MiniChart
+              transactions={transactions}
+              currentMonth={currentMonth}
+              currentYear={currentYear}
+              currency={settings.currency}
+            />
+          ) : yearlyDynamicsData.every((d) => d.income === 0 && d.expense === 0) ? (
             <p className="text-muted-foreground text-sm text-center py-8">
-              Немає даних за цей місяць
+              Немає даних за цей рік
             </p>
           ) : (
-            <div className="h-48">
+            <div className="h-40">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={dailyData} barGap={2}>
+                <AreaChart data={yearlyDynamicsData}>
+                  <defs>
+                    <linearGradient id="yearIncome" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(160, 65%, 50%)" stopOpacity={0.35} />
+                      <stop offset="100%" stopColor="hsl(160, 65%, 50%)" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="yearExpense" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(0, 60%, 55%)" stopOpacity={0.35} />
+                      <stop offset="100%" stopColor="hsl(0, 60%, 55%)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
                   <XAxis
-                    dataKey="day"
+                    dataKey="label"
                     axisLine={false}
                     tickLine={false}
                     tick={{ fill: 'hsl(210, 15%, 55%)', fontSize: 10 }}
@@ -252,13 +333,25 @@ const Analytics = () => {
                     }}
                     formatter={(value: number, name: string) => [
                       `${value.toLocaleString('uk-UA')} ${settings.currency}`,
-                      name === 'income' ? 'Дохід' : 'Витрати',
+                      name === 'income' ? 'Кумулятивний дохід' : 'Кумулятивні витрати',
                     ]}
-                    labelFormatter={(label) => `День ${label}`}
+                    labelFormatter={(label) => `Місяць ${label}`}
                   />
-                  <Bar dataKey="income" fill="hsl(160, 65%, 50%)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="expense" fill="hsl(0, 60%, 55%)" radius={[4, 4, 0, 0]} />
-                </BarChart>
+                  <Area
+                    type="monotone"
+                    dataKey="income"
+                    stroke="hsl(160, 65%, 50%)"
+                    strokeWidth={2}
+                    fill="url(#yearIncome)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="expense"
+                    stroke="hsl(0, 60%, 55%)"
+                    strokeWidth={2}
+                    fill="url(#yearExpense)"
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             </div>
           )}
