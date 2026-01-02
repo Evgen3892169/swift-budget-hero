@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, TrendingUp, TrendingDown, User, Users, Trash2 } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, User, Users, Trash2, Crown } from 'lucide-react';
 import { TransactionType } from '@/types/transaction';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
@@ -341,9 +341,19 @@ const Settings = () => {
 
 
         {/* Categories Management */}
-        <div className="bg-card rounded-lg p-4 shadow-sm">
-          <Label className="text-base font-semibold mb-3 block">Категорії</Label>
-
+        <div className="bg-card rounded-lg p-4 shadow-sm relative overflow-hidden">
+          <div className="flex items-center gap-2 mb-2">
+            <Label className="text-base font-semibold flex items-center gap-2">
+              Категорії
+              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground border border-border/60">
+                <Crown className="h-3 w-3 text-primary" />
+                Преміум
+              </span>
+            </Label>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">
+            Додавання власних категорій доступне в преміум-підписці.
+          </p>
           <div className="space-y-3 opacity-60 pointer-events-none">
             <Button
               variant="outline"
@@ -421,7 +431,7 @@ const Settings = () => {
         </div>
 
         {/* Family Cabinet */}
-        <div className="bg-muted rounded-lg p-4 shadow-sm border border-border/60">
+        <div className="bg-muted rounded-lg p-4 shadow-sm border border-border/60 relative overflow-hidden">
           <div className="flex items-center gap-2 mb-2">
             <div className="bg-muted-foreground/10 p-1.5 rounded-full">
               <Users className="h-4 w-4 text-muted-foreground" />
@@ -430,12 +440,12 @@ const Settings = () => {
               Сімейний бюджет
               <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-background/60 text-muted-foreground border border-border/60">
                 <span>🔒</span>
-                <span>Скоро</span>
+                <span>Преміум</span>
               </span>
             </Label>
           </div>
           <p className="text-sm text-muted-foreground">
-            Можливість вести спільний сімейний бюджет зʼявиться найближчим часом.
+            Ведіть спільний бюджет з родиною: загальні витрати, доходи та ліміти — доступно в преміум-підписці.
           </p>
         </div>
       </div>
