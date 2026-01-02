@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTransactionsContext } from '@/contexts/TransactionsContext';
 import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { MonthNavigator } from '@/components/MonthNavigator';
@@ -38,29 +38,41 @@ const Index = () => {
   const isPageLoading = isUserLoading;
   const isDataLoading = isLoading || (isSyncing && !isInitialized);
 
-  const weeklyData = useMemo(() => {
-    // Якщо є операції в поточному місяці — будуємо тиждень від останньої дати з цього місяця
-    let endDate: Date;
-
-    if (monthTransactions.length > 0) {
-      const dates = monthTransactions.map((t) => new Date(t.date));
-      const latestTime = Math.max(...dates.map((d) => d.getTime()));
-      endDate = new Date(latestTime);
-    } else {
-      // Якщо операцій немає, орієнтуємось на кінець обраного місяця
-      endDate = new Date(currentYear, currentDate.getMonth() + 1, 0);
+  // Діапазони тижнів всередині обраного місяця: 1–7, 8–14, 15–21, 22–28, 29–кінець місяця
+  const weekRanges = useMemo(() => {
+    const monthIndex = currentDate.getMonth();
+    const daysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
+    const ranges: Array<[number, number]> = [
+      [1, 7],
+      [8, 14],
+      [15, 21],
+      [22, 28],
+    ];
+    if (daysInMonth > 28) {
+      ranges.push([29, daysInMonth]);
     }
+    return ranges;
+  }, [currentDate, currentYear]);
 
-    const startDate = new Date(endDate);
-    startDate.setDate(endDate.getDate() - 6);
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
+
+  const weeklyData = useMemo(() => {
+    const monthIndex = currentDate.getMonth();
+    const ranges = weekRanges;
+    if (ranges.length === 0) return [];
+
+    const safeIndex = Math.min(selectedWeekIndex, ranges.length - 1);
+    const [startDay, endDay] = ranges[safeIndex];
+
+    const endDate = new Date(currentYear, monthIndex, endDay);
+    const startDate = new Date(currentYear, monthIndex, startDay);
 
     const weekMap: { [key: string]: { income: number; expense: number; date: Date } } = {};
 
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(startDate);
-      d.setDate(startDate.getDate() + i);
-      const key = d.toDateString();
-      weekMap[key] = { income: 0, expense: 0, date: d };
+    for (let d = startDay; d <= endDay; d++) {
+      const date = new Date(currentYear, monthIndex, d);
+      const key = date.toDateString();
+      weekMap[key] = { income: 0, expense: 0, date };
     }
 
     monthTransactions.forEach((t) => {
@@ -85,7 +97,7 @@ const Index = () => {
       incomeHeight: (v.income / maxValue) * 100,
       expenseHeight: (v.expense / maxValue) * 100,
     }));
-  }, [monthTransactions, currentDate, currentYear]);
+  }, [monthTransactions, currentDate, currentYear, weekRanges, selectedWeekIndex]);
 
   if (isPageLoading || (isDataLoading && !isInitialized)) {
     return (
@@ -187,25 +199,46 @@ const Index = () => {
               </div>
               <h3 className="font-semibold text-sm">Тиждень</h3>
             </div>
-            <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-income/80" />
-                <span>Дохід</span>
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-income/80" />
+                  <span>Дохід</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-expense/80" />
+                  <span>Витрати</span>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-expense/80" />
-                <span>Витрати</span>
+              <div className="inline-flex items-center gap-1 bg-secondary/40 rounded-full p-0.5">
+                {weekRanges.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className={`px-2 h-6 rounded-full text-[10px] font-medium transition-colors ${
+                      selectedWeekIndex === index
+                        ? 'bg-background text-foreground'
+                        : 'text-muted-foreground'
+                    }`}
+                    onClick={() => setSelectedWeekIndex(index)}
+                  >
+                    {index + 1} тижд.
+                  </button>
+                ))}
               </div>
             </div>
           </div>
-          {weeklyData.every(d => d.income === 0 && d.expense === 0) ? (
+          {weeklyData.every((d) => d.income === 0 && d.expense === 0) ? (
             <p className="text-muted-foreground text-sm text-center py-6">
-              Немає даних за останній тиждень
+              Немає даних за обраний тиждень
             </p>
           ) : (
             <div className="flex items-end justify-between gap-2 h-32">
               {weeklyData.map((d) => (
-                <div key={`${d.label}-${d.dayNumber}`} className="flex-1 flex flex-col items-center gap-1 text-[10px]">
+                <div
+                  key={`${d.label}-${d.dayNumber}`}
+                  className="flex-1 flex flex-col items-center gap-1 text-[10px]"
+                >
                   <span className="text-muted-foreground">{d.label}</span>
                   <div className="relative w-full flex-1 flex items-end gap-1">
                     <div
@@ -217,9 +250,7 @@ const Index = () => {
                       style={{ height: `${d.expenseHeight}%` }}
                     />
                   </div>
-                  <span className="text-muted-foreground/70">
-                    {d.dayNumber}
-                  </span>
+                  <span className="text-muted-foreground/70">{d.dayNumber}</span>
                 </div>
               ))}
             </div>

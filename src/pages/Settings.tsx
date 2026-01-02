@@ -49,9 +49,10 @@ const Settings = () => {
      isOpen: boolean;
      type: TransactionType;
    }>({ isOpen: false, type: 'income' });
-   const [newCategoryName, setNewCategoryName] = useState('');
-   const [isCategorySubmitting, setIsCategorySubmitting] = useState(false);
-   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [isCategorySubmitting, setIsCategorySubmitting] = useState(false);
+  const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+  const [isPremiumDialogOpen, setIsPremiumDialogOpen] = useState(false);
 
   // Set telegram user ID in context
   useEffect(() => {
@@ -432,7 +433,10 @@ const Settings = () => {
         </div>
 
         {/* Family Cabinet */}
-        <div className="bg-muted rounded-lg p-4 shadow-sm border border-border/60 relative overflow-hidden">
+        <div
+          className="bg-muted rounded-lg p-4 shadow-sm border border-border/60 relative overflow-hidden cursor-pointer hover:bg-muted/80 transition-colors"
+          onClick={() => setIsPremiumDialogOpen(true)}
+        >
           <div className="flex items-center gap-2 mb-2">
             <div className="bg-muted-foreground/10 p-1.5 rounded-full">
               <Users className="h-4 w-4 text-muted-foreground" />
@@ -445,9 +449,12 @@ const Settings = () => {
               </span>
             </Label>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Ведіть спільний бюджет з родиною: загальні витрати, доходи та ліміти — доступно в преміум-підписці.
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground max-w-[70%]">
+              Ведіть спільний бюджет з родиною: загальні витрати, доходи та ліміти — доступно в преміум-підписці.
+            </p>
+            <Switch disabled className="data-[state=checked]:bg-primary" />
+          </div>
         </div>
 
         {/* Premium Feature: Receipt Scanner */}
@@ -494,6 +501,43 @@ const Settings = () => {
           <Switch disabled className="data-[state=checked]:bg-primary" />
         </div>
       </div>
+
+      <Dialog open={isPremiumDialogOpen} onOpenChange={setIsPremiumDialogOpen}>
+        <DialogContent className="max-w-sm rounded-2xl p-5 bg-card border border-border/60 animate-enter">
+          <DialogHeader className="text-left space-y-1">
+            <DialogTitle className="flex items-center gap-2 text-base font-semibold">
+              <Crown className="h-5 w-5 text-primary" />
+              Преміум-підписка
+            </DialogTitle>
+            <p className="text-xs text-muted-foreground">
+              Відкрийте сімейний бюджет, сканер чеків та голосові витрати в одному пакеті.
+            </p>
+          </DialogHeader>
+          <div className="mt-3 space-y-3 text-xs">
+            <ul className="space-y-1.5 text-muted-foreground">
+              <li>• Сімейний бюджет для спільних витрат</li>
+              <li>• Сканер чеків з автоматичним додаванням витрат</li>
+              <li>• Запис голосових витрат з перетворенням у текст</li>
+            </ul>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              <div className="border border-primary/40 rounded-xl p-3 flex flex-col gap-1 bg-primary/5">
+                <span className="text-[11px] text-muted-foreground">Місячна підписка</span>
+                <span className="text-sm font-semibold">$3 / міс</span>
+              </div>
+              <div className="border border-primary rounded-xl p-3 flex flex-col gap-1 bg-primary/10">
+                <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                  Рік одразу
+                  <span className="px-1.5 py-0.5 rounded-full bg-primary text-[9px] text-primary-foreground">-30%</span>
+                </span>
+                <span className="text-sm font-semibold">≈ $2 / міс</span>
+              </div>
+            </div>
+            <Button className="w-full h-10 mt-1" disabled>
+              Купити (скоро)
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <BottomNav />
       
