@@ -155,7 +155,12 @@ const Index = () => {
                 </div>
               </div>
               <div className="inline-flex items-center gap-1 bg-secondary/40 rounded-full p-0.5">
-                {weekRanges.map((_, index) => {})}
+                {weekRanges.map((_, index) => (
+                  <span
+                    key={index}
+                    className="w-5 h-5 rounded-full bg-background/60 border border-border/60"
+                  />
+                ))}
               </div>
             </div>
           </div>
