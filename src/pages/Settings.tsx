@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, TrendingUp, TrendingDown, User, Users, Trash2, Crown, Mic, ReceiptText } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, User, Users, Trash2, Crown, Mic, ReceiptText, Moon, Sun } from 'lucide-react';
 import { TransactionType } from '@/types/transaction';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
@@ -250,8 +250,8 @@ const Settings = () => {
         {/* Theme */}
         <div className="bg-card rounded-lg p-4 shadow-sm">
           <Label className="text-base font-semibold mb-3 block">Тема інтерфейсу</Label>
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-sm text-muted-foreground">Світла</span>
+          <div className="flex items-center justify-center gap-4">
+            <Moon className={`h-5 w-5 ${!isDarkTheme ? 'text-muted-foreground' : 'text-primary'}`} />
             <Switch
               checked={isDarkTheme}
               onCheckedChange={(checked) => {
@@ -266,7 +266,7 @@ const Settings = () => {
               }}
               aria-label="Перемикач темної та світлої теми"
             />
-            <span className="text-sm text-muted-foreground">Темна</span>
+            <Sun className={`h-5 w-5 ${isDarkTheme ? 'text-muted-foreground' : 'text-primary'}`} />
           </div>
         </div>
 

@@ -39,6 +39,7 @@ const Analytics = () => {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isPremiumOpen, setIsPremiumOpen] = useState(false);
   const [dynamicsScope, setDynamicsScope] = useState<'month' | 'year'>('month');
+  const [monthChartType, setMonthChartType] = useState<'area' | 'bar'>('area');
   const isPageLoading = isUserLoading || isLoading && !isInitialized;
   const categoryData = useMemo(() => {
     const sourceTransactions = range === 'month' ? transactions.filter(t => {
@@ -217,17 +218,59 @@ const Analytics = () => {
               <h3 className="font-semibold text-sm">Динаміка</h3>
             </div>
             <div className="inline-flex items-center gap-1 bg-secondary/40 rounded-full p-0.5">
-              <button type="button" className={`px-3 h-7 rounded-full text-[11px] font-medium transition-colors ${dynamicsScope === 'month' ? 'bg-background text-foreground' : 'text-muted-foreground'}`} onClick={() => setDynamicsScope('month')}>
+              <button
+                type="button"
+                className={`px-3 h-7 rounded-full text-[11px] font-medium transition-colors ${
+                  dynamicsScope === 'month' ? 'bg-background text-foreground' : 'text-muted-foreground'
+                }`}
+                onClick={() => setDynamicsScope('month')}
+              >
                 Місяць
               </button>
-              <button type="button" className={`px-3 h-7 rounded-full text-[11px] font-medium transition-colors ${dynamicsScope === 'year' ? 'bg-background text-foreground' : 'text-muted-foreground'}`} onClick={() => setDynamicsScope('year')}>
+              <button
+                type="button"
+                className={`px-3 h-7 rounded-full text-[11px] font-medium transition-colors ${
+                  dynamicsScope === 'year' ? 'bg-background text-foreground' : 'text-muted-foreground'
+                }`}
+                onClick={() => setDynamicsScope('year')}
+              >
                 Рік
               </button>
             </div>
+
+            {dynamicsScope === 'month' && (
+              <div className="inline-flex items-center gap-1 bg-secondary/40 rounded-full p-0.5">
+                <button
+                  type="button"
+                  className={`px-2 h-7 rounded-full text-[10px] font-medium transition-colors ${
+                    monthChartType === 'area' ? 'bg-background text-foreground' : 'text-muted-foreground'
+                  }`}
+                  onClick={() => setMonthChartType('area')}
+                >
+                  Лінія
+                </button>
+                <button
+                  type="button"
+                  className={`px-2 h-7 rounded-full text-[10px] font-medium transition-colors ${
+                    monthChartType === 'bar' ? 'bg-background text-foreground' : 'text-muted-foreground'
+                  }`}
+                  onClick={() => setMonthChartType('bar')}
+                >
+                  Стовпчики
+                </button>
+              </div>
+            )}
           </div>
 
           {dynamicsScope === 'month' ? (
-            dailyData.length === 0 ? (
+            monthChartType === 'area' ? (
+              <MiniChart
+                transactions={transactions}
+                currentMonth={currentMonth}
+                currentYear={currentYear}
+                currency={settings.currency}
+              />
+            ) : dailyData.length === 0 ? (
               <p className="text-muted-foreground text-sm text-center py-8">
                 Немає даних за цей місяць
               </p>
