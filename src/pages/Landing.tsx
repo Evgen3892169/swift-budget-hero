@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import landingLineChart from "@/assets/landing-line-chart-3.png";
-import landingBarsPreview from "@/assets/landing-bars-preview.png";
-import landingCategoriesPreview from "@/assets/landing-categories-preview.png";
 import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2, Users, ReceiptText, Mic } from "lucide-react";
 const telegramLink = "https://t.me"; // TODO: replace with real bot link
 
@@ -281,99 +278,51 @@ const LandingPage = () => {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3 items-stretch">
-            {/* History preview like in the screenshot */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 h-full hover-scale animate-fade-in">
-              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
-                <div className="flex flex-col">
-                  <span className="font-semibold text-sm sm:text-base">
-                    {lang === "ua" ? "Історія" : "History"}
-                  </span>
-                  <span className="text-[11px] sm:text-xs">
-                    {lang === "ua" ? "Всі операції" : "All operations"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Month selector mock */}
-              <div className="mt-1 flex items-center justify-between rounded-2xl bg-secondary/60 px-3 py-2 text-xs sm:text-sm">
-                <button className="text-muted-foreground">◀</button>
-                <span className="font-medium">
-                  {lang === "ua" ? "листопад 2025 р." : "November 2025"}
-                </span>
-                <button className="text-muted-foreground">▶</button>
-              </div>
-
-              {/* Operations list */}
-              <div className="space-y-3 text-[11px] sm:text-xs mt-1">
-                <div className="text-muted-foreground uppercase tracking-wide text-[10px] sm:text-[11px]">
-                  {lang === "ua" ? "26 листопада 2025 р." : "26 November 2025"}
-                </div>
-                <div className="rounded-2xl bg-card/80 border border-border/60 px-3 py-2 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-muted-foreground">17:55</span>
-                    <span>{lang === "ua" ? "аптека" : "pharmacy"}</span>
-                  </div>
-                  <span className="font-semibold text-destructive">
-                    -1 300 {lang === "ua" ? "грн" : "UAH"}
-                  </span>
-                </div>
-
-                <div className="text-muted-foreground uppercase tracking-wide text-[10px] sm:text-[11px]">
-                  {lang === "ua" ? "22 листопада 2025 р." : "22 November 2025"}
-                </div>
-                <div className="rounded-2xl bg-card/80 border border-border/60 px-3 py-2 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-muted-foreground">14:30</span>
-                    <span>{lang === "ua" ? "підробіток" : "side job"}</span>
-                  </div>
-                  <span className="font-semibold text-income">
-                    +3 000 {lang === "ua" ? "грн" : "UAH"}
-                  </span>
-                </div>
-              </div>
-            </article>
-
-            {/* Bars chart - looks like your example */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 h-full hover-scale animate-fade-in">
-              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
+            {/* Last operations */}
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-1 hover-scale">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
                     <BarChart3 className="size-4 text-income" />
                   </div>
                   <span className="font-medium">
-                    {lang === "ua" ? "Динаміка по днях (стовпчики)" : "Daily dynamics (bars)"}
+                    {lang === "ua" ? "Останні операції" : "Recent operations"}
                   </span>
                 </div>
               </div>
-              <div className="relative h-28 sm:h-32 rounded-xl bg-gradient-to-b from-background/5 via-background/25 to-background/70 overflow-hidden animate-fade-in">
-                <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-95">
-                  {/* Green income bars (як на скріні) */}
-                  <rect x="6" y="4" width="6" height="32" className="fill-income" rx="2" />
-                  <rect x="18" y="22" width="4" height="14" className="fill-income" rx="2" />
-                  <rect x="46" y="24" width="4" height="12" className="fill-income" rx="2" />
-                  <rect x="78" y="26" width="4" height="10" className="fill-income" rx="2" />
-
-                  {/* Red expense bars */}
-                  <rect x="26" y="24" width="4" height="12" className="fill-destructive" rx="2" />
-                  <rect x="34" y="16" width="5" height="20" className="fill-destructive" rx="2" />
-                  <rect x="62" y="26" width="4" height="10" className="fill-destructive" rx="2" />
-                  <rect x="90" y="26" width="4" height="10" className="fill-destructive" rx="2" />
-
-                  {/* Bottom axis labels (дні) */}
-                  <text x="7" y="38" className="fill-muted-foreground" fontSize="4">1</text>
-                  <text x="19" y="38" className="fill-muted-foreground" fontSize="4">2</text>
-                  <text x="27" y="38" className="fill-muted-foreground" fontSize="4">3</text>
-                  <text x="35" y="38" className="fill-muted-foreground" fontSize="4">5</text>
-                  <text x="47" y="38" className="fill-muted-foreground" fontSize="4">6</text>
-                  <text x="63" y="38" className="fill-muted-foreground" fontSize="4">8</text>
-                  <text x="79" y="38" className="fill-muted-foreground" fontSize="4">15</text>
-                  <text x="91" y="38" className="fill-muted-foreground" fontSize="4">22</text>
-                </svg>
+              <div className="space-y-3 text-[11px] flex-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-muted-foreground">17:55</span>
+                    <span>{lang === "ua" ? "аптека" : "pharmacy"}</span>
+                  </div>
+                  <span className="font-semibold text-destructive">-1 300 {lang === "ua" ? "грн" : "UAH"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-muted-foreground">14:30</span>
+                    <span>{lang === "ua" ? "підробіток" : "side job"}</span>
+                  </div>
+                  <span className="font-semibold text-income">+3 000 {lang === "ua" ? "грн" : "UAH"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-muted-foreground">20:45</span>
+                    <span>{lang === "ua" ? "розваги" : "entertainment"}</span>
+                  </div>
+                  <span className="font-semibold text-destructive">-1 600 {lang === "ua" ? "грн" : "UAH"}</span>
+                </div>
               </div>
+              <button className="mt-2 text-xs text-primary text-left">
+                {lang === "ua" ? "Вся історія" : "Full history"} →
+              </button>
             </article>
 
+            {/* Bars chart - looks like your example */}
+            
+
             {/* Line chart - like separate block on screenshot */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-5 lg:col-span-1 h-full hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 hover-scale">
               <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
@@ -392,23 +341,21 @@ const LandingPage = () => {
                   </button>
                 </div>
               </div>
-              <div className="relative h-32 sm:h-36 rounded-xl overflow-hidden animate-fade-in">
-                <img
-                  src={landingLineChart}
-                  alt={lang === "ua" ? "Скріншот графіка динаміки лініями" : "Screenshot of dynamics line chart"}
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                />
+              <div className="relative h-24 rounded-xl bg-gradient-to-b from-background/10 to-background/40 overflow-hidden animate-fade-in">
+                <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-80">
+                  {/* Income line */}
+                  <polyline fill="none" stroke="currentColor" strokeWidth="1.5" className="text-income" points="0,35 10,30 20,25 35,22 50,18 65,15 80,12 100,10" />
+                  {/* Expense line */}
+                  <polyline fill="none" stroke="currentColor" strokeWidth="1.5" className="text-destructive" points="0,36 10,34 20,32 35,30 50,28 65,27 80,26 100,25" />
+                </svg>
               </div>
-              <p className="mt-2 text-[11px] text-muted-foreground">
-                {lang === "ua"
-                  ? "ШІ проаналізував динаміку за місяць і радить зменшити витрати на доставку їжі та імпульсивні покупки хоча б на 15%, щоб баланс ріс швидше."
-                  : "AI analysed this month's dynamics and suggests cutting food delivery and impulse purchases by at least 15% so your balance grows faster."}
+              <p className="text-[11px] text-muted-foreground">
+                {lang === "ua" ? "Зелена лінія — накопичений залишок, червона — витрати. Чим далі вони одна від одної, тим спокійніше за гроші." : "Green line is your accumulated balance, red is expenses. The further they are apart, the safer your money."}
               </p>
             </article>
 
             {/* Regular incomes / expenses */}
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-1 h-full hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-1 hover-scale">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span className="font-medium">
                   {lang === "ua" ? "Регулярні доходи" : "Recurring income"}
@@ -429,31 +376,10 @@ const LandingPage = () => {
                   </div>
                   <span className="font-semibold text-income">+34 989 {lang === "ua" ? "грн" : "UAH"}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span>{lang === "ua" ? "фриланс‑проєкти" : "freelance projects"}</span>
-                    <span className="text-muted-foreground">щопʼятниці</span>
-                  </div>
-                  <span className="font-semibold text-income">+12 000 {lang === "ua" ? "грн" : "UAH"}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span>{lang === "ua" ? "основна зарплата" : "main salary"}</span>
-                    <span className="text-muted-foreground">10 {lang === "ua" ? "число місяця" : "day of month"}</span>
-                  </div>
-                  <span className="font-semibold text-income">+45 000 {lang === "ua" ? "грн" : "UAH"}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span>{lang === "ua" ? "рента квартири" : "apartment rent"}</span>
-                    <span className="text-muted-foreground">1 {lang === "ua" ? "число місяця" : "day of month"}</span>
-                  </div>
-                  <span className="font-semibold text-income">+18 500 {lang === "ua" ? "грн" : "UAH"}</span>
-                </div>
               </div>
             </article>
 
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-1 h-full hover-scale animate-fade-in">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-3 lg:col-span-1 hover-scale">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span className="font-medium">
                   {lang === "ua" ? "Регулярні витрати" : "Recurring expenses"}
@@ -470,30 +396,9 @@ const LandingPage = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <span>{lang === "ua" ? "оренда ШІ сервера" : "AI server rent"}</span>
-                    <span className="text-muted-foreground">31 {lang === "ua" ? "число місяця" : "day of month"}</span>
+                    
                   </div>
                   <span className="font-semibold text-destructive">-4 300 {lang === "ua" ? "грн" : "UAH"}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span>{lang === "ua" ? "стрімінгові підписки" : "streaming subscriptions"}</span>
-                    <span className="text-muted-foreground">5 {lang === "ua" ? "число місяця" : "day of month"}</span>
-                  </div>
-                  <span className="font-semibold text-destructive">-799 {lang === "ua" ? "грн" : "UAH"}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span>{lang === "ua" ? "таксі та доставка" : "taxi and delivery"}</span>
-                    <span className="text-muted-foreground">щотижня</span>
-                  </div>
-                  <span className="font-semibold text-destructive">-2 400 {lang === "ua" ? "грн" : "UAH"}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span>{lang === "ua" ? "кава та кафе" : "coffee and cafes"}</span>
-                    <span className="text-muted-foreground">кожні 2–3 дні</span>
-                  </div>
-                  <span className="font-semibold text-destructive">-1 200 {lang === "ua" ? "грн" : "UAH"}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
@@ -502,45 +407,6 @@ const LandingPage = () => {
                   </div>
                   <span className="font-semibold text-destructive">-120 {lang === "ua" ? "грн" : "UAH"}</span>
                 </div>
-              </div>
-            </article>
-
-            {/* Extra bar chart preview from screenshot */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-4 lg:col-span-1 h-full hover-scale animate-fade-in">
-              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <div className="size-7 rounded-full bg-income-light flex items-center justify-center">
-                    <BarChart3 className="size-4 text-income" />
-                  </div>
-                  <span className="font-medium">
-                    {lang === "ua" ? "Динаміка по днях" : "Daily dynamics"}
-                  </span>
-                </div>
-              </div>
-              <div className="relative h-32 rounded-xl overflow-hidden animate-fade-in">
-                <img
-                  src={landingBarsPreview}
-                  alt={lang === "ua" ? "Скріншот динаміки по днях" : "Screenshot of daily dynamics chart"}
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                />
-              </div>
-            </article>
-
-            {/* Categories & premium preview from screenshot */}
-            <article className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-3 lg:col-span-1 h-full hover-scale animate-fade-in">
-              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
-                <span className="font-medium">
-                  {lang === "ua" ? "Категорії та преміум" : "Categories & premium"}
-                </span>
-              </div>
-              <div className="relative h-32 rounded-xl overflow-hidden animate-fade-in">
-                <img
-                  src={landingCategoriesPreview}
-                  alt={lang === "ua" ? "Скріншот екрану категорій і сімейного бюджету" : "Screenshot of categories and family budget screen"}
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                />
               </div>
             </article>
           </div>
@@ -552,9 +418,7 @@ const LandingPage = () => {
             <h2 className="text-2xl sm:text-3xl font-semibold">
               {lang === "ua" ? "Для кого ця програма" : "Who this app is for"}
             </h2>
-            <p className="text-sm text-muted-foreground">
-              {lang === "ua" ? "Бот для тих, хто втомився жити від зарплати до зарплати й хоче нарешті відчути контроль, а не провину за кожну витрачену гривню." : "A bot for people tired of living paycheck to paycheck who want control and peace of mind instead of guilt over every purchase."}
-            </p>
+            
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -585,7 +449,7 @@ const LandingPage = () => {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale border border-destructive/60 shadow-[0_0_25px_hsl(var(--destructive)_/_0.45)]">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
               <h3 className="font-semibold text-sm">
                 {lang === "ua" ? "Твої болі" : "Your pains"}
               </h3>
@@ -595,7 +459,7 @@ const LandingPage = () => {
                 <li>{lang === "ua" ? "Пробував таблиці й застосунки, але кидав, бо це займає пів вечора й не дає швидкої відповіді 'я можу собі це дозволити?'." : "You tried spreadsheets and apps but quit because they eat your evenings and still don't answer fast if you can afford something."}</li>
               </ul>
             </article>
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale border border-income/60 shadow-[0_0_25px_hsl(var(--income)_/_0.45)]">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
               <h3 className="font-semibold text-sm">
                 {lang === "ua" ? "Як бот це вирішує" : "How the bot fixes this"}
               </h3>
