@@ -396,8 +396,8 @@ const LandingPage = () => {
                 </div>
               </div>
 
-              {/* Simple fake chart */}
-              <div className="space-y-2">
+              {/* Simple fake bar chart */}
+              <div className="space-y-2 animate-fade-in">
                 <div className="h-24 flex items-end gap-1 mt-1">
                   {[100, 25, 18, 60, 12, 15, 10, 35].map((height, index) => (
                     <div key={index} className="flex-1 flex flex-col justify-end gap-1">
@@ -420,8 +420,45 @@ const LandingPage = () => {
                 </div>
               </div>
 
-              {/* AI insight explaining the chart */}
-              <div className="mt-2 rounded-2xl bg-card border border-border/60 p-3 sm:p-4 text-[11px] flex flex-col gap-2">
+              {/* Simple fake line chart */}
+              <div className="mt-4 rounded-2xl bg-card border border-border/60 p-3 sm:p-4 space-y-3 animate-fade-in">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span className="font-medium">
+                    {lang === "ua" ? "Динаміка (лінії)" : "Dynamics (lines)"}
+                  </span>
+                  <div className="flex items-center gap-2 text-[10px]">
+                    <button className="px-2 py-0.5 rounded-full bg-secondary/80">
+                      {lang === "ua" ? "Місяць" : "Month"}
+                    </button>
+                    <button className="px-2 py-0.5 rounded-full bg-secondary/40">
+                      {lang === "ua" ? "Рік" : "Year"}
+                    </button>
+                  </div>
+                </div>
+                <div className="relative h-24 rounded-xl bg-gradient-to-b from-background/10 to-background/40 overflow-hidden">
+                  <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-80">
+                    {/* Income line */}
+                    <polyline
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      className="text-income"
+                      points="0,35 10,30 20,25 35,22 50,18 65,15 80,12 100,10"
+                    />
+                    {/* Expense line */}
+                    <polyline
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      className="text-destructive"
+                      points="0,36 10,34 20,32 35,30 50,28 65,27 80,26 100,25"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* AI insight explaining the charts */}
+              <div className="mt-2 rounded-2xl bg-card border border-border/60 p-3 sm:p-4 text-[11px] flex flex-col gap-2 animate-fade-in">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground font-medium flex items-center gap-1">
                     <Sparkles className="size-3 text-income" />
