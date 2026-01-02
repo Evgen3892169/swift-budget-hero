@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import landingLineChart from "@/assets/landing-line-chart.png";
 import { Globe2, Sparkles, ShieldCheck, BarChart3, ArrowRight, CheckCircle2, Users, ReceiptText, Mic } from "lucide-react";
 const telegramLink = "https://t.me"; // TODO: replace with real bot link
 
@@ -387,29 +388,13 @@ const LandingPage = () => {
                   </button>
                 </div>
               </div>
-              <div className="relative h-24 rounded-xl bg-gradient-to-b from-background/5 via-background/20 to-background/60 overflow-hidden animate-fade-in">
-                <svg viewBox="0 0 100 40" className="absolute inset-0 w-full h-full opacity-90">
-                  {/* Income line - step-like accumulated balance */}
-                  <polyline
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-income"
-                    points="0,30 10,30 20,30 30,25 40,25 55,20 70,20 85,15 100,15"
-                  />
-                  {/* Expense line - catching up from below */}
-                  <polyline
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-destructive"
-                    points="0,37 15,37 25,32 40,32 55,29 70,27 85,27 100,27"
-                  />
-                </svg>
+              <div className="relative h-24 rounded-xl overflow-hidden animate-fade-in">
+                <img
+                  src={landingLineChart}
+                  alt={lang === "ua" ? "Скріншот графіка динаміки лініями" : "Screenshot of dynamics line chart"}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
               </div>
               <p className="text-[11px] text-muted-foreground">
                 {lang === "ua"
