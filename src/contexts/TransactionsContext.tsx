@@ -145,6 +145,16 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
                   }
                 }
 
+                const createdAtRaw =
+                  item.createdAt ??
+                  item.created_at ??
+                  item.date ??
+                  item['дата'] ??
+                  item['дата коли поставли '] ??
+                  item['дата коли поставили'];
+
+                const createdAt = createdAtRaw ? String(createdAtRaw) : undefined;
+
                 const type: 'income' | 'expense' =
                   item.type === 'income' || item.type === 'expense'
                     ? item.type
@@ -163,6 +173,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
                     item['опис'] ||
                     '',
                   dayOfMonth,
+                  createdAt,
                 } as RegularPayment;
               })
               .filter((p): p is RegularPayment => !!p && p.amount > 0);
@@ -272,6 +283,16 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
               }
             }
 
+            const createdAtRaw =
+              item.createdAt ??
+              item.created_at ??
+              item.date ??
+              item['дата'] ??
+              item['дата коли поставли '] ??
+              item['дата коли поставили'];
+
+            const createdAt = createdAtRaw ? String(createdAtRaw) : undefined;
+
             const payment: RegularPayment = {
               id:
                 item.id ||
@@ -290,6 +311,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
                 item['Категорія'] ||
                 '',
               dayOfMonth,
+              createdAt,
             };
 
             if (type === 'income') incomes.push(payment);
