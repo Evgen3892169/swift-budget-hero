@@ -53,6 +53,7 @@ const Settings = () => {
   const [isCategorySubmitting, setIsCategorySubmitting] = useState(false);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [isPremiumDialogOpen, setIsPremiumDialogOpen] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   // Set telegram user ID in context
   useEffect(() => {
@@ -60,6 +61,17 @@ const Settings = () => {
       setTelegramUserId(telegramUserId);
     }
   }, [telegramUserId, setTelegramUserId]);
+
+  // Initialize theme switch state from current document / localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('theme');
+      const isDark = stored === 'dark' || document.documentElement.classList.contains('dark');
+      setIsDarkTheme(!!isDark);
+    } catch {
+      // ignore
+    }
+  }, []);
 
   const handleAddRegularPayment = async (payment: { type: TransactionType; amount: number; description: string; dayOfMonth?: number }) => {
     addRegularPayment(payment.type, {
@@ -239,25 +251,22 @@ const Settings = () => {
         <div className="bg-card rounded-lg p-4 shadow-sm">
           <Label className="text-base font-semibold mb-3 block">Тема інтерфейсу</Label>
           <div className="flex items-center justify-between gap-3">
-            <span className="text-sm text-muted-foreground">Темна / Світла</span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="rounded-full px-4 text-xs"
-              onClick={() => {
-                const isDark = document.documentElement.classList.contains('dark');
-                if (isDark) {
-                  document.documentElement.classList.remove('dark');
-                  localStorage.setItem('theme', 'light');
-                } else {
+            <span className="text-sm text-muted-foreground">Світла</span>
+            <Switch
+              checked={isDarkTheme}
+              onCheckedChange={(checked) => {
+                setIsDarkTheme(checked);
+                if (checked) {
                   document.documentElement.classList.add('dark');
                   localStorage.setItem('theme', 'dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                  localStorage.setItem('theme', 'light');
                 }
               }}
-            >
-              Змінити тему
-            </Button>
+              aria-label="Перемикач темної та світлої теми"
+            />
+            <span className="text-sm text-muted-foreground">Темна</span>
           </div>
         </div>
 
