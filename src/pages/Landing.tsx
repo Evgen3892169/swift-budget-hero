@@ -6,33 +6,33 @@ const telegramLink = "https://t.me"; // TODO: replace with real bot link
 
 const ua = {
   heroBadge: "AI‑трекер витрат у Telegram для звичайних людей",
-  heroTitle: "Тримай гроші під контролем за кілька хвилин на день",
+  heroTitle: "Перестань зливати гроші непомітно — керуй ними кожен день",
   heroSubtitle:
-    "Просто записуй витрати, а ШІ сам збирає статистику, показує, куди зникають гроші, і допомагає не вилітати з бюджету.",
-  heroCtaPrimary: "Відкрити в Telegram",
-  heroCtaSecondary: "Подивитись можливості",
-  heroNote: "Жодних таблиць в Excel • Усе працює прямо в Telegram",
-  featuresTitle: "Що ти отримуєш з першого дня",
+    "Записуй витрати у Telegram, а ШІ сам збирає аналітику, показує, куди тече найбільше грошей, і дає прості кроки, як залишатися в плюсах.",
+  heroCtaPrimary: "Запустити бота в Telegram",
+  heroCtaSecondary: "Побачити, як це працює",
+  heroNote: "Без Excel і фінансової освіти • Усе працює прямо в Telegram",
+  featuresTitle: "Що конкретно дає тобі бот з першого тижня",
   features: [
     {
       icon: <Sparkles className="text-primary" />,
-      title: "Розумний аналіз витрат",
-      text: "Додай кілька днів витрат — і ШІ покаже, на що йде найбільше грошей, де ти переплачуєш і як це змінити без жорсткої економії.",
+      title: "AI, який говорить людською мовою",
+      text: "Декілька днів витрат — і ШІ вже показує, де ти зливаєш гроші, які категорії тягнуть бюджет вниз і що можна прибрати без відчуття 'жити впроголодь'.",
     },
     {
       icon: <BarChart3 className="text-income" />,
-      title: "Графіки, які все пояснюють за 3 секунди",
-      text: "Доходи, витрати та баланс по днях і місяцях. Чітко видно, коли ти виходиш у плюс, а коли «горить» бюджет.",
+      title: "Графіки, що одразу показують, ти в плюсах чи мінусах",
+      text: "Доходи, витрати та баланс по днях і місяцях. Жодних складних термінів — тільки зрозумілі стовпчики та лінії, як на скрінах нижче.",
     },
     {
       icon: <ShieldCheck className="text-accent-foreground" />,
-      title: "Фінанси без складних термінів",
-      text: "Інтерфейс українською, продуманий для телефону. Ніяких «дебет/кредит» — тільки зрозумілі категорії та суми.",
+      title: "Фінанси, які не страшно відкривати",
+      text: "Інтерфейс українською, продуманий під телефон. Все виглядає як звичайний чат і мобільний застосунок — без 'дебет/кредит' і нудних таблиць.",
     },
   ],
-  screenshotsTitle: "Як виглядає всередині",
-  screenshotsSubtitle: "Баланс, останні операції, аналітика і регулярні платежі — все в одному місці.",
-  faqTitle: "Питання та відповіді",
+  screenshotsTitle: "Як виглядає твій фінансовий день усередині",
+  screenshotsSubtitle: "Баланс, останні операції, аналітика, регулярні платежі та AI‑коментарі в одному Telegram‑застосунку.",
+  faqTitle: "Часті запитання перед стартом",
   faq: [
     {
       q: "Це окремий застосунок чи бот?",
@@ -56,33 +56,33 @@ const ua = {
 
 const en = {
   heroBadge: "AI‑powered money tracker in Telegram",
-  heroTitle: "Stay in control of your money in a few minutes a day",
+  heroTitle: "Stop leaking money silently — take control every day",
   heroSubtitle:
-    "Simply log your expenses and AI will group them, show where your money really goes and how not to break your budget.",
-  heroCtaPrimary: "Open in Telegram",
-  heroCtaSecondary: "See how it works",
-  heroNote: "No spreadsheets • Everything lives inside Telegram",
-  featuresTitle: "What you get from day one",
+    "Log expenses in Telegram and let AI turn them into clear insights: where most of your money flows and what to tweak to stay in the green.",
+  heroCtaPrimary: "Launch the bot in Telegram",
+  heroCtaSecondary: "See it in action",
+  heroNote: "No spreadsheets or finance degree • Everything lives inside Telegram",
+  featuresTitle: "What this bot actually gives you in the first week",
   features: [
     {
       icon: <Sparkles className="text-primary" />,
-      title: "Smart spending insights",
-      text: "After a few days of tracking AI shows your top spending categories, hidden leaks and realistic ways to save.",
+      title: "AI that talks like a human, not a banker",
+      text: "After a few days of tracking AI shows where you silently leak money, your heaviest categories and what you can cut without feeling miserable.",
     },
     {
       icon: <BarChart3 className="text-income" />,
-      title: "Charts that tell the story",
-      text: "Income, expenses and balance by day and month. You instantly see when you are in the green or burning cash.",
+      title: "Charts that instantly show if you're safe or burning cash",
+      text: "Income, expenses and balance by day and month. Simple bars and lines — like on the screenshots below — instead of confusing reports.",
     },
     {
       icon: <ShieldCheck className="text-accent-foreground" />,
-      title: "Friendly, not financial‑jargon heavy",
-      text: "Mobile‑first interface in Ukrainian. No accounting terms — just clear categories, amounts and trends.",
+      title: "Finances that don't scare you away",
+      text: "Mobile‑first interface. Everything looks like a normal chat and finance app — no 'debit/credit' jargon or ugly spreadsheets.",
     },
   ],
-  screenshotsTitle: "What it looks like inside",
-  screenshotsSubtitle: "Balance, recent operations, analytics and recurring payments — all in one place.",
-  faqTitle: "FAQ",
+  screenshotsTitle: "How your financial day looks inside",
+  screenshotsSubtitle: "Balance, recent operations, analytics, recurring payments and AI insights — all inside one Telegram app.",
+  faqTitle: "Questions people ask before they start",
   faq: [
     {
       q: "Is it an app or a bot?",
@@ -618,12 +618,12 @@ const LandingPage = () => {
           <div className="glass-card rounded-3xl px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-2 max-w-md">
               <h2 className="text-2xl font-semibold">
-                {lang === "ua" ? "Почни вести свої фінанси сьогодні" : "Start owning your finances today"}
+                {lang === "ua" ? "Запусти свого фінансового бота зараз" : "Launch your personal money bot now"}
               </h2>
               <p className="text-sm text-muted-foreground">
                 {lang === "ua"
-                  ? "Відкрий застосунок у Telegram, додай перші витрати — і вже за тиждень побачиш, куди реально йдуть гроші."
-                  : "Open the app in Telegram, add your first expenses — and in a week you’ll clearly see where your money goes."}
+                  ? "Натисни одну кнопку, додай кілька останніх витрат — і вже за тиждень ти побачиш, скільки в тебе реально вільних грошей."
+                  : "Tap one button, add a few recent expenses — and within a week you'll see how much free money you truly have."}
               </p>
             </div>
             <Button
