@@ -398,8 +398,8 @@ const LandingPage = () => {
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">
                 {lang === "ua"
-                  ? "ШІ вже проаналізував твій бюджет за період і показує, як змінюється баланс після кожної витрати та доходу."
-                  : "AI has already analysed your budget for this period and shows how your balance changes after every expense and income."}
+                  ? "ШІ проаналізував динаміку за місяць і радить зменшити витрати на доставку їжі та імпульсивні покупки хоча б на 15%, щоб баланс ріс швидше."
+                  : "AI analysed this month's dynamics and suggests cutting food delivery and impulse purchases by at least 15% so your balance grows faster."}
               </p>
             </article>
 
