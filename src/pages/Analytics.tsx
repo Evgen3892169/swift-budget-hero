@@ -4,7 +4,7 @@ import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { MonthNavigator } from '@/components/MonthNavigator';
 import { BottomNav } from '@/components/BottomNav';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { TrendingUp, TrendingDown, Wallet, PieChart, Sparkles } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, PieChart, Sparkles, Crown } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -12,11 +12,10 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Cell,
-  PieChart as RechartsPieChart,
-  Pie,
 } from 'recharts';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const COLORS = [
   'hsl(168, 80%, 48%)',
@@ -52,6 +51,7 @@ const Analytics = () => {
 
   const [range, setRange] = useState<'month' | 'all'>('month');
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [isPremiumOpen, setIsPremiumOpen] = useState(false);
 
   const isPageLoading = isUserLoading || (isLoading && !isInitialized);
 
@@ -204,9 +204,9 @@ const Analytics = () => {
             </p>
           </div>
 
-          <div className="bg-card rounded-2xl p-4 text-center border border-balance glow-primary">
-             <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/20">
-               <Wallet className="h-5 w-5 text-primary" />
+          <div className="bg-card rounded-2xl p-4 text-center border border-balance glow-balance">
+             <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-balance-soft flex items-center justify-center border border-balance">
+               <Wallet className="h-5 w-5 text-balance" />
              </div>
              <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Баланс</p>
              <p
@@ -228,13 +228,12 @@ const Analytics = () => {
             </div>
             <h3 className="font-semibold text-sm">Динаміка</h3>
           </div>
-          {/* Reuse monthly dailyData chart here in compact form */}
           {dailyData.length === 0 ? (
             <p className="text-muted-foreground text-sm text-center py-8">
               Немає даних за цей місяць
             </p>
           ) : (
-            <div className="h-40">
+            <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={dailyData} barGap={2}>
                   <XAxis
@@ -271,19 +270,27 @@ const Analytics = () => {
             <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
               <PieChart className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-semibold text-sm">Витрати по категоріях</h3>
+            <h3 className="font-semibold text-sm flex items-center gap-2">
+              Витрати по категоріях
+              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground border border-border/60">
+                <Crown className="h-3 w-3 text-primary" />
+                Преміум
+              </span>
+            </h3>
           </div>
           <p className="text-xs text-muted-foreground mb-4">
-            Детальна аналітика за категоріями доступна в преміум-підписці.
+            Детальна аналітика за категоріями, фото-чеків та ШІ-аналіз доступні в преміум-підписці.
           </p>
-          <div className="absolute inset-0 bg-background/70 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
-            <p className="text-sm font-medium">Преміум-аналітика</p>
-            <button
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-fade-in">
+            <p className="text-sm font-medium">Відкрийте повну аналітику</p>
+            <Button
               type="button"
-              className="px-4 h-9 rounded-full bg-primary text-primary-foreground text-xs font-semibold shadow-md"
+              size="sm"
+              className="rounded-full px-5 text-xs font-semibold gap-2 hover-scale"
+              onClick={() => setIsPremiumOpen(true)}
             >
-              Преміум $3/міс
-            </button>
+              <Crown className="h-4 w-4" /> Преміум від $2/міс
+            </Button>
           </div>
         </div>
 
@@ -325,7 +332,6 @@ const Analytics = () => {
                   throw new Error('Помилка підключення до ШІ аналізу');
                 }
 
-                // Дані будемо красиво відображати після узгодження формату
                 await response.json().catch(() => null);
                 toast.success('Запит на ШІ-аналіз відправлено');
               } catch (error) {
@@ -342,6 +348,45 @@ const Analytics = () => {
             {isAiLoading ? 'Аналіз...' : 'Аналіз'}
           </button>
         </div>
+
+        {/* Premium modal */}
+        <Dialog open={isPremiumOpen} onOpenChange={setIsPremiumOpen}>
+          <DialogContent className="max-w-sm rounded-2xl p-5 bg-card border border-border/60 animate-enter">
+            <DialogHeader className="text-left space-y-1">
+              <DialogTitle className="flex items-center gap-2 text-base font-semibold">
+                <Crown className="h-5 w-5 text-primary" />
+                Преміум-підписка
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground">
+                Отримайте розширену аналітику та зручні інструменти фіксації витрат.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-3 space-y-3 text-xs">
+              <ul className="space-y-1.5 text-muted-foreground">
+                <li>• Голосова фіксація витрат та доходів</li>
+                <li>• ШІ-аналіз витрат за місяць та рік</li>
+                <li>• Фотофіксація чеків</li>
+                <li>• Витрати по категоріях + власні категорії</li>
+              </ul>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div className="border border-primary/40 rounded-xl p-3 flex flex-col gap-1 bg-primary/5">
+                  <span className="text-[11px] text-muted-foreground">Місячна підписка</span>
+                  <span className="text-sm font-semibold">$3 / міс</span>
+                </div>
+                <div className="border border-primary rounded-xl p-3 flex flex-col gap-1 bg-primary/10">
+                  <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                    Рік одразу
+                    <span className="px-1.5 py-0.5 rounded-full bg-primary text-[9px] text-primary-foreground">-30%</span>
+                  </span>
+                  <span className="text-sm font-semibold">≈ $2 / міс</span>
+                </div>
+              </div>
+              <Button className="w-full h-10 mt-1" disabled>
+                Купити (скоро)
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <BottomNav />

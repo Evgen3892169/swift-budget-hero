@@ -344,39 +344,17 @@ const Settings = () => {
         <div className="bg-card rounded-lg p-4 shadow-sm">
           <Label className="text-base font-semibold mb-3 block">Категорії</Label>
 
-          <div className="space-y-3">
+          <div className="space-y-3 opacity-60 pointer-events-none">
             <Button
               variant="outline"
               className="w-full h-10 justify-center gap-1"
-              onClick={() => setIsCategoryDialogOpen(true)}
+              disabled
             >
               <Plus className="h-4 w-4" />
-              Додати категорію
+              Додати категорію (Преміум)
             </Button>
 
-            <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
-              <DialogContent className="w-[calc(100%-2rem)] max-w-md rounded-2xl p-5">
-                <DialogHeader className="text-left">
-                  <DialogTitle className="text-base font-semibold">Нова категорія</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-3 pt-1">
-                  <Input
-                    placeholder="Назва категорії"
-                    value={newCategoryName}
-                    onChange={(e) => setNewCategoryName(e.target.value)}
-                    className="h-10"
-                    autoFocus
-                  />
-                  <Button
-                    className="w-full h-10"
-                    disabled={isCategorySubmitting}
-                    onClick={handleSaveCategory}
-                  >
-                    Зберегти
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            {/* Діалог лишаємо на майбутнє, зараз недоступний */}
           </div>
 
           {(!settings.categories || settings.categories.length === 0) ? (
