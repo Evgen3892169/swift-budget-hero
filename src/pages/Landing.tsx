@@ -542,7 +542,7 @@ const LandingPage = () => {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale border border-destructive/60 shadow-[0_0_25px_hsl(var(--destructive)_/_0.45)]">
               <h3 className="font-semibold text-sm">
                 {lang === "ua" ? "Твої болі" : "Your pains"}
               </h3>
@@ -552,7 +552,7 @@ const LandingPage = () => {
                 <li>{lang === "ua" ? "Пробував таблиці й застосунки, але кидав, бо це займає пів вечора й не дає швидкої відповіді 'я можу собі це дозволити?'." : "You tried spreadsheets and apps but quit because they eat your evenings and still don't answer fast if you can afford something."}</li>
               </ul>
             </article>
-            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale">
+            <article className="glass-card rounded-2xl p-4 flex flex-col gap-2 hover-scale border border-income/60 shadow-[0_0_25px_hsl(var(--income)_/_0.45)]">
               <h3 className="font-semibold text-sm">
                 {lang === "ua" ? "Як бот це вирішує" : "How the bot fixes this"}
               </h3>
