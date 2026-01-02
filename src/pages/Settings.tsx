@@ -432,29 +432,29 @@ const Settings = () => {
           )}
         </div>
 
-        {/* Family Cabinet */}
+        {/* Premium Feature: Family Budget */}
         <div
-          className="bg-muted rounded-lg p-4 shadow-sm border border-border/60 relative overflow-hidden cursor-pointer hover:bg-muted/80 transition-colors"
+          className="bg-card rounded-lg p-4 shadow-sm border border-border/60 flex items-center justify-between gap-3 cursor-pointer hover:border-primary/40 transition-colors"
           onClick={() => setIsPremiumDialogOpen(true)}
         >
-          <div className="flex items-center gap-2 mb-2">
-            <div className="bg-muted-foreground/10 p-1.5 rounded-full">
-              <Users className="h-4 w-4 text-muted-foreground" />
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 p-1.5 rounded-full border border-primary/20">
+              <Users className="h-4 w-4 text-primary" />
             </div>
-            <Label className="text-base font-semibold flex items-center gap-2">
-              Сімейний бюджет
-              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-background/60 text-muted-foreground border border-border/60">
-                <span>🔒</span>
-                <span>Преміум</span>
-              </span>
-            </Label>
+            <div>
+              <p className="text-sm font-semibold flex items-center gap-2">
+                Сімейний бюджет
+                <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground border border-border/60">
+                  <Crown className="h-3 w-3 text-primary" />
+                  Преміум
+                </span>
+              </p>
+              <p className="text-xs text-muted-foreground max-w-[260px]">
+                Ведіть спільний бюджет з родиною: загальні витрати, доходи та ліміти — доступно в преміум-підписці.
+              </p>
+            </div>
           </div>
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-muted-foreground max-w-[70%]">
-              Ведіть спільний бюджет з родиною: загальні витрати, доходи та ліміти — доступно в преміум-підписці.
-            </p>
-            <Switch disabled className="data-[state=checked]:bg-primary" />
-          </div>
+          <Switch disabled className="data-[state=checked]:bg-primary" />
         </div>
 
         {/* Premium Feature: Receipt Scanner */}
