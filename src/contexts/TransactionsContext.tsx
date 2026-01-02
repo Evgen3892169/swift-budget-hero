@@ -20,6 +20,8 @@ interface TransactionsContextType {
   isLoading: boolean;
   isSyncing: boolean;
   isInitialized: boolean;
+  isAdmin: boolean;
+  isAdminLoading: boolean;
   monthTransactions: Transaction[];
   monthlyStats: {
     income: number;
@@ -39,6 +41,7 @@ interface TransactionsContextType {
   getMonthName: (date: Date) => string;
   setTelegramUserId: (id: string | null) => void;
 }
+
 
 const TransactionsContext = createContext<TransactionsContextType | null>(null);
 
@@ -62,6 +65,8 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdminLoading, setIsAdminLoading] = useState(false);
 
   // Sync function - only gets data from n8n webhook, no local storage
   const syncTransactions = useCallback(async () => {
@@ -405,6 +410,60 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     }
   }, [telegramUserId, isInitialized, syncTransactions]);
 
+  // Check admin access via n8n webhook when user ID is available
+  useEffect(() => {
+    if (!telegramUserId) {
+      setIsAdmin(false);
+      return;
+    }
+
+    const checkAdmin = async () => {
+      setIsAdminLoading(true);
+      try {
+        const response = await fetch(
+          'https://shinespiceclover.app.n8n.cloud/webhook-test/0943ef7a-8083-4593-95bb-9c0d877153e6',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: telegramUserId }),
+          }
+        );
+
+        if (!response.ok) {
+          console.warn('Admin check webhook returned non-OK status');
+          setIsAdmin(false);
+          return;
+        }
+
+        let data: unknown = null;
+        try {
+          data = await response.json();
+        } catch (e) {
+          console.warn('Admin check: failed to parse JSON response', e);
+        }
+
+        let hasData = false;
+        if (Array.isArray(data)) {
+          hasData = data.length > 0;
+        } else if (data && typeof data === 'object') {
+          hasData = Object.keys(data as Record<string, unknown>).length > 0;
+        } else if (data !== null && data !== undefined) {
+          hasData = true;
+        }
+
+        setIsAdmin(hasData);
+        console.log('Admin check result:', { telegramUserId, hasData, data });
+      } catch (error) {
+        console.error('Error calling admin check webhook:', error);
+        setIsAdmin(false);
+      } finally {
+        setIsAdminLoading(false);
+      }
+    };
+
+    checkAdmin();
+  }, [telegramUserId]);
+
   // Load settings from localStorage
   useEffect(() => {
     const savedSettings = localStorage.getItem(SETTINGS_KEY);
@@ -595,6 +654,8 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     isLoading,
     isSyncing,
     isInitialized,
+    isAdmin,
+    isAdminLoading,
     monthTransactions,
     monthlyStats,
     syncTransactions,
